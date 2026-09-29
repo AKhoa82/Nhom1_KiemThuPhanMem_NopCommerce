@@ -101,9 +101,9 @@ Một test **Pass** khi hành vi quan sát được khớp với expected result
 
 ## 8. Review và trạng thái
 
-- [ ] **Trang:** review danh sách chức năng trong/ngoài phạm vi và các luồng nghiệp vụ chính.
+- [x] **Trang:** review danh sách chức năng trong/ngoài phạm vi và các luồng nghiệp vụ chính.
 - [ ] **Linh:** review giả định, rủi ro và tiêu chí Pass/Fail.
-- Xác nhận của Trang: chưa có.
+- Xác nhận của Trang: đã xác nhận.
 - Xác nhận của Linh: chưa có.
 - Trạng thái: bản dự thảo; chờ cả hai reviewer hoàn tất phần được phân công và xác nhận.
 - Trạng thái: bản dự thảo chờ Trang và Linh review; chưa ghi nhận acceptance cho đến khi hai reviewer xác nhận.
