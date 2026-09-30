@@ -79,7 +79,7 @@ Ràng buộc: guest chỉ được dùng khi cấu hình cho phép; sản phẩm
 
 ## 6. Tiêu chí Pass/Fail
 
-Một test **Pass** khi hành vi quan sát được khớp với expected result, dữ liệu được lưu đúng và không có lỗi ngoài dự kiến. Test **Fail** khi có sai lệch; ghi lại input/fixture, cấu hình, log, kết quả thực tế và mã nguồn liên quan.
+Một test **Pass** khi hành vi quan sát được khớp toàn bộ expected result, dữ liệu được lưu đúng và không có lỗi ngoài dự kiến. Test **Fail** khi có ít nhất một sai lệch có thể tái hiện trong đúng baseline, cấu hình và fixture đã chốt; khi đó phải ghi lại input/fixture, cấu hình, bước tái hiện, log, kết quả mong đợi và kết quả thực tế.
 
 - Thao tác thêm/cập nhật/xóa lưu đúng sản phẩm, thuộc tính và số lượng; quantity không hợp lệ không được âm/0 hoặc vượt giới hạn nghiệp vụ.
 - Hàng hết/vượt kho hoặc tổ hợp biến thể không hợp lệ bị từ chối/cảnh báo theo cấu hình; không xác nhận được số lượng vượt mức cho phép khi không bật backorder.
@@ -88,6 +88,14 @@ Một test **Pass** khi hành vi quan sát được khớp với expected result
 - Luồng thành công tạo đúng một order với đúng line item, số lượng và tổng tiền theo fixture; giỏ được dọn sau khi đặt thành công.
 - Payment decline giả lập phải trả lỗi quan sát được, không báo hoàn tất/thanh toán thành công và không tạo đơn thành công trùng lặp; nếu không có processor giả lập, ghi rõ kịch bản chưa chạy.
 - Ma trận K06 đạt 100% coverage các cặp mức khả thi được khai báo trong model; lưu model, generated cases, constraints, lệnh chạy và report. Các ca biên/negative bắt buộc phải có kết quả riêng, không tính thay cho pair coverage.
+
+Quy ước các trạng thái không phải Pass/Fail:
+
+- **Blocked:** không thể thực thi do thiếu fixture, plugin local, cấu hình hoặc môi trường bắt buộc. Ghi rõ nguyên nhân, bằng chứng và người xử lý; không tính Blocked là Pass hoặc Fail.
+- **Not Run:** test chưa được thực thi. Không dùng Not Run để thay thế cho kết quả của một tổ hợp Pairwise bắt buộc.
+- Lỗi từ cổng thanh toán, hãng vận chuyển hoặc dịch vụ Internet ngoài phạm vi không được ghi là Fail của nopCommerce nếu chưa chứng minh lỗi thuộc luồng local đang kiểm thử.
+
+Phạm vi chỉ được coi là hoàn thành khi 100% test ưu tiên cao và 100% tổ hợp Pairwise khả thi đã được chạy, không còn lỗi Critical/High đang mở, không còn test Blocked chưa có quyết định xử lý, và mọi test chưa Pass đều có defect hoặc biên bản chấp nhận rủi ro. Kịch bản payment decline chỉ được tính hoàn thành khi có processor giả lập local; nếu chưa có thì toàn bộ phạm vi vẫn còn một mục Blocked.
 
 ## 7. Rủi ro chính
 
@@ -102,11 +110,11 @@ Một test **Pass** khi hành vi quan sát được khớp với expected result
 ## 8. Review và trạng thái
 
 - [x] **Trang:** review danh sách chức năng trong/ngoài phạm vi và các luồng nghiệp vụ chính.
-- [ ] **Linh:** review giả định, rủi ro và tiêu chí Pass/Fail.
+- [x] **Linh:** review giả định, rủi ro và tiêu chí Pass/Fail.
 - Xác nhận của Trang: đã xác nhận.
-- Xác nhận của Linh: chưa có.
-- Trạng thái: bản dự thảo; chờ cả hai reviewer hoàn tất phần được phân công và xác nhận.
-- Trạng thái: bản dự thảo chờ Trang và Linh review; chưa ghi nhận acceptance cho đến khi hai reviewer xác nhận.
+- Xác nhận của Linh: đã review ngày 2026-09-30; chấp nhận với điều kiện payment decline phải dùng processor giả lập local và được đánh dấu Blocked nếu processor chưa sẵn sàng.
+- Kết quả review của Linh: giả định đã nêu đủ baseline, fixture và cấu hình cần khóa; rủi ro đã có biện pháp giảm thiểu; tiêu chí Pass/Fail đã bổ sung cách phân loại Blocked/Not Run và điều kiện kết thúc đo được.
+- Trạng thái: đã được Trang và Linh review, xác nhận; đủ điều kiện đưa vào pull request. Điều kiện về processor giả lập vẫn phải được kiểm tra trước khi thực thi kịch bản payment decline.
 
 ## 9. Căn cứ mã nguồn
 
@@ -115,3 +123,4 @@ Một test **Pass** khi hành vi quan sát được khớp với expected result
 - `src/Libraries/Nop.Services/Orders/ShoppingCartService.cs`: kiểm tra quantity, stock thường, stock theo thuộc tính và cảnh báo giỏ.
 - `src/Libraries/Nop.Services/Orders/OrderProcessingService.cs`: gọi payment processor, tạo order khi payment thành công và trả lỗi khi payment thất bại.
 - `src/Plugins/Nop.Plugin.Payments.CheckMoneyOrder/CheckMoneyOrderPaymentProcessor.cs`: payment offline; `ProcessPaymentAsync` trả kết quả mặc định, không mô phỏng từ chối thanh toán.
+
