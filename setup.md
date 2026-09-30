@@ -159,6 +159,8 @@ Lưu ảnh chụp không chứa mật khẩu/token vào thư mục bằng chứn
 - [x] Hoàn tất installer, database kết nối và storefront trả HTTP 200 sau khi web container được khởi động lại.
 [Khoa]
 ![1790744963215](image/setup/1790744963215.png)
+[Linh]
+![alt text](image.png)
 - [x] Đăng nhập Admin và tạo được fixture sản phẩm.
 [Khoa]
 ![1790745028939](image/setup/1790745028939.png)
@@ -174,6 +176,7 @@ Lưu ảnh chụp không chứa mật khẩu/token vào thư mục bằng chứn
 - [x] Customer test đăng nhập được.
 [Khoa]
 ![1790745246221](image/setup/1790745246221.png)
-- [ ] Trang và Linh chạy lại theo hướng dẫn từ đúng SHA; ghi ngày/kết quả.
+- [ ] Trang chạy lại theo hướng dẫn từ đúng SHA; ghi ngày/kết quả.
+- [x] Linh chạy lại theo hướng dẫn từ đúng SHA; 30/09/2026; kết quả:đạt
 
 Các ô chưa đánh dấu là việc còn lại; không đánh dấu thay cho bằng chứng chạy thực tế.
