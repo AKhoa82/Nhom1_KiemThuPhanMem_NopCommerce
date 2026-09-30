@@ -176,7 +176,17 @@ Lưu ảnh chụp không chứa mật khẩu/token vào thư mục bằng chứn
 - [x] Customer test đăng nhập được.
 [Khoa]
 ![1790745246221](image/setup/1790745246221.png)
-- [ ] Trang chạy lại theo hướng dẫn từ đúng SHA; ghi ngày/kết quả.
+- [x] Trang chạy lại theo hướng dẫn từ đúng SHA `674d0ceef6bd8a52fe74d6f4fff326960162cec0`; 30/09/2026; kết quả: đạt. Môi trường kiểm chứng: .NET SDK `10.0.401`, Docker Engine `29.7.2`, Docker Compose `v5.5.1`, storefront `http://localhost/`.
+
+  ![Trang - build solution thành công](image/setup/trang/trang-01-build-success.png)
+  ![Trang - web và database container đang chạy](image/setup/trang/trang-02-docker-running.png)
+  ![Trang - SQL Server sẵn sàng kết nối](image/setup/trang/trang-03-database-ready.png)
+  ![Trang - storefront chạy thành công](image/setup/trang/trang-04-storefront-running.png)
+  ![Trang - sản phẩm thường và tồn kho](image/setup/trang/trang-05-simple-product.png)
+  ![Trang - bốn tổ hợp biến thể và tồn kho](image/setup/trang/trang-06-variant-stock.png)
+  ![Trang - chặn số lượng vượt tồn kho](image/setup/trang/trang-07-stock-validation.png)
+  ![Trang - thêm số lượng hợp lệ vào giỏ hàng](image/setup/trang/trang-08-valid-cart.png)
+  ![Trang - tài khoản khách hàng test đăng nhập thành công](image/setup/trang/trang-09-customer-login.png)
 - [x] Linh chạy lại theo hướng dẫn từ đúng SHA; 30/09/2026; kết quả:đạt
 
 Các ô chưa đánh dấu là việc còn lại; không đánh dấu thay cho bằng chứng chạy thực tế.
