@@ -112,7 +112,7 @@ Phạm vi chỉ được coi là hoàn thành khi 100% test ưu tiên cao và 10
 - [x] **Trang:** review danh sách chức năng trong/ngoài phạm vi và các luồng nghiệp vụ chính.
 - [x] **Linh:** review giả định, rủi ro và tiêu chí Pass/Fail.
 - Xác nhận của Trang: đã xác nhận.
-- Xác nhận của Linh: đã review ngày 2026-09-30; chấp nhận với điều kiện payment decline phải dùng processor giả lập local và được đánh dấu Blocked nếu processor chưa sẵn sàng.
+- Xác nhận của Linh: đã review; chấp nhận với điều kiện payment decline phải dùng processor giả lập local và được đánh dấu Blocked nếu processor chưa sẵn sàng.
 - Kết quả review của Linh: giả định đã nêu đủ baseline, fixture và cấu hình cần khóa; rủi ro đã có biện pháp giảm thiểu; tiêu chí Pass/Fail đã bổ sung cách phân loại Blocked/Not Run và điều kiện kết thúc đo được.
 - Trạng thái: đã được Trang và Linh review, xác nhận; đủ điều kiện đưa vào pull request. Điều kiện về processor giả lập vẫn phải được kiểm tra trước khi thực thi kịch bản payment decline.
 
