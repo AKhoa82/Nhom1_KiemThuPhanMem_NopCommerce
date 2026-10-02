@@ -2,6 +2,8 @@
 
 > Hướng dẫn dành cho thành viên nhóm: clone mã nguồn, khởi chạy cửa hàng và bắt đầu kiểm thử.
 
+> Quy trình Jira, Git/PR, review và lưu deliverable: [Hướng dẫn làm việc nhóm](docs/TEAM_WORKFLOW.md).
+
 [![Repository](https://img.shields.io/badge/GitHub-Nhom1__KiemThuPhanMem__NopCommerce-181717?logo=github)](https://github.com/AKhoa82/Nhom1_KiemThuPhanMem_NopCommerce)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
@@ -32,11 +34,11 @@ Lần chạy đầu tiên sẽ build ứng dụng và tải các image cần thi
 
 Ở bước cấu hình database trong trình cài đặt, nhập thông tin SQL Server của Docker Compose:
 
-| Trường        | Giá trị                   |
-| --------------- | --------------------------- |
+| Trường          | Giá trị                   |
+| --------------- | ------------------------- |
 | Database server | `nopcommerce_database`    |
 | Database name   | `nopcommerce`             |
-| Authentication  | SQL Server account          |
+| Authentication  | SQL Server account        |
 | Username        | `sa`                      |
 | Password        | `nopCommerce_db_password` |
 
