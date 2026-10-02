@@ -2,6 +2,7 @@
 
 > Hướng dẫn dành cho thành viên nhóm: clone mã nguồn, khởi chạy cửa hàng và bắt đầu kiểm thử.
 
+> Kiến trúc Shopping Cart và Checkout: [T03 - Architecture](docs/architecture.md).
 [![Repository](https://img.shields.io/badge/GitHub-Nhom1__KiemThuPhanMem__NopCommerce-181717?logo=github)](https://github.com/AKhoa82/Nhom1_KiemThuPhanMem_NopCommerce)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
