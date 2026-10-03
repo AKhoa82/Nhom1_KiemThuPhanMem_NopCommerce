@@ -10,7 +10,7 @@
 | Đỗ Đặng Diệu Linh phụ trách    | `Nop.Services`, `Nop.Core` và database flow                                                         |
 | Chức năng                           | Shopping Cart và Checkout storefront                                                                    |
 | Ngoài phạm vi                       | Admin, Wishlist và các luồng ngoài`scope.md`                                                       |
-| Trạng thái                          | In Progress - phần Nop.Web và phần Services/Core/database đã được bổ sung; chờ review nhóm     |
+| Trạng thái                          | Khoa đã review; chờ Linh xác nhận review tài liệu kiến trúc                                      |
 
 ## 2. Mục tiêu và kết luận chính
 
@@ -22,7 +22,7 @@ Kết luận chính:
 - `ShoppingCartController` điều phối thêm, sửa, xóa sản phẩm, coupon, ước tính shipping và chuyển sang checkout.
 - `CheckoutController` hoạt động như state machine cho hai chế độ multi-step và one-page checkout.
 - Model Factory tổng hợp dữ liệu từ nhiều service rồi tạo ViewModel dành riêng cho UI.
-- Controller chỉ biết các service qua interface được inject; implementation của service, Core entity và database flow nằm ngoài phạm vi tài liệu này.
+- Controller chỉ biết các service qua interface được inject; implementation của service, Core entity và database flow được mô tả tại mục 9.
 - Tại ranh giới Nop.Web, lệnh đặt hàng được chuyển giao qua `IOrderProcessingService.PlaceOrderAsync`.
 - Sau khi service trả về `PlacedOrder` thành công, Controller chuyển sang `IPaymentService.PostProcessPaymentAsync` hoặc trang Completed.
 
@@ -685,11 +685,11 @@ Các factor dưới đây bám theo phạm vi đã khóa tại `scope.md`. Đây
 - [X] Có danh sách Pairwise Test candidates phù hợp `scope.md`.
 - [X] Phần `Nop.Services`, `Nop.Core` và database flow của Linh đã được bổ sung.
 - [X] Trần Thị Phương Trang tự kiểm tra nội dung phần mình viết.
-- [ ] Lê Anh Khoa review.
+- [X] Lê Anh Khoa review kiến trúc và xác nhận phạm vi module.
 - [ ] Đỗ Đặng Diệu Linh review.
 
 | Reviewer                  | Trạng thái       | Ngày      | Nhận xét hoặc bằng chứng    |
 | ------------------------- | ------------------ | ---------- | -------------------------------- |
 | Trần Thị Phương Trang | Đã tự kiểm tra | 03/10/2026 | Tự kiểm tra phạm vi nội dung |
-| Lê Anh Khoa              | Chờ review        |            |                                  |
+| Lê Anh Khoa              | Đã review         | 03/10/2026 | Đã đối chiếu `scope.md` và mã nguồn; xác nhận phạm vi module Cart/Checkout, luồng payment/order, Pairwise baseline multi-step; làm rõ rằng mục 9 bao gồm implementation Services/Core/database. |
 | Đỗ Đặng Diệu Linh    | Chờ review        |            |                                  |
