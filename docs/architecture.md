@@ -10,7 +10,7 @@
 | Đỗ Đặng Diệu Linh phụ trách    | `Nop.Services`, `Nop.Core` và database flow                                                         |
 | Chức năng                           | Shopping Cart và Checkout storefront                                                                    |
 | Ngoài phạm vi                       | Admin, Wishlist và các luồng ngoài`scope.md`                                                       |
-| Trạng thái                          | In Progress - phần Nop.Web của Trang đã hoàn thành; chờ phần của Linh và review nhóm          |
+| Trạng thái                          | In Progress - phần Nop.Web và phần Services/Core/database đã được bổ sung; chờ review nhóm     |
 
 ## 2. Mục tiêu và kết luận chính
 
@@ -303,19 +303,298 @@ ViewModel chỉ phục vụ hiển thị và binding request; không phải enti
 
 ## 9. Nop.Services, Nop.Core và database flow
 
-> **Phụ trách: Đỗ Đặng Diệu Linh.** Phần triển khai service, Core entity và database flow sẽ được Linh bổ sung vào tài liệu dùng chung này.
+> **Phụ trách: Đỗ Đặng Diệu Linh.** Phần này nối điểm handoff ở `Nop.Web` với xử lý nghiệp vụ trong `Nop.Services`, mô hình miền trong `Nop.Core` và cơ chế lưu trữ của `Nop.Data`. Phạm vi chỉ gồm Shopping Cart và Checkout storefront.
 
-### 9.1. Ranh giới bàn giao từ phần Nop.Web
+### 9.1. Vai trò và ranh giới của các tầng
 
-Tài liệu của Trang dừng tại lời gọi interface từ Controller/Model Factory. Các nội dung sau thuộc phần **[Linh] Phân tích Nop.Services, Nop.Core và database flow**:
+| Tầng | Trách nhiệm trong luồng Cart/Checkout | Không chịu trách nhiệm |
+| --- | --- | --- |
+| `Nop.Core` | Khai báo domain entity, enum và cấu hình như `ShoppingCartItem`, `Order`, `OrderItem`, `ShoppingCartType`, `OrderStatus`, `PaymentStatus` và `ShippingStatus` | Không truy vấn database và không điều phối request web |
+| `Nop.Services` | Thực thi validation và nghiệp vụ; tính giá/tổng tiền; gọi payment/shipping plugin; chuyển cart thành order; gọi repository để đọc ghi | Không render View/Razor và không chứa chi tiết SQL Server |
+| `Nop.Data` | Cung cấp `IRepository<TEntity>`, `EntityRepository<TEntity>`, mapping, migration và `INopDataProvider`; chuyển LINQ/CRUD thành thao tác database | Không quyết định quy tắc add-to-cart, checkout hoặc payment |
 
-- Service implementation xử lý nghiệp vụ bên trong như thế nào.
-- Cart, Product, Customer, Order và các entity được ánh xạ vào bảng nào.
-- Repository/query và luồng đọc ghi database.
-- Chi tiết tạo `Order`, chuyển cart item thành order item và cập nhật trạng thái.
-- Chi tiết `PaymentService`, `ShippingService`, `ShoppingCartService` và `OrderService`.
+Controller và Model Factory chỉ phụ thuộc vào interface service. Dependency Injection chọn implementation, còn service nhận generic repository hoặc gọi service chuyên trách khác. Luồng phụ thuộc chính là:
 
-Phần của Trang chỉ ghi nhận dependency và điểm handoff để nối sơ đồ chung của nhóm.
+```mermaid
+flowchart LR
+    Web[Nop.Web Controller / Model Factory]
+    Contract[Service interface]
+    Service[Nop.Services implementation]
+    Core[Nop.Core entity]
+    Repo[IRepository of TEntity]
+    EntityRepo[EntityRepository of TEntity]
+    Provider[INopDataProvider / Linq2DB]
+    Db[(SQL Server)]
+    Plugin[Payment / Shipping plugin]
+
+    Web --> Contract --> Service
+    Service --> Core
+    Service --> Repo --> EntityRepo --> Provider --> Db
+    Service --> Plugin
+```
+
+`NopDbStartup` đăng ký `IRepository<> → EntityRepository<>` theo scoped lifetime và đăng ký `INopDataProvider` theo database provider đang cấu hình. Với môi trường của nhóm, provider cuối là SQL Server.
+
+### 9.2. Service implementation chính
+
+| Service | Vai trò | Điểm đọc/ghi hoặc dependency quan trọng |
+| --- | --- | --- |
+| `ShoppingCartService` | Đọc cart; validate product, attributes, quantity, stock; thêm, cập nhật hoặc xóa cart item; reset checkout data | Dùng trực tiếp `IRepository<ShoppingCartItem>` và gọi product, customer, attribute, shipping services |
+| `OrderProcessingService` | Điều phối toàn bộ use case đặt hàng từ validation đến tạo order, order item, lịch sử, inventory, event và notification | Gọi `IShoppingCartService`, `IOrderService`, `IPaymentService`, `IProductService`, `IAddressService` và các service discount/gift card/reward point |
+| `OrderService` | Cung cấp query và CRUD cho `Order`, `OrderItem`, `OrderNote`, recurring payment | Bao `IRepository<Order>`, `IRepository<OrderItem>` và các repository thuộc Orders |
+| `PaymentService` | Chọn payment plugin theo system name; xử lý payment thường/recurring và post-process redirect | `ProcessPaymentAsync` trả `ProcessPaymentResult`; order tổng bằng 0 được đánh dấu `Paid`; `PostProcessPaymentAsync` giao tiếp plugin sau khi order đã được tạo |
+| `ShippingService` | Xác định trọng lượng/package và tổng hợp shipping option từ plugin đang hoạt động | Đọc cart/product/address; gọi từng shipping rate computation plugin |
+| `ProductService` | Đọc product và điều chỉnh inventory sau khi tạo order item | Cập nhật `Product` hoặc tổ hợp/warehouse inventory và thêm `StockQuantityHistory` khi phù hợp |
+
+Các service hỗ trợ như `OrderTotalCalculationService`, `AddressService`, `GenericAttributeService`, `DiscountService`, `GiftCardService` và `RewardPointService` được gọi trong checkout, nhưng không phải entry point từ Controller.
+
+### 9.3. Core entity và quan hệ dữ liệu
+
+| Entity | Trường quyết định trong phạm vi | Ý nghĩa |
+| --- | --- | --- |
+| `ShoppingCartItem` | `CustomerId`, `ProductId`, `StoreId`, `ShoppingCartTypeId`, `AttributesXml`, `Quantity`, `CreatedOnUtc`, `UpdatedOnUtc` | Trạng thái giỏ có thể thay đổi trước khi checkout; giá cuối cùng chưa được cố định tại đây |
+| `Product` | `ManageInventoryMethodId`, `StockQuantity`, `MinStockQuantity`, `BackorderModeId`, `OrderMinimumQuantity`, `OrderMaximumQuantity` | Nguồn quy tắc về khả dụng và tồn kho khi validate cart |
+| `Customer` | `BillingAddressId`, `ShippingAddressId`, currency/language và các generic attribute | Chủ cart/order và nơi giữ lựa chọn checkout tạm thời |
+| `Address` | Email, country/state, city, address và postal code | Khi đặt hàng, billing/shipping/pickup address được clone và lưu thành bản ghi riêng cho order |
+| `Order` | `CustomerId`, address IDs, totals, `OrderStatusId`, `PaymentStatusId`, `ShippingStatusId`, payment/shipping system name | Header và snapshot tài chính/trạng thái tại thời điểm đặt hàng |
+| `OrderItem` | `OrderId`, `ProductId`, `Quantity`, giá gồm/không gồm thuế, discount, attributes, weight | Snapshot từng dòng cart; không chỉ tham chiếu cart item cũ |
+
+Quan hệ chính trong database:
+
+```mermaid
+erDiagram
+    Customer ||--o{ ShoppingCartItem : owns
+    Product ||--o{ ShoppingCartItem : selected_as
+    Customer ||--o{ Order : places
+    Address ||--o{ Order : billing_shipping_pickup
+    Order ||--|{ OrderItem : contains
+    Product ||--o{ OrderItem : snapshots
+
+    ShoppingCartItem {
+        int Id PK
+        int CustomerId FK
+        int ProductId FK
+        int StoreId
+        int ShoppingCartTypeId
+        int Quantity
+        string AttributesXml
+    }
+    Order {
+        int Id PK
+        int CustomerId FK
+        int BillingAddressId FK
+        int ShippingAddressId FK
+        int OrderStatusId
+        int PaymentStatusId
+        int ShippingStatusId
+        decimal OrderTotal
+    }
+    OrderItem {
+        int Id PK
+        int OrderId FK
+        int ProductId FK
+        int Quantity
+        decimal PriceInclTax
+        decimal PriceExclTax
+    }
+```
+
+### 9.4. Shopping Cart service flow
+
+#### Đọc cart
+
+`ShoppingCartService.GetShoppingCartAsync` tạo query từ `IRepository<ShoppingCartItem>.Table` và luôn lọc theo `CustomerId`. Các filter tiếp theo gồm cart type, wishlist, store, product và thời gian. Filter store được bỏ qua nếu cấu hình cho phép chia sẻ cart giữa các store. Kết quả query được materialize bằng `ToListAsync` và đi qua short-term cache.
+
+#### Thêm, cập nhật và xóa
+
+1. `AddToCartAsync` kiểm tra cart hiện tại và tìm item tương đương theo product, attributes, customer-entered price và rental dates.
+2. Service chạy validation về quyền truy cập, trạng thái product, attributes, required products, quantity, stock và giới hạn số item.
+3. Nếu item tương đương đã có, service cộng quantity rồi gọi `_sciRepository.UpdateAsync`.
+4. Nếu chưa có, service tạo `ShoppingCartItem` rồi gọi `_sciRepository.InsertAsync`.
+5. `UpdateShoppingCartItemAsync` chỉ sửa item thuộc đúng customer. Quantity lớn hơn 0 được validate rồi update; quantity bằng hoặc nhỏ hơn 0 chuyển sang delete.
+6. `DeleteShoppingCartItemAsync` reset dữ liệu checkout liên quan, xóa bản ghi bằng repository và cập nhật cờ customer có cart item.
+7. `ClearShoppingCartAsync` bulk-delete các item của shopping cart, phát `ClearShoppingCartEvent`, rồi cập nhật trạng thái customer.
+
+Validation xảy ra trước lệnh insert/update. Khi trả về danh sách warning, Controller có thể hiển thị lỗi mà không ghi thay đổi cart không hợp lệ.
+
+```mermaid
+sequenceDiagram
+    participant Web as ShoppingCartController
+    participant Cart as ShoppingCartService
+    participant Product as Product/Attribute Services
+    participant Repo as IRepository<ShoppingCartItem>
+    participant DB as ShoppingCartItem table
+
+    Web->>Cart: AddToCartAsync / UpdateShoppingCartItemAsync
+    Cart->>Repo: Table / GetByIdAsync
+    Repo->>DB: SELECT by Customer/Product/Store
+    DB-->>Repo: Current cart item(s)
+    Repo-->>Cart: Core entities
+    Cart->>Product: Validate product, attributes, quantity, stock
+    alt Có warning
+        Product-->>Cart: Warning list
+        Cart-->>Web: Warnings; không ghi cart change
+    else Item tương đương đã tồn tại
+        Cart->>Repo: UpdateAsync(ShoppingCartItem)
+        Repo->>DB: UPDATE ShoppingCartItem
+        Cart-->>Web: Empty warning list
+    else Item mới
+        Cart->>Repo: InsertAsync(ShoppingCartItem)
+        Repo->>DB: INSERT ShoppingCartItem
+        Cart-->>Web: Empty warning list
+    end
+```
+
+### 9.5. Checkout và PlaceOrder flow
+
+Điểm vào nghiệp vụ là `OrderProcessingService.PlaceOrderAsync`. Method này không dùng dữ liệu form để tạo order trực tiếp mà nạp lại customer/cart và validate trạng thái hiện tại trước khi ghi dữ liệu.
+
+#### Giai đoạn chuẩn bị và validation
+
+`PreparePlaceOrderDetailsAsync` lần lượt:
+
+1. Nạp customer, kiểm tra guest checkout, currency và language.
+2. Nạp `ShoppingCartItem` từ database; kiểm tra cart rỗng, cart warnings, từng item và minimum order totals.
+3. Nạp billing address và clone thành snapshot; chuẩn bị shipping hoặc pickup address nếu cart cần vận chuyển.
+4. Đọc checkout attributes, selected shipping option và pickup point từ `GenericAttribute` của customer.
+5. Tính subtotal, shipping, payment fee, tax, discount, gift card, reward points và order total.
+6. Kiểm tra recurring cart nếu có.
+
+Nếu một bước chuẩn bị thất bại, exception được truyền về Controller để khối `try/catch` của action ghi log và đưa message vào warnings; phần tạo order chưa được bắt đầu. Các exception phát sinh bên trong giai đoạn payment/ghi order được local function của `PlaceOrderAsync` bắt và chuyển thành lỗi của `PlaceOrderResult`.
+
+#### Giai đoạn payment và ghi order
+
+1. `GetProcessPaymentResultAsync` kiểm tra payment workflow. Nếu cần payment, service nạp plugin đang hoạt động và gọi `PaymentService.ProcessPaymentAsync`; nếu không cần payment thì tạo kết quả `Paid`.
+2. Chỉ khi `ProcessPaymentResult.Success` là `true`, `SaveOrderDetailsAsync` mới chạy.
+3. Billing address luôn được insert; pickup và shipping address được insert khi có.
+4. `Order` được tạo với totals, currency, payment/shipping data và trạng thái ban đầu: `OrderStatus.Pending`, payment status từ processor, shipping status theo loại cart.
+5. `OrderService.InsertOrderAsync` insert order; sau khi có ID, custom order number được sinh và order được update.
+6. `MoveShoppingCartItemsToOrderItemsAsync` tính lại giá/thuế/discount cho từng cart item, tạo `OrderItem`, điều chỉnh inventory và phát `ShoppingCartItemMovedToOrderItemEvent`.
+7. Service lưu `DiscountUsageHistory`, `GiftCardUsageHistory`, recurring payment và reward point history khi áp dụng.
+8. Sau khi chuyển hết item, `ClearShoppingCartAsync` xóa các `ShoppingCartItem` của store.
+9. Service lưu note/notification, reset checkout attributes, phát `OrderPlacedEvent`, kiểm tra lại order status và xử lý nhánh paid.
+10. Sau khi `PlaceOrderAsync` thành công, Controller mới gọi `PaymentService.PostProcessPaymentAsync` cho payment gateway cần redirect hoặc POST ngoài hệ thống.
+
+Nếu `OrderSettings.PlaceOrderWithLock` được bật, service dùng mutex theo customer cùng cache key có thời hạn để hạn chế hai yêu cầu đặt hàng đồng thời. Controller cũng kiểm tra minimum order placement interval; hai cơ chế này là hàng rào chống submit trùng, không thay thế việc kiểm tra dữ liệu order thực tế.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Web as CheckoutController
+    participant OP as OrderProcessingService
+    participant Cart as ShoppingCartService
+    participant Pay as PaymentService / Plugin
+    participant OrderSvc as OrderService
+    participant Product as ProductService
+    participant Repo as EntityRepository
+    participant DB as SQL Server
+
+    User->>Web: POST ConfirmOrder
+    Web->>OP: PlaceOrderAsync(request)
+    OP->>Cart: GetShoppingCartAsync + warnings
+    Cart->>Repo: Query ShoppingCartItem
+    Repo->>DB: SELECT cart/product/customer data
+    DB-->>OP: Validated Core entities
+    OP->>Pay: ProcessPaymentAsync(request)
+    Pay-->>OP: ProcessPaymentResult
+    alt Payment/validation thất bại
+        OP-->>Web: PlaceOrderResult.Errors
+        Web-->>User: Confirm view + warnings
+    else Thành công
+        OP->>Repo: INSERT Address snapshot(s)
+        OP->>OrderSvc: InsertOrderAsync(Order)
+        OrderSvc->>Repo: INSERT Order
+        loop Mỗi ShoppingCartItem
+            OP->>OrderSvc: InsertOrderItemAsync(OrderItem)
+            OrderSvc->>Repo: INSERT OrderItem
+            OP->>Product: AdjustInventoryAsync(-quantity)
+            Product->>Repo: UPDATE inventory + INSERT history
+        end
+        OP->>Repo: INSERT discount/gift card/reward histories
+        OP->>Cart: ClearShoppingCartAsync
+        Cart->>Repo: DELETE ShoppingCartItem(s)
+        OP-->>Web: PlacedOrder
+        Web->>Pay: PostProcessPaymentAsync nếu cần
+        Web-->>User: Gateway hoặc Completed
+    end
+```
+
+### 9.6. Repository và database access
+
+`EntityRepository<TEntity>` thực thi contract của `IRepository<TEntity>`:
+
+| Repository operation | Data-provider operation | Hiệu ứng bổ sung |
+| --- | --- | --- |
+| `Table`, `GetByIdAsync`, LINQ query | `GetTable<TEntity>()` rồi materialize bằng Linq2DB | Có thể dùng short-term/static cache tùy lời gọi |
+| `InsertAsync` | `InsertEntityAsync` | Phát `EntityInsertedAsync` theo mặc định |
+| `UpdateAsync` | `UpdateEntityAsync` | Phát `EntityUpdatedAsync` theo mặc định |
+| `DeleteAsync` | `DeleteEntityAsync` hoặc update cờ `Deleted` | Phát `EntityDeletedAsync` theo mặc định |
+| Bulk insert/delete | Bulk provider API trong transaction scope của chính repository operation | Phát event từng entity nếu được yêu cầu |
+
+Entity triển khai `ISoftDeletedEntity`, ví dụ `Order`, `Product` và `Customer`, được đánh dấu `Deleted = true` khi gọi repository delete. `ShoppingCartItem` không triển khai interface này nên bị xóa vật lý. Mapping builder khai báo foreign key từ cart item tới customer/product, từ order tới customer/address và từ order item tới order/product.
+
+`PlaceOrderAsync` gọi nhiều repository/service operation nối tiếp nhau nhưng không tạo một transaction scope bao trùm toàn bộ use case trong method. Transaction scope nhìn thấy trong `EntityRepository` chỉ bao một số bulk operation. Vì vậy lỗi giữa chuỗi ghi dữ liệu là rủi ro tích hợp cần được kiểm thử và quan sát qua order/cart/inventory/history, thay vì giả định toàn bộ bước tự động rollback như một transaction duy nhất.
+
+### 9.7. Entity-table mapping và thay đổi dữ liệu
+
+Theo convention hiện tại, tên bảng chính trùng tên entity. Các builder bổ sung foreign key, độ dài, nullable và unique constraint.
+
+| Entity / bảng | Thời điểm đọc | Thời điểm ghi |
+| --- | --- | --- |
+| `ShoppingCartItem` | Hiển thị cart, validate cart, tính totals, bắt đầu checkout | Insert khi add mới; update quantity/attributes; delete khi remove hoặc đặt hàng thành công |
+| `Product` | Validate trạng thái, giá, attributes và stock | Update tồn kho trực tiếp hoặc qua inventory theo cấu hình product |
+| `Customer` | Xác định owner, guest, currency/language và address IDs | Có thể cập nhật cờ cart và checkout-related customer state |
+| `GenericAttribute` | Đọc checkout attributes, selected shipping option, pickup point và các lựa chọn tạm | Lưu/reset lựa chọn checkout, coupon và dữ liệu tạm của customer |
+| `Address` | Đọc address hiện tại của customer | Insert snapshot billing, shipping hoặc pickup cho order |
+| `Order` | Trang completed, quản lý và xử lý trạng thái sau đặt hàng | Insert header; update custom number, reward reference và trạng thái |
+| `OrderItem` | Hiển thị chi tiết đơn, fulfillment và download | Insert một bản ghi cho mỗi cart item |
+| `StockQuantityHistory` | Audit thay đổi tồn kho | Insert khi `AdjustInventoryAsync` thay đổi inventory phù hợp |
+| `DiscountUsageHistory` | Kiểm tra lịch sử sử dụng discount | Insert cho mỗi discount đã áp dụng |
+| `GiftCardUsageHistory` | Tính phần giá trị gift card đã dùng | Insert cho mỗi gift card được dùng trong order |
+| `RewardPointsHistory` | Tính số điểm khả dụng và audit | Insert entry trừ điểm khi redeem; entry cộng điểm tùy trạng thái/order settings |
+
+Trạng thái dữ liệu điển hình:
+
+```text
+Trước checkout
+  ShoppingCartItem tồn tại; Order và OrderItem chưa tồn tại.
+
+PlaceOrder thành công
+  Address snapshot(s) + Order + OrderItem(s) được thêm.
+  Inventory và các usage/history record được cập nhật khi áp dụng.
+  ShoppingCartItem được xóa.
+
+Payment dạng redirect
+  Order có thể đã tồn tại ở trạng thái Pending trước khi người dùng hoàn tất ở gateway.
+  Callback hoặc xử lý payment tiếp theo mới chuyển payment/order status.
+```
+
+### 9.8. Điểm kiểm thử rút ra từ service và database flow
+
+| Rủi ro/nhánh | Invariant cần kiểm tra |
+| --- | --- |
+| Cart thuộc customer/store khác | Không đọc, sửa hoặc xóa được item không thuộc customer hiện tại; store filter đúng theo cấu hình shared cart |
+| Add/update có warning | Không phát sinh insert/update ngoài ý muốn; quantity và attributes cũ được giữ nguyên |
+| Quantity bằng 0 | Cart item bị xóa và checkout data liên quan được reset đúng |
+| Hết hàng hoặc vượt giới hạn | Checkout bị chặn trước khi tạo `Order` |
+| Payment processor trả lỗi | `PlaceOrderResult` có lỗi; không trả `PlacedOrder` thành công |
+| Payment tổng bằng 0/không yêu cầu payment | Payment status phù hợp và không gọi plugin không cần thiết |
+| Order thành công | Có đúng một `Order`; số `OrderItem` và quantity khớp cart; totals và attributes được snapshot |
+| Shipping required/not required/pickup | Address IDs, shipping method và `ShippingStatus` nhất quán |
+| Inventory-managed product | Tồn kho giảm đúng quantity và có history phù hợp; product không quản lý tồn kho không bị giảm sai |
+| Discount/gift card/reward points | Usage/history gắn đúng `OrderId` và không bị ghi lặp khi submit lại |
+| Sau đặt hàng | Cart của đúng customer/store được làm sạch; checkout attributes/coupon được reset |
+| Redirection payment | Order Pending vẫn tồn tại trước redirect; post-process/callback cập nhật trạng thái đúng và không tạo order trùng |
+| Lỗi giữa chuỗi persistence | Kiểm tra dữ liệu dở dang giữa `Order`, `OrderItem`, inventory, histories và cart vì không có transaction bao toàn bộ method |
+
+### 9.9. Mã nguồn đối chiếu
+
+- Core entities: [`ShoppingCartItem.cs`](../src/Libraries/Nop.Core/Domain/Orders/ShoppingCartItem.cs), [`Order.cs`](../src/Libraries/Nop.Core/Domain/Orders/Order.cs), [`OrderItem.cs`](../src/Libraries/Nop.Core/Domain/Orders/OrderItem.cs), [`Product.cs`](../src/Libraries/Nop.Core/Domain/Catalog/Product.cs), [`Customer.cs`](../src/Libraries/Nop.Core/Domain/Customers/Customer.cs), [`Address.cs`](../src/Libraries/Nop.Core/Domain/Common/Address.cs).
+- Cart: [`IShoppingCartService.cs`](../src/Libraries/Nop.Services/Orders/IShoppingCartService.cs), [`ShoppingCartService.cs`](../src/Libraries/Nop.Services/Orders/ShoppingCartService.cs).
+- Order: [`IOrderProcessingService.cs`](../src/Libraries/Nop.Services/Orders/IOrderProcessingService.cs), [`OrderProcessingService.cs`](../src/Libraries/Nop.Services/Orders/OrderProcessingService.cs), [`OrderService.cs`](../src/Libraries/Nop.Services/Orders/OrderService.cs).
+- Payment và shipping: [`PaymentService.cs`](../src/Libraries/Nop.Services/Payments/PaymentService.cs), [`ShippingService.cs`](../src/Libraries/Nop.Services/Shipping/ShippingService.cs).
+- Persistence: [`IRepository.cs`](../src/Libraries/Nop.Data/IRepository.cs), [`EntityRepository.cs`](../src/Libraries/Nop.Data/EntityRepository.cs), [`INopDataProvider.cs`](../src/Libraries/Nop.Data/INopDataProvider.cs), [`NopDbStartup.cs`](../src/Libraries/Nop.Data/NopDbStartup.cs).
+- Mapping: [`ShoppingCartItemBuilder.cs`](../src/Libraries/Nop.Data/Mapping/Builders/Orders/ShoppingCartItemBuilder.cs), [`OrderBuilder.cs`](../src/Libraries/Nop.Data/Mapping/Builders/Orders/OrderBuilder.cs), [`OrderItemBuilder.cs`](../src/Libraries/Nop.Data/Mapping/Builders/Orders/OrderItemBuilder.cs).
 
 ## 10. Điểm handoff từ Controller
 
@@ -389,7 +668,10 @@ Các factor dưới đây bám theo phạm vi đã khóa tại `scope.md`. Đây
 | Cart models                                 | [`ShoppingCartModel.cs`](../src/Presentation/Nop.Web/Models/ShoppingCart/ShoppingCartModel.cs), [`OrderTotalsModel.cs`](../src/Presentation/Nop.Web/Models/ShoppingCart/OrderTotalsModel.cs), [`EstimateShippingModel.cs`](../src/Presentation/Nop.Web/Models/ShoppingCart/EstimateShippingModel.cs) |
 | Checkout models                             | [`Models/Checkout`](../src/Presentation/Nop.Web/Models/Checkout)                                                                                                                                                                                                                                       |
 | Views                                       | [`Views/ShoppingCart`](../src/Presentation/Nop.Web/Views/ShoppingCart), [`Views/Checkout`](../src/Presentation/Nop.Web/Views/Checkout)                                                                                                                                                                |
-| Service interfaces được Controller dùng | `IShoppingCartService`, `IOrderProcessingService`, `IPaymentService`, `IShippingService`, `ICustomerService`                                                                                                                                                                                  |
+| Service interfaces được Controller dùng     | `IShoppingCartService`, `IOrderProcessingService`, `IPaymentService`, `IShippingService`, `ICustomerService`                                                                                                                                                                                           |
+| Service implementations                     | [`ShoppingCartService.cs`](../src/Libraries/Nop.Services/Orders/ShoppingCartService.cs), [`OrderProcessingService.cs`](../src/Libraries/Nop.Services/Orders/OrderProcessingService.cs), [`OrderService.cs`](../src/Libraries/Nop.Services/Orders/OrderService.cs), [`PaymentService.cs`](../src/Libraries/Nop.Services/Payments/PaymentService.cs), [`ShippingService.cs`](../src/Libraries/Nop.Services/Shipping/ShippingService.cs) |
+| Core entities                               | [`ShoppingCartItem.cs`](../src/Libraries/Nop.Core/Domain/Orders/ShoppingCartItem.cs), [`Order.cs`](../src/Libraries/Nop.Core/Domain/Orders/Order.cs), [`OrderItem.cs`](../src/Libraries/Nop.Core/Domain/Orders/OrderItem.cs), [`Product.cs`](../src/Libraries/Nop.Core/Domain/Catalog/Product.cs), [`Customer.cs`](../src/Libraries/Nop.Core/Domain/Customers/Customer.cs) |
+| Data access và mapping                      | [`IRepository.cs`](../src/Libraries/Nop.Data/IRepository.cs), [`EntityRepository.cs`](../src/Libraries/Nop.Data/EntityRepository.cs), [`ShoppingCartItemBuilder.cs`](../src/Libraries/Nop.Data/Mapping/Builders/Orders/ShoppingCartItemBuilder.cs), [`OrderBuilder.cs`](../src/Libraries/Nop.Data/Mapping/Builders/Orders/OrderBuilder.cs), [`OrderItemBuilder.cs`](../src/Libraries/Nop.Data/Mapping/Builders/Orders/OrderItemBuilder.cs) |
 
 ## 13. Acceptance checklist và review
 
@@ -401,7 +683,7 @@ Các factor dưới đây bám theo phạm vi đã khóa tại `scope.md`. Đây
 - [X] Xác định điểm Controller bàn giao lệnh đặt hàng và post-process payment.
 - [X] Nêu rõ ranh giới với phần Services/Core/database của Linh.
 - [X] Có danh sách Pairwise Test candidates phù hợp `scope.md`.
-- [ ] Phần `Nop.Services`, `Nop.Core` và database flow của Linh đã được bổ sung.
+- [X] Phần `Nop.Services`, `Nop.Core` và database flow của Linh đã được bổ sung.
 - [X] Trần Thị Phương Trang tự kiểm tra nội dung phần mình viết.
 - [ ] Lê Anh Khoa review.
 - [ ] Đỗ Đặng Diệu Linh review.
