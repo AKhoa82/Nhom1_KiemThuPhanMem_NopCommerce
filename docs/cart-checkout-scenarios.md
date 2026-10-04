@@ -38,6 +38,18 @@ T04 hoàn thành khi:
 
 - Người thực hiện: Lê Anh Khoa.
 - Phạm vi: `CART-01` đến `CART-06` và review chéo phần của Linh.
+- Các scenario trong phạm vi:
+  - `CART-01`: Thêm sản phẩm hợp lệ.
+  - `CART-02`: Thêm sản phẩm có biến thể.
+  - `CART-03`: Thêm sản phẩm với quantity bằng 1.
+  - `CART-04`: Thêm nhiều sản phẩm khác nhau.
+  - `CART-05`: Cập nhật quantity.
+  - `CART-06`: Xóa một sản phẩm, cart vẫn còn item.
+- Tiêu chí hoàn thành phần đặc tả:
+  - [x] Cả 6 scenario có đủ Actor, Preconditions, Input, Steps, Expected result, Invariant và dữ liệu test.
+  - [x] Dữ liệu scenario dùng các fixture chung và có kết quả quan sát/tính toán cụ thể.
+  - [x] Khoa đã rà soát `CART-01` đến `CART-06`; kết quả ghi tại mục 13.2.
+  - [x] Khoa đã review chéo `CART-07` đến `CART-13`; kết quả ghi tại mục 13.2.
 
 ### 3.2. Subtask của Linh
 
@@ -330,8 +342,8 @@ Nếu môi trường không thể khóa các điều kiện này, tester phải 
 | Preconditions | Cart chỉ có `PW-Simple-Stock` quantity `1`; không có item khác; nếu có coupon thì phải gỡ trước khi bắt đầu |
 | Input | Xóa item duy nhất |
 | Steps | 1. Mở Shopping Cart.<br>2. Chọn xóa `PW-Simple-Stock`.<br>3. Cập nhật cart nếu UI yêu cầu.<br>4. Quan sát trang cart và cart indicator. |
-| Expected result | Item bị xóa; cart chuyển sang trạng thái rỗng; không còn product line; subtotal/discount của item cũ không còn ảnh hưởng; cart indicator bằng `0`; không thể tiếp tục checkout với cart rỗng. |
-| Invariant | `INV-CART-09`, `INV-CART-10`, `INV-CART-11`, `INV-CART-13` |
+| Expected result | Item bị xóa; cart chuyển sang trạng thái rỗng; không còn product line; subtotal/discount của item cũ không còn ảnh hưởng; cart indicator bằng `0`; nếu giao diện hiển thị các khoản tổng tiền thì subtotal, discount và total đều bằng `0`; không thể tiếp tục checkout với cart rỗng. |
+| Invariant | `INV-CART-08`, `INV-CART-09`, `INV-CART-10`, `INV-CART-11`, `INV-CART-13` |
 | Dữ liệu test | `PW-SIMPLE-001`, quantity `1` |
 
 ### 10.3. CART-09 - Truy cập cart khi chưa có sản phẩm
@@ -343,7 +355,7 @@ Nếu môi trường không thể khóa các điều kiện này, tester phải 
 | Preconditions | Customer test không có Shopping Cart item; không có coupon đang áp dụng |
 | Input | Mở URL Shopping Cart |
 | Steps | 1. Đăng nhập bằng customer test.<br>2. Xác nhận cart indicator bằng `0`.<br>3. Mở Shopping Cart. |
-| Expected result | Trang cart hiển thị trạng thái rỗng phù hợp; không có product line; không hiển thị tổng tiền của giỏ cũ; không cho bắt đầu checkout bằng một cart rỗng; không phát sinh lỗi hệ thống. |
+| Expected result | Trang cart hiển thị trạng thái rỗng phù hợp; không có product line; không hiển thị tổng tiền của giỏ cũ; nếu giao diện hiển thị các khoản tổng tiền thì subtotal, discount và total đều bằng `0`; không cho bắt đầu checkout bằng một cart rỗng; không phát sinh lỗi hệ thống. |
 | Invariant | `INV-CART-08`, `INV-CART-11`, `INV-CART-12` |
 | Dữ liệu test | `qa.customer@example.test`, cart rỗng |
 
@@ -521,17 +533,19 @@ Tiến độ gợi ý:
 - [x] Đã tạo fixture coupon và sản phẩm hết hàng trên môi trường chạy test.
 - [x] Linh đã thực thi và xác nhận Pass `CART-07` đến `CART-13` ngày 04/10/2026.
 - [x] Evidence của `CART-07` đến `CART-13` đã được đính kèm trên Jira.
-- [ ] Khoa đã hoàn thiện/self-review phần mình viết.
-- [ ] Khoa đã review chéo phần của Linh.
+- [x] Khoa đã xác nhận hoàn thiện/self-review phần mình viết (đã có rà soát hỗ trợ theo yêu cầu; xem nhật ký bên dưới).
+- [x] Khoa đã xác nhận review chéo phần của Linh (đã có review hỗ trợ theo yêu cầu; xem nhật ký bên dưới).
 - [ ] Trang đã review toàn bộ tài liệu.
 - [ ] Mọi comment `Blocking` đã được xử lý.
-- [ ] Khoa và Trang đã xác nhận `Approved`.
+- [x] Khoa đã xác nhận `Approved`.
+- [ ] Trang đã xác nhận `Approved`.
 
 ### 13.2. Nhật ký review
 
 | Reviewer | Phạm vi | Trạng thái | Ngày | Nhận xét hoặc bằng chứng |
 | --- | --- | --- | --- | --- |
-| Lê Anh Khoa | `CART-07` đến `CART-13` | Chờ review |  |  |
+| Lê Anh Khoa | `CART-01` đến `CART-06` | Đã review | 04/10/2026 | Đã kiểm tra các trường bắt buộc, fixture, kết quả và invariant. Đề nghị bổ sung kết quả tổng tiền bằng 0 nếu giao diện hiển thị khi cart rỗng; đã cập nhật `CART-08`. |
+| Lê Anh Khoa | `CART-07` đến `CART-13` | Đã review | 04/10/2026 | Đã đối chiếu input, expected result, invariant và phép tính. Nêu rõ subtotal/discount/total bằng 0 nếu được hiển thị tại `CART-09`; không ghi nhận vấn đề Blocking nào khác trong phạm vi rà soát tài liệu. |
 | Trần Thị Phương Trang | `CART-01` đến `CART-13` và invariant | Chờ review |  |  |
 
 ### 13.3. Comment hoàn thành task cha
