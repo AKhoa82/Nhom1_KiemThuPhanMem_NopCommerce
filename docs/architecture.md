@@ -10,7 +10,7 @@
 | Đỗ Đặng Diệu Linh phụ trách    | `Nop.Services`, `Nop.Core` và database flow                                                         |
 | Chức năng                           | Shopping Cart và Checkout storefront                                                                    |
 | Ngoài phạm vi                       | Admin, Wishlist và các luồng ngoài`scope.md`                                                       |
-| Trạng thái                          | Khoa đã review; chờ Linh xác nhận review tài liệu kiến trúc                                      |
+| Trạng thái                          | Khoa đã review; Linh đã review tài liệu kiến trúc                                      |
 
 ## 2. Mục tiêu và kết luận chính
 
@@ -686,7 +686,7 @@ Các factor dưới đây bám theo phạm vi đã khóa tại `scope.md`. Đây
 - [X] Phần `Nop.Services`, `Nop.Core` và database flow của Linh đã được bổ sung.
 - [X] Trần Thị Phương Trang tự kiểm tra nội dung phần mình viết.
 - [X] Lê Anh Khoa review kiến trúc và xác nhận phạm vi module.
-- [ ] Đỗ Đặng Diệu Linh review.
+- [X] Đỗ Đặng Diệu Linh review.
 
 | Reviewer                  | Trạng thái       | Ngày      | Nhận xét hoặc bằng chứng    |
 | ------------------------- | ------------------ | ---------- | -------------------------------- |
