@@ -4,7 +4,7 @@
 
 - Đề tài: R04 nopCommerce + K06 Combinatorial / Pairwise Testing.
 - Mục tiêu: kiểm tra các tổ hợp đầu vào quan trọng của giỏ hàng và checkout, đồng thời xác minh các quy tắc nghiệp vụ và điều kiện biên được nêu dưới đây.
-- Mã nguồn hiện có trong workspace: commit `efdf6348e54e3aae9dba4cba7f51ee4a73954c18`. Giữ nguyên commit này làm baseline kiểm thử của workspace; nếu nhóm chốt release/commit khác, cập nhật lại trước khi chạy bộ test chính thức.
+- Mã nguồn hiện có trong workspace: commit `674d0ceef6bd8a52fe74d6f4fff326960162cec0`. Giữ nguyên commit này làm baseline kiểm thử của workspace; nếu nhóm chốt release/commit khác, cập nhật lại trước khi chạy bộ test chính thức.
 - Phạm vi được đối chiếu với `ShoppingCartController`, `CheckoutController`, `ShoppingCartService` và `OrderProcessingService`.
 
 ## 2. Phạm vi trong

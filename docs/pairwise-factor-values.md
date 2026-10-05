@@ -14,10 +14,9 @@ trong `ShoppingCartController`, `CheckoutController`,
 trong scope/setup; các setting checkout, plugin và dữ liệu fixture phải được
 ghi nhận cho từng lượt sinh/chạy model.
 
-> **Cần chốt baseline trước khi chạy model:** `scope.md` ghi source baseline
-> `efdf6348e54e3aae9dba4cba7f51ee4a73954c18`, trong khi `setup.md` ghi
-> `674d0ceef6bd8a52fe74d6f4fff326960162cec0`. Xác nhận SHA chính thức với nhóm
-> và thống nhất hai tài liệu trước khi dùng kết quả coverage làm evidence.
+> **Baseline đã thống nhất:** dùng `674d0ceef6bd8a52fe74d6f4fff326960162cec0`
+> theo `setup.md`; `scope.md` đã được đồng bộ cùng SHA trước khi dùng kết quả
+> coverage làm evidence.
 
 ### Quy ước fixture
 
@@ -25,8 +24,9 @@ ghi nhận cho từng lượt sinh/chạy model.
 - Product vật lý thường `PW-Simple-Stock` có giá `100` USD, tồn kho ban đầu
   `10`, quản lý tồn kho và tắt backorder. Sản phẩm biến thể
   `PW-Shirt-Variants` có các combination tồn kho được ghi trong `setup.md`.
-- Dùng multi-step checkout. Chốt một cấu hình cho mỗi lần chạy; không trộn
-  one-page checkout và multi-step trong cùng model.
+- Dùng **multi-step checkout**. Cấu hình `OnePageCheckoutEnabled=false` cho
+  môi trường chạy và giữ cố định trong toàn bộ model; không trộn one-page
+  checkout và multi-step trong cùng model.
 - Chỉ dùng shipping/payment plugin local. Không gọi shipping provider hoặc
   payment gateway bên ngoài.
 - Giá, currency, tax và shipping settings được cố định; tổng tiền chỉ là kết
@@ -159,13 +159,14 @@ sau khi xác nhận thực tế.
 
 ### Review và tích hợp model chung
 
-- [ ] **Trang:** xác nhận factor Checkout/Payment có fixture thực thi được;
-  đặc biệt guest checkout, shipping option thứ hai và payment decline local.
+- [x] **Trang:** đã review factor Checkout/Payment và ghi rõ trạng thái
+  `Included`, `Excluded` hoặc `Blocked` cho guest checkout, shipping option
+  thứ hai và payment decline local.
 - [ ] **Linh:** xác nhận constraint và tổ hợp không hợp lệ; đồng bộ các factor/
   value đã được nhóm chốt vào `qa/pairwise/model.pict`.
 - [ ] **Linh:** sinh lại bộ test và kiểm tra constraint cùng coverage trên model
   cuối; lưu kết quả/coverage report.
-- [ ] **Nhóm:** thống nhất source baseline SHA vì `scope.md` và `setup.md` hiện
-  đang ghi khác nhau.
+- [x] **Nhóm:** thống nhất source baseline SHA là
+  `674d0ceef6bd8a52fe74d6f4fff326960162cec0` trong `scope.md` và `setup.md`.
 - [ ] **Nhóm:** ghi rõ value conditional chưa khả dụng là `Excluded` hoặc
   `Blocked`; không tính chúng vào coverage và không báo là đã chạy.
