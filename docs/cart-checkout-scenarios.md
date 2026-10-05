@@ -12,7 +12,7 @@
 | Người cùng đặc tả | Lê Anh Khoa |
 | Reviewer | Lê Anh Khoa và Trần Thị Phương Trang |
 | Baseline tham chiếu | `674d0ceef6bd8a52fe74d6f4fff326960162cec0` theo `setup.md` và `docs/architecture.md` |
-| Trạng thái | In Progress - Linh đã xác minh fixture, thực thi `CART-07` đến `CART-13` và tải evidence lên Jira ngày 04/10/2026; chờ Khoa/Trang review |
+| Trạng thái | Ready for Done - Linh đã xác minh fixture, thực thi `CART-07` đến `CART-13` và tải evidence lên Jira ngày 04/10/2026; Khoa và Trang đã review/Approved ngày 05/10/2026 |
 
 > T04 sử dụng baseline `674d0ceef6bd8a52fe74d6f4fff326960162cec0` và quy trình trong `setup.md`, đúng với môi trường đã được dùng để kiểm thử trước đó. `scope.md` hiện ghi SHA khác và cần được đồng bộ ở lần cập nhật tài liệu tiếp theo. Commit hiện tại là hậu duệ của baseline này và không có thay đổi mã nguồn trong `src` so với baseline.
 
@@ -73,8 +73,8 @@ Definition of Done của subtask Linh:
 - [x] Hoàn thành đủ `CART-07` đến `CART-13`.
 - [x] Tổng hợp đủ `CART-01` đến `CART-13`.
 - [x] Có dữ liệu tính tiền cụ thể và có thể tái lập.
-- [ ] Đã xử lý mọi comment `Blocking`.
-- [ ] Khoa và Trang đã xác nhận `Approved`.
+- [x] Đã xử lý mọi comment `Blocking`.
+- [x] Khoa và Trang đã xác nhận `Approved`.
 
 ### 3.3. Subtask của Trang
 
@@ -342,7 +342,7 @@ Nếu môi trường không thể khóa các điều kiện này, tester phải 
 | Preconditions | Cart chỉ có `PW-Simple-Stock` quantity `1`; không có item khác; nếu có coupon thì phải gỡ trước khi bắt đầu |
 | Input | Xóa item duy nhất |
 | Steps | 1. Mở Shopping Cart.<br>2. Chọn xóa `PW-Simple-Stock`.<br>3. Cập nhật cart nếu UI yêu cầu.<br>4. Quan sát trang cart và cart indicator. |
-| Expected result | Item bị xóa; cart chuyển sang trạng thái rỗng; không còn product line; subtotal/discount của item cũ không còn ảnh hưởng; cart indicator bằng `0`; nếu giao diện hiển thị các khoản tổng tiền thì subtotal, discount và total đều bằng `0`; không thể tiếp tục checkout với cart rỗng. |
+| Expected result | Item bị xóa; cart chuyển sang trạng thái rỗng; không còn product line; subtotal/discount của item cũ không còn ảnh hưởng; cart indicator bằng `0`; nếu giao diện hiển thị các khoản tổng tiền thì subtotal, discount và total đều bằng `0`. T04 không đánh giá luồng Checkout. |
 | Invariant | `INV-CART-08`, `INV-CART-09`, `INV-CART-10`, `INV-CART-11`, `INV-CART-13` |
 | Dữ liệu test | `PW-SIMPLE-001`, quantity `1` |
 
@@ -355,8 +355,8 @@ Nếu môi trường không thể khóa các điều kiện này, tester phải 
 | Preconditions | Customer test không có Shopping Cart item; không có coupon đang áp dụng |
 | Input | Mở URL Shopping Cart |
 | Steps | 1. Đăng nhập bằng customer test.<br>2. Xác nhận cart indicator bằng `0`.<br>3. Mở Shopping Cart. |
-| Expected result | Trang cart hiển thị trạng thái rỗng phù hợp; không có product line; không hiển thị tổng tiền của giỏ cũ; nếu giao diện hiển thị các khoản tổng tiền thì subtotal, discount và total đều bằng `0`; không cho bắt đầu checkout bằng một cart rỗng; không phát sinh lỗi hệ thống. |
-| Invariant | `INV-CART-08`, `INV-CART-11`, `INV-CART-12` |
+| Expected result | Trang cart hiển thị trạng thái rỗng phù hợp; không có product line; không hiển thị tổng tiền của giỏ cũ; nếu giao diện hiển thị các khoản tổng tiền thì subtotal, discount và total đều bằng `0`; không phát sinh lỗi hệ thống. T04 không đánh giá luồng Checkout. |
+| Invariant | `INV-CART-08`, `INV-CART-11` |
 | Dữ liệu test | `qa.customer@example.test`, cart rỗng |
 
 ### 10.4. CART-10 - Thêm sản phẩm hết hàng
@@ -367,8 +367,8 @@ Nếu môi trường không thể khóa các điều kiện này, tester phải 
 | Actor | Khách hàng đã đăng nhập |
 | Preconditions | `PW-Out-Of-Stock` Published, stock `0`, Track inventory, No backorders; cart rỗng |
 | Input | Product `PW-OOS-001`; quantity `1` |
-| Steps | 1. Mở trang chi tiết `PW-Out-Of-Stock`.<br>2. Nếu UI cho phép, nhập quantity `1` và nhấn **Add to cart**.<br>3. Nếu nút bị vô hiệu/ẩn, ghi nhận trạng thái UI.<br>4. Mở Shopping Cart. |
-| Expected result | Hệ thống không thêm sản phẩm hết hàng; UI thể hiện trạng thái không khả dụng hoặc service trả cảnh báo tồn kho; cart vẫn rỗng; cart indicator vẫn bằng `0`; không tạo cart item một phần. |
+| Steps | 1. Mở trang chi tiết `PW-Out-Of-Stock`.<br>2. Nhập quantity `1` và nhấn **Add to cart**.<br>3. Mở Shopping Cart. |
+| Expected result | Hệ thống hiển thị cảnh báo `Out of stock` và không thêm sản phẩm hết hàng; cart vẫn rỗng; cart indicator vẫn bằng `0`; không tạo cart item một phần. |
 | Invariant | `INV-CART-02`, `INV-CART-09`, `INV-CART-12`, `INV-CART-13` |
 | Dữ liệu test | `PW-Out-Of-Stock`, SKU `PW-OOS-001`, price `50`, stock `0`, quantity `1` |
 
@@ -535,10 +535,10 @@ Tiến độ gợi ý:
 - [x] Evidence của `CART-07` đến `CART-13` đã được đính kèm trên Jira.
 - [x] Khoa đã xác nhận hoàn thiện/self-review phần mình viết (đã có rà soát hỗ trợ theo yêu cầu; xem nhật ký bên dưới).
 - [x] Khoa đã xác nhận review chéo phần của Linh (đã có review hỗ trợ theo yêu cầu; xem nhật ký bên dưới).
-- [ ] Trang đã review toàn bộ tài liệu.
-- [ ] Mọi comment `Blocking` đã được xử lý.
+- [x] Trang đã review toàn bộ tài liệu.
+- [x] Mọi comment `Blocking` đã được xử lý.
 - [x] Khoa đã xác nhận `Approved`.
-- [ ] Trang đã xác nhận `Approved`.
+- [x] Trang đã xác nhận `Approved`.
 
 ### 13.2. Nhật ký review
 
@@ -546,7 +546,7 @@ Tiến độ gợi ý:
 | --- | --- | --- | --- | --- |
 | Lê Anh Khoa | `CART-01` đến `CART-06` | Đã review | 04/10/2026 | Đã kiểm tra các trường bắt buộc, fixture, kết quả và invariant. Đề nghị bổ sung kết quả tổng tiền bằng 0 nếu giao diện hiển thị khi cart rỗng; đã cập nhật `CART-08`. |
 | Lê Anh Khoa | `CART-07` đến `CART-13` | Đã review | 04/10/2026 | Đã đối chiếu input, expected result, invariant và phép tính. Nêu rõ subtotal/discount/total bằng 0 nếu được hiển thị tại `CART-09`; không ghi nhận vấn đề Blocking nào khác trong phạm vi rà soát tài liệu. |
-| Trần Thị Phương Trang | `CART-01` đến `CART-13` và invariant | Chờ review |  |  |
+| Trần Thị Phương Trang | `CART-01` đến `CART-13` và invariant | Đã review / Approved | 05/10/2026 | Đã kiểm tra đủ trường bắt buộc, độ bao phủ 13 scenario, fixture, expected result và phép tính. Đã chỉnh 2 assertion Checkout nằm ngoài phạm vi T04, làm rõ `CART-10` theo kết quả fixture đã xác minh, và loại `INV-CART-12` khỏi `CART-09` vì không phải thao tác bị từ chối. Không còn comment Blocking. |
 
 ### 13.3. Comment hoàn thành task cha
 
