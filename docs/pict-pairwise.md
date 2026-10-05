@@ -147,6 +147,28 @@ File chính:
 - qa/pairwise/test-data/summary.md
 
 Nhờ Khoa review factor, value và constraint của model.
-Nhờ Trang kiểm tra output và mapping PW-xxx với scenario phù hợp.
+Trang đã kiểm tra output, mapping PW-xxx với scenario phù hợp và thống kê Pairwise.
+
+### 7. Review của Trang
+
+Kết quả kiểm tra ngày 05/10/2026:
+
+| Hạng mục | Kết quả |
+| --- | --- |
+| Validation output | PASS; không có row vi phạm constraint |
+| Case ID | `PW-001` đến `PW-011`, duy nhất và liên tục |
+| Feasible exhaustive | `62` tổ hợp |
+| Pairwise output | `11` case |
+| Reduction | `51` case, tương đương `82.26%` so với feasible exhaustive |
+| Pair coverage | `135/135 = 100.00%` |
+| Mapping | Ghi tại `qa/pairwise/test-data/scenario-mapping.csv` |
+
+Các case `PW-002`, `PW-003`, `PW-009` và `PW-010` được đánh dấu `Needs clarification`
+vì bộ scenario hiện tại chưa có ID mô tả đúng toàn bộ tổ hợp factor của chúng. Không
+gán các case này vào scenario gần giống để tránh làm sai traceability. Các case còn lại
+đã được mapping theo hành vi Cart/Shipping tương ứng. Payment `CheckMoneyOrder` được ghi
+nhận là value local success; T05 hiện chưa có scenario ID riêng cho payment success.
+
+File mapping chỉ bổ sung liên kết review, không chỉnh sửa các file output do PICT sinh.
 
 ```
