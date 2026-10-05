@@ -1,0 +1,57 @@
+# T07 - nopCommerce Shopping Cart and Checkout pairwise model
+# Baseline confirmed by scope.md and setup.md:
+# - Multi-step checkout
+# - Registered customer
+# - Physical products PW-Simple-Stock and PW-Shirt-Variants
+# - Inventory tracking enabled, no backorders
+# - Local shipping and Check/Money Order for the successful checkout path
+#
+# Guest is intentionally omitted until anonymous checkout is confirmed enabled.
+# SimulatedDecline is intentionally omitted until a local fake processor exists.
+# NonShippable is intentionally omitted because the current fixture only confirms
+# physical products. See docs/pict-pairwise.md before changing values.
+
+CustomerType: Registered
+ProductType: SimplePhysical, ConfigurablePhysical
+InventoryState: Sufficient, ExactLimit, OverLimit
+CartAction: Add, Update, Remove
+Coupon: None, Valid, Invalid
+Address: Valid, Invalid, NA
+Shipping: LocalAvailable, NA
+Payment: CheckMoneyOrder, NA
+
+# Removing the only cart item leaves an empty cart, so checkout does not continue.
+# Inventory and coupon do not participate in this flow and are fixed to a neutral value.
+IF [CartAction] = "Remove"
+THEN [InventoryState] = "Sufficient"
+ AND [Coupon] = "None"
+ AND [Address] = "NA"
+ AND [Shipping] = "NA"
+ AND [Payment] = "NA";
+
+# An over-limit quantity is rejected before checkout can continue.
+IF [InventoryState] = "OverLimit"
+THEN [CartAction] <> "Remove"
+ AND [Address] = "NA"
+ AND [Shipping] = "NA"
+ AND [Payment] = "NA";
+
+# NA address is only valid for a removed cart or an inventory-blocked flow.
+IF [Address] = "NA"
+THEN [CartAction] = "Remove" OR [InventoryState] = "OverLimit";
+
+# A valid address allows the confirmed local shipping and payment methods.
+IF [Address] = "Valid"
+THEN [Shipping] = "LocalAvailable"
+ AND [Payment] = "CheckMoneyOrder";
+
+# An invalid address blocks all later checkout selections.
+IF [Address] = "Invalid"
+THEN [Shipping] = "NA"
+ AND [Payment] = "NA";
+
+# These reverse rules prevent NA or active checkout values outside their valid flow.
+IF [Shipping] = "LocalAvailable" THEN [Address] = "Valid";
+IF [Payment] = "CheckMoneyOrder" THEN [Address] = "Valid";
+IF [Shipping] = "NA" THEN [Address] <> "Valid";
+IF [Payment] = "NA" THEN [Address] <> "Valid";
