@@ -5,8 +5,8 @@
 - Người thực hiện: Linh
 - Ngày kiểm tra: 2026-10-07 (Asia/Bangkok)
 - Source baseline under test: `674d0ceef6bd8a52fe74d6f4fff326960162cec0`
-- Working branch HEAD khi kiểm tra: `902cffd0c21a20104dbf7022512631965590e18c`
-- QA artifacts commit: chưa commit
+- Working branch HEAD khi kiểm tra: `3044939423`
+- QA artifacts commit: `3044939423`
 - Input: `qa/pairwise/generated-cases.csv`
 - Generated CSV SHA-256:
   `07F2F48BE415263BC23EB9C5612BF18809B878BE3BF89274971948E06C121A0F`

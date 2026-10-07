@@ -5,8 +5,8 @@
 - Người thực hiện: Linh
 - Ngày tính coverage: 2026-10-07 (Asia/Bangkok)
 - Source baseline under test: `674d0ceef6bd8a52fe74d6f4fff326960162cec0`
-- Working branch HEAD khi kiểm tra: `902cffd0c21a20104dbf7022512631965590e18c`
-- QA artifacts commit: chưa commit
+- Working branch HEAD khi kiểm tra: `3044939423`
+- QA artifacts commit: `3044939423`
 - Model: `qa/pairwise/model.pict`
 - Model SHA-256:
   `96102280AC25AAA5A89191AA45F7BA2B6E761398D76962CF3F555088F41791B1`
