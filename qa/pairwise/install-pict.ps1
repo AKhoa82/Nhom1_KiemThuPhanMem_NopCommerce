@@ -12,9 +12,8 @@ $pictPath = Join-Path $toolDirectory "pict.exe"
 $versionPath = Join-Path $toolDirectory "VERSION.txt"
 $downloadUrl = "https://github.com/microsoft/pict/releases/download/v$Version/pict.exe"
 
-# SHA-256 for the official Microsoft PICT v3.7.4 Windows executable.
 $knownHashes = @{
-    "3.7.4" = "80ABA862739CF18B4FAA13D408163324D188A1C4EFCCDD977D9C5BA3F8950BBd"
+    "3.7.4" = "80ABA862739CF18B4FAA13D408163324D188A1C4EFCCDD977D9C5BA3F8950BBD"
 }
 
 if (-not $knownHashes.ContainsKey($Version)) {

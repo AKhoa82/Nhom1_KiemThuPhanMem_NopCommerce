@@ -3,11 +3,14 @@
 ## Run information
 
 - Model: `qa/pairwise/model.pict`
-- Generated cases: `qa/pairwise/generated-cases.csv`
+- Generated cases: `qa/pairwise/test-data/generated-cases.csv`
+- Scenario mapping: `qa/pairwise/test-data/scenario-mapping.csv`
+- Generation log: `qa/pairwise/test-data/generation.log`
 - PICT: `3.7.4`
 - Seed: `10380`
-- Model SHA-256: `36322F452859DBDE32ABB6F2588769B33B0EF07704B03658E9452D2CA5F5A144`
-- Generated CSV SHA-256: `FBAB645C5DC70C070EF9A40201C13D6D0E57070E8EB3B8D40997EDEA78D6DDC4`
+- Model SHA-256: `70DDF6677F992FE6317A43B8CEE5CAFFCF4DB14BB8041C3B2F16FB85644AAB5F`
+- Generated CSV SHA-256: `9DBFCD743BA359DBEC9BE756AA2BAB7B8E1225CB7A3893C577F45FE960240DFA`
+- Generation command: `pict.exe model.pict /o:2 /r:10380`
 
 ## Result
 
@@ -17,6 +20,8 @@
 | Raw full assignments | 6912 |
 | Feasible full assignments | 420 |
 | Generated pairwise tests | 14 |
+| CaseId column | Present (`PW-001` ... `PW-014`) |
+| CaseId-to-scenario mapping | 14/14, 1-to-1 |
 | Raw candidate pairs | 279 |
 | Total feasible pairs | 253 |
 | Covered feasible pairs | 253 |

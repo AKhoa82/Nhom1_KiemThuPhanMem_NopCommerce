@@ -25,7 +25,6 @@ if ([string]::IsNullOrWhiteSpace($PictPath)) {
 if (-not (Test-Path -LiteralPath $PictPath)) {
     throw "PICT was not found at '$PictPath'. Run qa\pairwise\install-pict.ps1 first or pass -PictPath."
 }
-
 if (-not (Test-Path -LiteralPath $modelPath)) {
     throw "Model not found: $modelPath"
 }
@@ -36,10 +35,10 @@ $pairwiseTemp = Join-Path $dataDirectory "pairwise-raw.tsv.tmp"
 $pairwiseErrorTemp = Join-Path $dataDirectory "pairwise.stderr.tmp"
 $exhaustiveTemp = Join-Path $dataDirectory "exhaustive-raw.tsv.tmp"
 $exhaustiveErrorTemp = Join-Path $dataDirectory "exhaustive.stderr.tmp"
-
+$pairwisePath = Join-Path $dataDirectory "pairwise-raw.tsv"
 $exhaustivePath = Join-Path $dataDirectory "exhaustive-raw.tsv"
-$generatedCasesPath = Join-Path $pairwiseRoot "generated-cases.csv"
-$generationInfoPath = Join-Path $pairwiseRoot "generation-info.txt"
+$generatedCasesPath = Join-Path $dataDirectory "generated-cases.csv"
+$logPath = Join-Path $dataDirectory "generation.log"
 
 function Invoke-PictProcess {
     param(
@@ -65,26 +64,17 @@ function Invoke-PictProcess {
     $process.WaitForExit()
     $standardOutputTask.Result | Set-Content -LiteralPath $StandardOutputPath -Encoding UTF8
     $standardErrorTask.Result | Set-Content -LiteralPath $StandardErrorPath -Encoding UTF8
-
     return $process.ExitCode
 }
 
 try {
-    $pairwiseExitCode = Invoke-PictProcess `
-        -Executable $PictPath `
-        -Arguments "`"$modelPath`" /o:2 /r:$Seed" `
-        -StandardOutputPath $pairwiseTemp `
-        -StandardErrorPath $pairwiseErrorTemp
+    $pairwiseExitCode = Invoke-PictProcess -Executable $PictPath -Arguments "`"$modelPath`" /o:2 /r:$Seed" -StandardOutputPath $pairwiseTemp -StandardErrorPath $pairwiseErrorTemp
     if ($pairwiseExitCode -ne 0) {
         $details = Get-Content -LiteralPath $pairwiseErrorTemp -Raw -ErrorAction SilentlyContinue
         throw "PICT pairwise generation failed with exit code $pairwiseExitCode. $details"
     }
 
-    $exhaustiveExitCode = Invoke-PictProcess `
-        -Executable $PictPath `
-        -Arguments "`"$modelPath`" /o:max" `
-        -StandardOutputPath $exhaustiveTemp `
-        -StandardErrorPath $exhaustiveErrorTemp
+    $exhaustiveExitCode = Invoke-PictProcess -Executable $PictPath -Arguments "`"$modelPath`" /o:max" -StandardOutputPath $exhaustiveTemp -StandardErrorPath $exhaustiveErrorTemp
     if ($exhaustiveExitCode -ne 0) {
         $details = Get-Content -LiteralPath $exhaustiveErrorTemp -Raw -ErrorAction SilentlyContinue
         throw "PICT exhaustive generation failed with exit code $exhaustiveExitCode. $details"
@@ -92,51 +82,61 @@ try {
 
     $pairwiseRows = @(Import-Csv -LiteralPath $pairwiseTemp -Delimiter "`t")
     $exhaustiveRows = @(Import-Csv -LiteralPath $exhaustiveTemp -Delimiter "`t")
-    if ($pairwiseRows.Count -eq 0) {
-        throw "PICT produced no pairwise rows."
-    }
-    if ($exhaustiveRows.Count -eq 0) {
-        throw "PICT produced no exhaustive rows."
+    if ($pairwiseRows.Count -eq 0 -or $exhaustiveRows.Count -eq 0) {
+        throw "PICT produced an empty pairwise or exhaustive output."
     }
 
+    $generatedRows = for ($index = 0; $index -lt $pairwiseRows.Count; $index++) {
+        $record = [ordered]@{ CaseId = "PW-{0:D3}" -f ($index + 1) }
+        foreach ($property in $pairwiseRows[$index].PSObject.Properties) {
+            $record[$property.Name] = $property.Value
+        }
+        [PSCustomObject]$record
+    }
+
+    Move-Item -LiteralPath $pairwiseTemp -Destination $pairwisePath -Force
     Move-Item -LiteralPath $exhaustiveTemp -Destination $exhaustivePath -Force
-    $pairwiseRows | Export-Csv -LiteralPath $generatedCasesPath -NoTypeInformation -Encoding UTF8
+    $generatedRows | Export-Csv -LiteralPath $generatedCasesPath -NoTypeInformation -Encoding UTF8
 
     $toolHash = (Get-FileHash -LiteralPath $PictPath -Algorithm SHA256).Hash
     $modelHash = (Get-FileHash -LiteralPath $modelPath -Algorithm SHA256).Hash
+    $csvHash = (Get-FileHash -LiteralPath $generatedCasesPath -Algorithm SHA256).Hash
     $commit = (& git -C $repositoryRoot rev-parse HEAD 2>$null)
-    if ($LASTEXITCODE -ne 0) {
-        $commit = "UNKNOWN"
-    }
+    if ($LASTEXITCODE -ne 0) { $commit = "UNKNOWN" }
+    $pairwiseMessages = Get-Content -LiteralPath $pairwiseErrorTemp -Raw -ErrorAction SilentlyContinue
+    $exhaustiveMessages = Get-Content -LiteralPath $exhaustiveErrorTemp -Raw -ErrorAction SilentlyContinue
 
     @(
-        "Generation date: $(Get-Date -Format o)"
-        "Source baseline: 674d0ceef6bd8a52fe74d6f4fff326960162cec0"
-        "QA artifacts commit: $commit"
-        "PICT release: v3.7.4"
-        "PICT SHA-256: $toolHash"
-        "Command: pict.exe .\qa\pairwise\model.pict /o:2 /r:$Seed"
-        "Strength: 2 (pairwise)"
-        "Seed: $Seed"
-        "PICT exit code: $pairwiseExitCode"
-        "Generated data rows: $($pairwiseRows.Count)"
-        "Factor columns: $(@($pairwiseRows[0].PSObject.Properties).Count)"
-        "Model SHA-256: $modelHash"
-        "Generated CSV SHA-256: $((Get-FileHash -LiteralPath $generatedCasesPath -Algorithm SHA256).Hash)"
-        "Feasible exhaustive rows: $($exhaustiveRows.Count)"
-        "Exhaustive output: qa/pairwise/test-data/exhaustive-raw.tsv"
-        "Output: qa/pairwise/generated-cases.csv"
-    ) | Set-Content -LiteralPath $generationInfoPath -Encoding UTF8
+        "GeneratedAt=$(Get-Date -Format o)"
+        "Commit=$commit"
+        "PictPath=$PictPath"
+        "PictVersion=3.7.4"
+        "PictSHA256=$toolHash"
+        "ModelSHA256=$modelHash"
+        "GeneratedCasesSHA256=$csvHash"
+        "PairwiseCommand=pict.exe model.pict /o:2 /r:$Seed"
+        "ExhaustiveCommand=pict.exe model.pict /o:max"
+        "Seed=$Seed"
+        "PairwiseCases=$($pairwiseRows.Count)"
+        "FeasibleExhaustiveCases=$($exhaustiveRows.Count)"
+        "GeneratedCases=qa/pairwise/test-data/generated-cases.csv"
+        "ScenarioMapping=qa/pairwise/test-data/scenario-mapping.csv"
+        ""
+        "[Pairwise stderr]"
+        $pairwiseMessages
+        ""
+        "[Exhaustive stderr]"
+        $exhaustiveMessages
+    ) | Set-Content -LiteralPath $logPath -Encoding UTF8
 
     Write-Host "Generation completed successfully."
     Write-Host "Pairwise cases: $($pairwiseRows.Count)"
     Write-Host "Feasible exhaustive cases: $($exhaustiveRows.Count)"
     Write-Host "Generated cases: $generatedCasesPath"
+    Write-Host "Generation log: $logPath"
 }
 finally {
     foreach ($temporaryFile in @($pairwiseTemp, $pairwiseErrorTemp, $exhaustiveTemp, $exhaustiveErrorTemp)) {
-        if (Test-Path -LiteralPath $temporaryFile) {
-            Remove-Item -LiteralPath $temporaryFile -Force
-        }
+        if (Test-Path -LiteralPath $temporaryFile) { Remove-Item -LiteralPath $temporaryFile -Force }
     }
 }

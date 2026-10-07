@@ -1,0 +1,15 @@
+CustomerType	ProductType	CartComposition	QuantityClass	InventoryState	Coupon	Address	ShippingMethod	PaymentMethod	CartAction
+Registered	SimplePhysical	OneLine	ManyWithinStock	InStock	Invalid	MissingRequired	NA	NA	Update
+Guest	ConfigurablePhysical	MultipleLines	One	InStock	Invalid	Complete	LocalOption1	LocalSuccess	Add
+Guest	ConfigurablePhysical	OneLine	ManyWithinStock	InStock	Valid	NA	NA	NA	Remove
+Registered	SimplePhysical	MultipleLines	ExceedsAvailableStock	OutOfStock	None	NA	NA	NA	Update
+Registered	SimplePhysical	OneLine	One	InStock	None	NA	NA	NA	Remove
+Registered	SimplePhysical	OneLine	AtAvailableLimit	InStock	Valid	Complete	LocalOption1	LocalSuccess	Add
+Guest	ConfigurablePhysical	MultipleLines	ManyWithinStock	InStock	None	Complete	LocalOption1	LocalSuccess	Add
+Guest	ConfigurablePhysical	OneLine	AtAvailableLimit	InStock	Invalid	NA	NA	NA	Remove
+Guest	ConfigurablePhysical	MultipleLines	AtAvailableLimit	InStock	None	Complete	LocalOption1	LocalSuccess	Update
+Guest	ConfigurablePhysical	OneLine	ExceedsAvailableStock	OutOfStock	Valid	NA	NA	NA	Add
+Guest	SimplePhysical	MultipleLines	One	InStock	Valid	MissingRequired	NA	NA	Update
+Registered	ConfigurablePhysical	OneLine	AtAvailableLimit	InStock	None	MissingRequired	NA	NA	Add
+Registered	ConfigurablePhysical	OneLine	ExceedsAvailableStock	OutOfStock	Invalid	NA	NA	NA	Update
+Registered	SimplePhysical	MultipleLines	ExceedsAvailableStock	InStock	Valid	NA	NA	NA	Update

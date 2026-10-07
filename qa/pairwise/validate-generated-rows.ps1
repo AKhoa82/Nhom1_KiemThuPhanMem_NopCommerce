@@ -10,7 +10,7 @@ if ([string]::IsNullOrWhiteSpace($ModelPath)) {
     $ModelPath = Join-Path $pairwiseDirectory "model.pict"
 }
 if ([string]::IsNullOrWhiteSpace($CsvPath)) {
-    $CsvPath = Join-Path $pairwiseDirectory "generated-cases.csv"
+    $CsvPath = Join-Path $pairwiseDirectory "test-data\generated-cases.csv"
 }
 
 $resolvedModelPath = (Resolve-Path -LiteralPath $ModelPath).Path
@@ -45,8 +45,9 @@ if ($cases.Count -eq 0) {
 
 $expectedColumns = @($domains.Keys)
 $actualColumns = @($cases[0].PSObject.Properties.Name)
-$missingColumns = @($expectedColumns | Where-Object { $actualColumns -notcontains $_ })
-$extraColumns = @($actualColumns | Where-Object { $expectedColumns -notcontains $_ })
+$requiredColumns = @("CaseId") + $expectedColumns
+$missingColumns = @($requiredColumns | Where-Object { $actualColumns -notcontains $_ })
+$extraColumns = @($actualColumns | Where-Object { $requiredColumns -notcontains $_ })
 if ($missingColumns.Count -gt 0 -or $extraColumns.Count -gt 0) {
     throw "CSV/model columns differ. Missing: $($missingColumns -join ', '); Extra: $($extraColumns -join ', ')"
 }
@@ -61,11 +62,20 @@ $localSuccessPaymentAvailable = $true
 $verifiedTrackedProductTypes = @("SimplePhysical", "ConfigurablePhysical")
 
 $rowResults = [System.Collections.Generic.List[object]]::new()
+$seenCaseIds = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
 
 for ($index = 0; $index -lt $cases.Count; $index++) {
     $case = $cases[$index]
-    $caseId = "PW-{0:D3}" -f ($index + 1)
+    $expectedCaseId = "PW-{0:D3}" -f ($index + 1)
+    $caseId = [string]$case.CaseId
     $errors = [System.Collections.Generic.List[string]]::new()
+
+    if ($caseId -ne $expectedCaseId) {
+        $errors.Add("CaseId '$caseId' is not the expected stable ID $expectedCaseId")
+    }
+    if ([string]::IsNullOrWhiteSpace($caseId) -or -not $seenCaseIds.Add($caseId)) {
+        $errors.Add("CaseId is blank or duplicated")
+    }
 
     # Structural/domain validation.
     foreach ($column in $expectedColumns) {

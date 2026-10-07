@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 
 $pairwiseDirectory = Split-Path -Parent $MyInvocation.MyCommand.Path
 if ([string]::IsNullOrWhiteSpace($CsvPath)) {
-    $CsvPath = Join-Path $pairwiseDirectory "generated-cases.csv"
+    $CsvPath = Join-Path $pairwiseDirectory "test-data\generated-cases.csv"
 }
 
 $resolvedCsvPath = (Resolve-Path -LiteralPath $CsvPath).Path
@@ -17,6 +17,7 @@ if ($cases.Count -eq 0) {
 }
 
 $requiredColumns = @(
+    "CaseId",
     "CustomerType",
     "ProductType",
     "CartComposition",
@@ -42,7 +43,7 @@ $verifiedTrackedProductTypes = @("SimplePhysical", "ConfigurablePhysical")
 
 $indexedCases = for ($index = 0; $index -lt $cases.Count; $index++) {
     [pscustomobject]@{
-        CaseId = "PW-{0:D3}" -f ($index + 1)
+        CaseId = [string]$cases[$index].CaseId
         Data   = $cases[$index]
     }
 }

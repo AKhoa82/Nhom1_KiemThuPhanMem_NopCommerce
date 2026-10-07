@@ -5,30 +5,39 @@ $ErrorActionPreference = "Stop"
 
 $pairwiseRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $modelPath = Join-Path $pairwiseRoot "model.pict"
-$generatedCasesPath = Join-Path $pairwiseRoot "generated-cases.csv"
 $dataDirectory = Join-Path $pairwiseRoot "test-data"
+$pairwisePath = Join-Path $dataDirectory "pairwise-raw.tsv"
 $exhaustivePath = Join-Path $dataDirectory "exhaustive-raw.tsv"
+$generatedCasesPath = Join-Path $dataDirectory "generated-cases.csv"
+$mappingPath = Join-Path $dataDirectory "scenario-mapping.csv"
 $coveragePath = Join-Path $dataDirectory "coverage-report.csv"
 $summaryPath = Join-Path $dataDirectory "summary.md"
 
-foreach ($requiredFile in @($modelPath, $generatedCasesPath, $exhaustivePath)) {
+foreach ($requiredFile in @($modelPath, $pairwisePath, $exhaustivePath, $generatedCasesPath, $mappingPath)) {
     if (-not (Test-Path -LiteralPath $requiredFile)) {
         throw "Required file not found: $requiredFile. Run generate.ps1 first."
     }
 }
 
+$pairwiseRows = @(Import-Csv -LiteralPath $pairwisePath -Delimiter "`t")
 $exhaustiveRows = @(Import-Csv -LiteralPath $exhaustivePath -Delimiter "`t")
 $generatedRows = @(Import-Csv -LiteralPath $generatedCasesPath)
+$mappingRows = @(Import-Csv -LiteralPath $mappingPath)
 
-if ($exhaustiveRows.Count -eq 0 -or $generatedRows.Count -eq 0) {
-    throw "Exhaustive or generated output is empty."
+if ($pairwiseRows.Count -eq 0 -or $exhaustiveRows.Count -eq 0 -or $generatedRows.Count -eq 0) {
+    throw "Pairwise, exhaustive, or generated output is empty."
 }
 
-$pairwiseRows = $generatedRows
-$factorNames = @($generatedRows[0].PSObject.Properties.Name)
+$factorNames = @($pairwiseRows[0].PSObject.Properties.Name)
 $exhaustiveFactorNames = @($exhaustiveRows[0].PSObject.Properties.Name)
 if (($factorNames -join "|") -ne ($exhaustiveFactorNames -join "|")) {
-    throw "Headers do not match between exhaustive output and generated-cases.csv."
+    throw "Pairwise and exhaustive headers do not match."
+}
+
+$expectedGeneratedColumns = @("CaseId") + $factorNames
+$actualGeneratedColumns = @($generatedRows[0].PSObject.Properties.Name)
+if (($actualGeneratedColumns -join "|") -ne ($expectedGeneratedColumns -join "|")) {
+    throw "Generated CSV columns must be CaseId followed by the PICT factor columns."
 }
 
 function Get-RowSignature {
@@ -37,20 +46,10 @@ function Get-RowSignature {
 }
 
 function Add-RowPairs {
-    param(
-        $Row,
-        [string[]]$Factors,
-        [System.Collections.Generic.HashSet[string]]$Set
-    )
-
+    param($Row, [string[]]$Factors, [System.Collections.Generic.HashSet[string]]$Set)
     for ($left = 0; $left -lt $Factors.Count - 1; $left++) {
         for ($right = $left + 1; $right -lt $Factors.Count; $right++) {
-            $key = @(
-                $Factors[$left]
-                [string]$Row.($Factors[$left])
-                $Factors[$right]
-                [string]$Row.($Factors[$right])
-            ) -join [char]31
+            $key = @($Factors[$left], [string]$Row.($Factors[$left]), $Factors[$right], [string]$Row.($Factors[$right])) -join [char]31
             [void]$Set.Add($key)
         }
     }
@@ -58,96 +57,73 @@ function Add-RowPairs {
 
 $errors = [System.Collections.Generic.List[string]]::new()
 $exhaustiveSignatures = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
-foreach ($row in $exhaustiveRows) {
-    [void]$exhaustiveSignatures.Add((Get-RowSignature -Row $row -Factors $factorNames))
-}
+foreach ($row in $exhaustiveRows) { [void]$exhaustiveSignatures.Add((Get-RowSignature $row $factorNames)) }
 
-for ($index = 0; $index -lt $pairwiseRows.Count; $index++) {
-    $caseId = "PW-{0:D3}" -f ($index + 1)
-    $pairwiseSignature = Get-RowSignature -Row $generatedRows[$index] -Factors $factorNames
-    if (-not $exhaustiveSignatures.Contains($pairwiseSignature)) {
-        $errors.Add("$caseId is not present in the feasible exhaustive set.")
+$seenCaseIds = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+for ($index = 0; $index -lt $generatedRows.Count; $index++) {
+    $expectedId = "PW-{0:D3}" -f ($index + 1)
+    $actualId = [string]$generatedRows[$index].CaseId
+    if ($actualId -ne $expectedId) { $errors.Add("Generated row $($index + 1) has CaseId '$actualId'; expected '$expectedId'.") }
+    if (-not $seenCaseIds.Add($actualId)) { $errors.Add("Duplicate generated CaseId: $actualId") }
+    if ($index -ge $pairwiseRows.Count) { continue }
+    if ((Get-RowSignature $generatedRows[$index] $factorNames) -ne (Get-RowSignature $pairwiseRows[$index] $factorNames)) {
+        $errors.Add("$expectedId differs between generated-cases.csv and pairwise-raw.tsv.")
     }
+    if (-not $exhaustiveSignatures.Contains((Get-RowSignature $generatedRows[$index] $factorNames))) {
+        $errors.Add("$expectedId is not present in the feasible exhaustive set.")
+    }
+}
+if ($generatedRows.Count -ne $pairwiseRows.Count) { $errors.Add("Generated row count does not match pairwise raw row count.") }
 
+$mappingIds = @($mappingRows | ForEach-Object { [string]$_.CaseId })
+if ($mappingRows.Count -ne $generatedRows.Count) { $errors.Add("Scenario mapping row count does not equal generated row count.") }
+if (($mappingIds -join "|") -ne (@($generatedRows | ForEach-Object { [string]$_.CaseId }) -join "|")) {
+    $errors.Add("Scenario mapping CaseId sequence is not a 1-to-1 match with generated-cases.csv.")
+}
+if (@($mappingRows | Where-Object { $_.MappingStatus -ne "Mapped" }).Count -gt 0) {
+    $errors.Add("Every scenario mapping row must have MappingStatus=Mapped.")
 }
 
 $validPairs = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
 $coveredPairs = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
-foreach ($row in $exhaustiveRows) {
-    Add-RowPairs -Row $row -Factors $factorNames -Set $validPairs
-}
-foreach ($row in $pairwiseRows) {
-    Add-RowPairs -Row $row -Factors $factorNames -Set $coveredPairs
-}
-
+foreach ($row in $exhaustiveRows) { Add-RowPairs $row $factorNames $validPairs }
+foreach ($row in $pairwiseRows) { Add-RowPairs $row $factorNames $coveredPairs }
 $coverageRows = foreach ($key in ($validPairs | Sort-Object)) {
     $parts = $key -split [char]31
-    [PSCustomObject]@{
-        Factor1 = $parts[0]
-        Value1  = $parts[1]
-        Factor2 = $parts[2]
-        Value2  = $parts[3]
-        Covered = $coveredPairs.Contains($key)
-    }
+    [PSCustomObject]@{ Factor1 = $parts[0]; Value1 = $parts[1]; Factor2 = $parts[2]; Value2 = $parts[3]; Covered = $coveredPairs.Contains($key) }
 }
 $coverageRows | Export-Csv -LiteralPath $coveragePath -NoTypeInformation -Encoding UTF8
-
 $coveredValidPairCount = @($validPairs | Where-Object { $coveredPairs.Contains($_) }).Count
 $missingPairCount = $validPairs.Count - $coveredValidPairCount
-$coveragePercent = if ($validPairs.Count -eq 0) { 100 } else { 100.0 * $coveredValidPairCount / $validPairs.Count }
-if ($missingPairCount -gt 0) {
-    $errors.Add("Pairwise output is missing $missingPairCount feasible pairs.")
-}
+if ($missingPairCount -gt 0) { $errors.Add("Pairwise output is missing $missingPairCount feasible pairs.") }
 
 $rawExhaustive = [long]1
 foreach ($line in Get-Content -LiteralPath $modelPath) {
     $trimmed = $line.Trim()
-    if ([string]::IsNullOrWhiteSpace($trimmed) -or $trimmed.StartsWith("#")) {
-        continue
-    }
-    if ($trimmed.StartsWith("IF ") -or $trimmed.StartsWith("[")) {
-        break
-    }
-    if ($trimmed -match '^[^:]+:\s*(.+)$') {
-        $rawExhaustive *= ($matches[1].Split(",")).Count
-    }
+    if ([string]::IsNullOrWhiteSpace($trimmed) -or $trimmed.StartsWith("#")) { continue }
+    if ($trimmed.StartsWith("IF ") -or $trimmed.StartsWith("[")) { break }
+    if ($trimmed -match '^[^:]+:\s*(.+)$') { $rawExhaustive *= $matches[1].Split(',').Count }
 }
-
-$invalidOutput = & (Join-Path $pairwiseRoot "validate-invalid-combinations.ps1") -CsvPath $generatedCasesPath 2>&1
-$invalidExitCode = $LASTEXITCODE
-$rowOutput = & (Join-Path $pairwiseRoot "validate-generated-rows.ps1") -ModelPath $modelPath -CsvPath $generatedCasesPath 2>&1
-$rowExitCode = $LASTEXITCODE
-$coverageOutput = & (Join-Path $pairwiseRoot "calculate-pairwise-coverage.ps1") -ModelPath $modelPath -CsvPath $generatedCasesPath 2>&1
-$coverageExitCode = $LASTEXITCODE
-
-$invalidOutput | Write-Output
-$rowOutput | Write-Output
-$coverageOutput | Write-Output
-
-if ($invalidExitCode -ne 0) { $errors.Add("Invalid-combination validation failed.") }
-if ($rowExitCode -ne 0) { $errors.Add("Generated-row validation failed.") }
-if ($coverageExitCode -ne 0) { $errors.Add("Independent feasible-pair coverage validation failed.") }
-
 $reducedCount = $exhaustiveRows.Count - $pairwiseRows.Count
 $reductionPercent = if ($exhaustiveRows.Count -eq 0) { 0 } else { 100.0 * $reducedCount / $exhaustiveRows.Count }
 $result = if ($errors.Count -eq 0) { "PASS" } else { "FAIL" }
 
 @(
-    "# T06/T07 - Pairwise validation summary"
+    "# T07 - Pairwise validation summary"
     ""
     "| Metric | Value |"
     "| --- | ---: |"
-    "| Factors | $($factorNames.Count) |"
     "| Raw exhaustive before constraints | $rawExhaustive |"
     "| Feasible exhaustive after constraints | $($exhaustiveRows.Count) |"
     "| Pairwise test cases | $($pairwiseRows.Count) |"
+    "| Generated CSV CaseId rows | $($generatedRows.Count) |"
+    "| Scenario mapping rows | $($mappingRows.Count) |"
     "| Reduced test cases | $reducedCount |"
     "| Reduction against feasible exhaustive | $($reductionPercent.ToString('F2'))% |"
     "| Total feasible pairs | $($validPairs.Count) |"
     "| Covered feasible pairs | $coveredValidPairCount |"
-    "| Pair coverage | $($coveragePercent.ToString('F2'))% |"
-    "| Invalid-combination validation | $(if ($invalidExitCode -eq 0) { 'PASS' } else { 'FAIL' }) |"
-    "| Row validation | $(if ($rowExitCode -eq 0) { 'PASS' } else { 'FAIL' }) |"
+    "| Pair coverage | $(('{0:F2}' -f (100.0 * $coveredValidPairCount / $validPairs.Count)))% |"
+    "| CaseId-to-mapping linkage | $(if ($errors -notcontains 'Scenario mapping CaseId sequence is not a 1-to-1 match with generated-cases.csv.') { 'PASS' } else { 'FAIL' }) |"
     "| Validation result | $result |"
     ""
     "## Validation errors"
@@ -155,19 +131,11 @@ $result = if ($errors.Count -eq 0) { "PASS" } else { "FAIL" }
     $(if ($errors.Count -eq 0) { "None." } else { $errors | ForEach-Object { "- $_" } })
 ) | Set-Content -LiteralPath $summaryPath -Encoding UTF8
 
-Write-Output "Integrated T06/T07 validation"
-Write-Output "Factors: $($factorNames.Count)"
-Write-Output "Raw exhaustive: $rawExhaustive"
-Write-Output "Feasible exhaustive: $($exhaustiveRows.Count)"
-Write-Output "Pairwise cases: $($pairwiseRows.Count)"
-Write-Output "Pair coverage: $coveredValidPairCount/$($validPairs.Count) ($($coveragePercent.ToString('F2'))%)"
-Write-Output "Validation result: $result"
+Write-Host "Raw exhaustive: $rawExhaustive"
+Write-Host "Feasible exhaustive: $($exhaustiveRows.Count)"
+Write-Host "Pairwise cases: $($pairwiseRows.Count)"
+Write-Host "CaseId-to-mapping rows: $($mappingRows.Count)"
+Write-Host "Pair coverage: $coveredValidPairCount/$($validPairs.Count)"
+Write-Host "Validation result: $result"
 
-if ($errors.Count -gt 0) {
-    foreach ($validationError in $errors) {
-        Write-Error $validationError
-    }
-    exit 1
-}
-
-exit 0
+if ($errors.Count -gt 0) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }

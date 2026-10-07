@@ -1,4 +1,4 @@
-﻿CustomerType	ProductType	CartComposition	QuantityClass	InventoryState	Coupon	Address	ShippingMethod	PaymentMethod	CartAction
+CustomerType	ProductType	CartComposition	QuantityClass	InventoryState	Coupon	Address	ShippingMethod	PaymentMethod	CartAction
 Registered	ConfigurablePhysical	MultipleLines	ManyWithinStock	InStock	Valid	Complete	LocalOption1	LocalSuccess	Add
 Registered	ConfigurablePhysical	OneLine	ExceedsAvailableStock	InStock	Invalid	NA	NA	NA	Add
 Registered	SimplePhysical	MultipleLines	ExceedsAvailableStock	InStock	None	NA	NA	NA	Update
@@ -419,4 +419,3 @@ Registered	SimplePhysical	OneLine	One	InStock	None	MissingRequired	NA	NA	Update
 Guest	SimplePhysical	OneLine	ExceedsAvailableStock	InStock	Valid	NA	NA	NA	Update
 Registered	SimplePhysical	MultipleLines	AtAvailableLimit	InStock	Valid	Complete	LocalOption1	LocalSuccess	Update
 Registered	SimplePhysical	OneLine	ManyWithinStock	InStock	Valid	MissingRequired	NA	NA	Add
-

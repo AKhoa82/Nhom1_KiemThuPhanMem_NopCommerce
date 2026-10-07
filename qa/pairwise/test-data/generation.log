@@ -1,0 +1,21 @@
+GeneratedAt=2026-10-07T23:34:22.1234040+07:00
+Commit=2c1a309ac80d2e57e52549e40b79eef27c6ca06f
+PictPath=C:\Users\Maxsys\AppData\Local\Programs\PICT\pict.exe
+PictVersion=3.7.4
+PictSHA256=80ABA862739CF18B4FAA13D408163324D188A1C4EFCCDD977D9C5BA3F8950BBD
+ModelSHA256=70DDF6677F992FE6317A43B8CEE5CAFFCF4DB14BB8041C3B2F16FB85644AAB5F
+GeneratedCasesSHA256=9DBFCD743BA359DBEC9BE756AA2BAB7B8E1225CB7A3893C577F45FE960240DFA
+PairwiseCommand=pict.exe model.pict /o:2 /r:10380
+ExhaustiveCommand=pict.exe model.pict /o:max
+Seed=10380
+PairwiseCases=14
+FeasibleExhaustiveCases=420
+GeneratedCases=qa/pairwise/test-data/generated-cases.csv
+ScenarioMapping=qa/pairwise/test-data/scenario-mapping.csv
+
+[Pairwise stderr]
+Used seed: 10380
+
+
+
+[Exhaustive stderr]
