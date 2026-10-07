@@ -14,6 +14,12 @@ $dataDirectory = Join-Path $pairwiseRoot "test-data"
 
 if ([string]::IsNullOrWhiteSpace($PictPath)) {
     $PictPath = Join-Path $pairwiseRoot "tools\pict.exe"
+    if (-not (Test-Path -LiteralPath $PictPath)) {
+        $installedPictPath = Join-Path $env:LOCALAPPDATA "Programs\PICT\pict.exe"
+        if (Test-Path -LiteralPath $installedPictPath) {
+            $PictPath = $installedPictPath
+        }
+    }
 }
 
 if (-not (Test-Path -LiteralPath $PictPath)) {
@@ -31,10 +37,9 @@ $pairwiseErrorTemp = Join-Path $dataDirectory "pairwise.stderr.tmp"
 $exhaustiveTemp = Join-Path $dataDirectory "exhaustive-raw.tsv.tmp"
 $exhaustiveErrorTemp = Join-Path $dataDirectory "exhaustive.stderr.tmp"
 
-$pairwisePath = Join-Path $dataDirectory "pairwise-raw.tsv"
 $exhaustivePath = Join-Path $dataDirectory "exhaustive-raw.tsv"
-$generatedCasesPath = Join-Path $dataDirectory "generated-cases.csv"
-$logPath = Join-Path $dataDirectory "generation.log"
+$generatedCasesPath = Join-Path $pairwiseRoot "generated-cases.csv"
+$generationInfoPath = Join-Path $pairwiseRoot "generation-info.txt"
 
 function Invoke-PictProcess {
     param(
@@ -94,19 +99,8 @@ try {
         throw "PICT produced no exhaustive rows."
     }
 
-    $generatedRows = for ($index = 0; $index -lt $pairwiseRows.Count; $index++) {
-        $record = [ordered]@{
-            CaseId = "PW-{0:D3}" -f ($index + 1)
-        }
-        foreach ($property in $pairwiseRows[$index].PSObject.Properties) {
-            $record[$property.Name] = $property.Value
-        }
-        [PSCustomObject]$record
-    }
-
-    Move-Item -LiteralPath $pairwiseTemp -Destination $pairwisePath -Force
     Move-Item -LiteralPath $exhaustiveTemp -Destination $exhaustivePath -Force
-    $generatedRows | Export-Csv -LiteralPath $generatedCasesPath -NoTypeInformation -Encoding UTF8
+    $pairwiseRows | Export-Csv -LiteralPath $generatedCasesPath -NoTypeInformation -Encoding UTF8
 
     $toolHash = (Get-FileHash -LiteralPath $PictPath -Algorithm SHA256).Hash
     $modelHash = (Get-FileHash -LiteralPath $modelPath -Algorithm SHA256).Hash
@@ -115,26 +109,24 @@ try {
         $commit = "UNKNOWN"
     }
 
-    $pairwiseMessages = Get-Content -LiteralPath $pairwiseErrorTemp -Raw -ErrorAction SilentlyContinue
-    $exhaustiveMessages = Get-Content -LiteralPath $exhaustiveErrorTemp -Raw -ErrorAction SilentlyContinue
     @(
-        "GeneratedAt=$(Get-Date -Format o)"
-        "Commit=$commit"
-        "PictPath=$PictPath"
-        "PictSHA256=$toolHash"
-        "ModelSHA256=$modelHash"
-        "PairwiseCommand=pict.exe model.pict /o:2 /r:$Seed"
-        "ExhaustiveCommand=pict.exe model.pict /o:max"
-        "Seed=$Seed"
-        "PairwiseCases=$($pairwiseRows.Count)"
-        "FeasibleExhaustiveCases=$($exhaustiveRows.Count)"
-        ""
-        "[Pairwise stderr]"
-        $pairwiseMessages
-        ""
-        "[Exhaustive stderr]"
-        $exhaustiveMessages
-    ) | Set-Content -LiteralPath $logPath -Encoding UTF8
+        "Generation date: $(Get-Date -Format o)"
+        "Source baseline: 674d0ceef6bd8a52fe74d6f4fff326960162cec0"
+        "QA artifacts commit: $commit"
+        "PICT release: v3.7.4"
+        "PICT SHA-256: $toolHash"
+        "Command: pict.exe .\qa\pairwise\model.pict /o:2 /r:$Seed"
+        "Strength: 2 (pairwise)"
+        "Seed: $Seed"
+        "PICT exit code: $pairwiseExitCode"
+        "Generated data rows: $($pairwiseRows.Count)"
+        "Factor columns: $(@($pairwiseRows[0].PSObject.Properties).Count)"
+        "Model SHA-256: $modelHash"
+        "Generated CSV SHA-256: $((Get-FileHash -LiteralPath $generatedCasesPath -Algorithm SHA256).Hash)"
+        "Feasible exhaustive rows: $($exhaustiveRows.Count)"
+        "Exhaustive output: qa/pairwise/test-data/exhaustive-raw.tsv"
+        "Output: qa/pairwise/generated-cases.csv"
+    ) | Set-Content -LiteralPath $generationInfoPath -Encoding UTF8
 
     Write-Host "Generation completed successfully."
     Write-Host "Pairwise cases: $($pairwiseRows.Count)"

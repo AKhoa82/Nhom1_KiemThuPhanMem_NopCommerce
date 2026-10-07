@@ -1,57 +1,99 @@
-# T07 - nopCommerce Shopping Cart and Checkout pairwise model
-# Baseline confirmed by scope.md and setup.md:
-# - Multi-step checkout
-# - Registered customer
-# - Physical products PW-Simple-Stock and PW-Shirt-Variants
-# - Inventory tracking enabled, no backorders
-# - Local shipping and Check/Money Order for the successful checkout path
+# T06/T07 - Shopping Cart and multi-step Checkout pairwise model
+# Source baseline: 674d0ceef6bd8a52fe74d6f4fff326960162cec0
+# OnePageCheckoutEnabled: false
 #
-# Guest is intentionally omitted until anonymous checkout is confirmed enabled.
-# SimulatedDecline is intentionally omitted until a local fake processor exists.
-# NonShippable is intentionally omitted because the current fixture only confirms
-# physical products. See docs/pict-pairwise.md before changing values.
+# Included values confirmed by local evidence:
+# - Guest: Anonymous checkout allowed is enabled.
+# - LocalOption1: Shipping.FixedByWeightByTotal is active.
+# - LocalSuccess: Payments.CheckMoneyOrder is active.
+# - Valid/Invalid coupon: PW-CART-10PCT and PW-NOT-EXIST are verified.
+# - MultipleLines: PW-Simple-Stock and PW-Shirt-Variants Blue/M are verified.
+#
+# Excluded/blocked values:
+# - LocalOption2: no second verified local shipping method.
+# - SimulatedDecline: no verified local fake decline processor.
 
-CustomerType: Registered
+CustomerType: Registered, Guest
 ProductType: SimplePhysical, ConfigurablePhysical
-InventoryState: Sufficient, ExactLimit, OverLimit
-CartAction: Add, Update, Remove
+CartComposition: OneLine, MultipleLines
+QuantityClass: One, ManyWithinStock, AtAvailableLimit, ExceedsAvailableStock
+InventoryState: InStock, OutOfStock
 Coupon: None, Valid, Invalid
-Address: Valid, Invalid, NA
-Shipping: LocalAvailable, NA
-Payment: CheckMoneyOrder, NA
+Address: Complete, MissingRequired, NA
+ShippingMethod: LocalOption1, NA
+PaymentMethod: LocalSuccess, NA
+CartAction: Add, Update, Remove
 
-# Removing the only cart item leaves an empty cart, so checkout does not continue.
-# Inventory and coupon do not participate in this flow and are fixed to a neutral value.
+# C01 - Guest is included because anonymous checkout is enabled for this run.
+# No executable constraint is required.
+
+# C02 - Both product fixtures track inventory, so boundary and over-stock
+# quantity classes apply to both ProductType values. No constraint is required.
+
+# C03 - Out-of-stock is represented by a requested quantity exceeding stock.
+# A stock failure stops before address, shipping, and payment.
+IF [InventoryState] = "OutOfStock"
+THEN [QuantityClass] = "ExceedsAvailableStock";
+
+IF [QuantityClass] = "ExceedsAvailableStock"
+THEN [Address] = "NA";
+
+IF [QuantityClass] = "ExceedsAvailableStock"
+THEN [ShippingMethod] = "NA";
+
+IF [QuantityClass] = "ExceedsAvailableStock"
+THEN [PaymentMethod] = "NA";
+
+# C04 - Remove means removing the final line and leaving an empty cart.
+# It cannot be combined with a separate stock failure.
 IF [CartAction] = "Remove"
-THEN [InventoryState] = "Sufficient"
- AND [Coupon] = "None"
- AND [Address] = "NA"
- AND [Shipping] = "NA"
- AND [Payment] = "NA";
+THEN [CartComposition] = "OneLine";
 
-# An over-limit quantity is rejected before checkout can continue.
-IF [InventoryState] = "OverLimit"
-THEN [CartAction] <> "Remove"
- AND [Address] = "NA"
- AND [Shipping] = "NA"
- AND [Payment] = "NA";
+IF [CartAction] = "Remove"
+THEN [Address] = "NA";
 
-# NA address is only valid for a removed cart or an inventory-blocked flow.
+IF [CartAction] = "Remove"
+THEN [ShippingMethod] = "NA";
+
+IF [CartAction] = "Remove"
+THEN [PaymentMethod] = "NA";
+
+IF [CartAction] = "Remove"
+THEN [QuantityClass] <> "ExceedsAvailableStock";
+
+# C05 - Missing a required address field stops before shipping and payment.
+IF [Address] = "MissingRequired"
+THEN [ShippingMethod] = "NA";
+
+IF [Address] = "MissingRequired"
+THEN [PaymentMethod] = "NA";
+
+# C06 - All fixtures are physical products. NA is permitted only after an
+# earlier stopping reason: remove, address validation, or stock failure.
+IF [ShippingMethod] = "NA"
+THEN ([CartAction] = "Remove" OR
+      [Address] = "MissingRequired" OR
+      [QuantityClass] = "ExceedsAvailableStock");
+
+IF [PaymentMethod] = "NA"
+THEN ([CartAction] = "Remove" OR
+      [Address] = "MissingRequired" OR
+      [QuantityClass] = "ExceedsAvailableStock");
+
 IF [Address] = "NA"
-THEN [CartAction] = "Remove" OR [InventoryState] = "OverLimit";
+THEN ([CartAction] = "Remove" OR
+      [QuantityClass] = "ExceedsAvailableStock");
 
-# A valid address allows the confirmed local shipping and payment methods.
-IF [Address] = "Valid"
-THEN [Shipping] = "LocalAvailable"
- AND [Payment] = "CheckMoneyOrder";
+# C07 - LocalSuccess is Payments.CheckMoneyOrder and requires a complete valid
+# flow. SimulatedDecline is not declared because no fake processor is available.
+IF [PaymentMethod] = "LocalSuccess"
+THEN ([CartAction] <> "Remove" AND
+      [QuantityClass] <> "ExceedsAvailableStock" AND
+      [Address] = "Complete" AND
+      [ShippingMethod] = "LocalOption1");
 
-# An invalid address blocks all later checkout selections.
-IF [Address] = "Invalid"
-THEN [Shipping] = "NA"
- AND [Payment] = "NA";
+# C08 - The rules above prevent more than one primary blocker (stock, address,
+# or payment) in a negative row. SimulatedDecline is currently absent.
 
-# These reverse rules prevent NA or active checkout values outside their valid flow.
-IF [Shipping] = "LocalAvailable" THEN [Address] = "Valid";
-IF [Payment] = "CheckMoneyOrder" THEN [Address] = "Valid";
-IF [Shipping] = "NA" THEN [Address] <> "Valid";
-IF [Payment] = "NA" THEN [Address] <> "Valid";
+# C09 - Invalid coupon is an independent apply-coupon operation and does not
+# force checkout factors to NA, so no executable coupon constraint is required.

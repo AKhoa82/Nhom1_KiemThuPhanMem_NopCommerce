@@ -1,15 +1,18 @@
-﻿# T07 - Pairwise validation summary
+﻿# T06/T07 - Pairwise validation summary
 
 | Metric | Value |
 | --- | ---: |
-| Raw exhaustive before constraints | 648 |
-| Feasible exhaustive after constraints | 62 |
-| Pairwise test cases | 11 |
-| Reduced test cases | 51 |
-| Reduction against feasible exhaustive | 82.26% |
-| Total valid pairs | 135 |
-| Covered valid pairs | 135 |
+| Factors | 10 |
+| Raw exhaustive before constraints | 6912 |
+| Feasible exhaustive after constraints | 420 |
+| Pairwise test cases | 14 |
+| Reduced test cases | 406 |
+| Reduction against feasible exhaustive | 96.67% |
+| Total feasible pairs | 253 |
+| Covered feasible pairs | 253 |
 | Pair coverage | 100.00% |
+| Invalid-combination validation | PASS |
+| Row validation | PASS |
 | Validation result | PASS |
 
 ## Validation errors
