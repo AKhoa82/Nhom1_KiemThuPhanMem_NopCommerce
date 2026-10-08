@@ -106,6 +106,9 @@ foreach ($line in Get-Content -LiteralPath $modelPath) {
 }
 $reducedCount = $exhaustiveRows.Count - $pairwiseRows.Count
 $reductionPercent = if ($exhaustiveRows.Count -eq 0) { 0 } else { 100.0 * $reducedCount / $exhaustiveRows.Count }
+$invariantCulture = [System.Globalization.CultureInfo]::InvariantCulture
+$formattedReductionPercent = $reductionPercent.ToString("F2", $invariantCulture)
+$formattedPairCoveragePercent = (100.0 * $coveredValidPairCount / $validPairs.Count).ToString("F2", $invariantCulture)
 $result = if ($errors.Count -eq 0) { "PASS" } else { "FAIL" }
 
 @(
@@ -119,10 +122,10 @@ $result = if ($errors.Count -eq 0) { "PASS" } else { "FAIL" }
     "| Generated CSV CaseId rows | $($generatedRows.Count) |"
     "| Scenario mapping rows | $($mappingRows.Count) |"
     "| Reduced test cases | $reducedCount |"
-    "| Reduction against feasible exhaustive | $($reductionPercent.ToString('F2'))% |"
+    "| Reduction against feasible exhaustive | $formattedReductionPercent% |"
     "| Total feasible pairs | $($validPairs.Count) |"
     "| Covered feasible pairs | $coveredValidPairCount |"
-    "| Pair coverage | $(('{0:F2}' -f (100.0 * $coveredValidPairCount / $validPairs.Count)))% |"
+    "| Pair coverage | $formattedPairCoveragePercent% |"
     "| CaseId-to-mapping linkage | $(if ($errors -notcontains 'Scenario mapping CaseId sequence is not a 1-to-1 match with generated-cases.csv.') { 'PASS' } else { 'FAIL' }) |"
     "| Validation result | $result |"
     ""

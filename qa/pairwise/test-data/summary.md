@@ -1,4 +1,4 @@
-﻿# T07 - Pairwise validation summary
+# T07 - Pairwise validation summary
 
 | Metric | Value |
 | --- | ---: |

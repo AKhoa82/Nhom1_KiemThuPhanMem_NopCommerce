@@ -39,6 +39,10 @@ Các quyết định môi trường:
 model bắt buộc `CartComposition=OneLine`. Trường hợp xóa một line khỏi cart nhiều line
 là một hành vi khác và không được dùng chung với nhánh dừng checkout này.
 
+`CartComposition` mô tả số line trong cart ngay trước thao tác `CartAction`;
+`ProductType` mô tả loại fixture/line đang được thao tác, không khẳng định mọi line
+trong cart đều cùng loại.
+
 Chín nhóm constraint C01-C09 được ghi trực tiếp trong model. C01, C02, C08 và C09
 có một phần là quyết định fixture/invariant; các quan hệ có thể biểu diễn bằng cú pháp
 PICT được khai báo thành constraint thực thi.

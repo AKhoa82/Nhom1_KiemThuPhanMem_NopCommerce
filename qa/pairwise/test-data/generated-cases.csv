@@ -1,4 +1,4 @@
-﻿"CaseId","CustomerType","ProductType","CartComposition","QuantityClass","InventoryState","Coupon","Address","ShippingMethod","PaymentMethod","CartAction"
+"CaseId","CustomerType","ProductType","CartComposition","QuantityClass","InventoryState","Coupon","Address","ShippingMethod","PaymentMethod","CartAction"
 "PW-001","Registered","SimplePhysical","OneLine","ManyWithinStock","InStock","Invalid","MissingRequired","NA","NA","Update"
 "PW-002","Guest","ConfigurablePhysical","MultipleLines","One","InStock","Invalid","Complete","LocalOption1","LocalSuccess","Add"
 "PW-003","Guest","ConfigurablePhysical","OneLine","ManyWithinStock","InStock","Valid","NA","NA","NA","Remove"

@@ -419,3 +419,4 @@ Registered	SimplePhysical	OneLine	One	InStock	None	MissingRequired	NA	NA	Update
 Guest	SimplePhysical	OneLine	ExceedsAvailableStock	InStock	Valid	NA	NA	NA	Update
 Registered	SimplePhysical	MultipleLines	AtAvailableLimit	InStock	Valid	Complete	LocalOption1	LocalSuccess	Update
 Registered	SimplePhysical	OneLine	ManyWithinStock	InStock	Valid	MissingRequired	NA	NA	Add
+
