@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 
 $pairwiseDirectory = Split-Path -Parent $MyInvocation.MyCommand.Path
 if ([string]::IsNullOrWhiteSpace($CsvPath)) {
-    $CsvPath = Join-Path $pairwiseDirectory "generated-cases.csv"
+    $CsvPath = Join-Path $pairwiseDirectory "test-data\generated-cases.csv"
 }
 
 $resolvedCsvPath = (Resolve-Path -LiteralPath $CsvPath).Path
@@ -17,6 +17,7 @@ if ($cases.Count -eq 0) {
 }
 
 $requiredColumns = @(
+    "CaseId",
     "CustomerType",
     "ProductType",
     "CartComposition",
@@ -42,7 +43,7 @@ $verifiedTrackedProductTypes = @("SimplePhysical", "ConfigurablePhysical")
 
 $indexedCases = for ($index = 0; $index -lt $cases.Count; $index++) {
     [pscustomobject]@{
-        CaseId = "PW-{0:D3}" -f ($index + 1)
+        CaseId = [string]$cases[$index].CaseId
         Data   = $cases[$index]
     }
 }
@@ -97,10 +98,11 @@ $results.Add([pscustomobject]@{
     Note       = "OutOfStock must map to ExceedsAvailableStock."
 })
 
-# INV-04: Removing the final line must stop before address/shipping/payment.
+# INV-04: Removing the final line requires OneLine and stops before checkout.
 $inv04 = @($indexedCases | Where-Object {
     $_.Data.CartAction -eq "Remove" -and
-    ($_.Data.Address -ne "NA" -or
+    ($_.Data.CartComposition -ne "OneLine" -or
+     $_.Data.Address -ne "NA" -or
      $_.Data.ShippingMethod -ne "NA" -or
      $_.Data.PaymentMethod -ne "NA")
 })
@@ -109,7 +111,7 @@ $results.Add([pscustomobject]@{
     Status     = if ($inv04.Count -eq 0) { "PASS" } else { "FAIL" }
     Violations = $inv04.Count
     SampleIds  = Get-SampleIds $inv04
-    Note       = "Remove requires Address, ShippingMethod, and PaymentMethod to be NA."
+    Note       = "Remove requires OneLine and Address, ShippingMethod, PaymentMethod set to NA."
 })
 
 # INV-05: MissingRequired must stop before shipping/payment.
@@ -126,18 +128,21 @@ $results.Add([pscustomobject]@{
     Note       = "MissingRequired requires ShippingMethod and PaymentMethod to be NA."
 })
 
-# INV-06: A successful checkout branch cannot use ShippingMethod=NA.
-# LocalSuccess is the success-branch marker in the current model.
+# INV-06: Payment state must agree with the verified checkout path.
 $inv06 = @($indexedCases | Where-Object {
-    $_.Data.PaymentMethod -eq "LocalSuccess" -and
-    $_.Data.ShippingMethod -eq "NA"
+    ($_.Data.PaymentMethod -eq "LocalSuccess" -and
+     $_.Data.ShippingMethod -eq "NA") -or
+    ($_.Data.PaymentMethod -eq "NA" -and
+     $_.Data.CartAction -ne "Remove" -and
+     $_.Data.Address -ne "MissingRequired" -and
+     $_.Data.QuantityClass -ne "ExceedsAvailableStock")
 })
 $results.Add([pscustomobject]@{
     Rule       = "INV-06"
     Status     = if ($inv06.Count -eq 0) { "PASS" } else { "FAIL" }
     Violations = $inv06.Count
     SampleIds  = Get-SampleIds $inv06
-    Note       = "LocalSuccess must use the verified LocalOption1 shipping method."
+    Note       = "LocalSuccess requires LocalOption1; NA requires an earlier stopping reason."
 })
 
 # INV-07: SimulatedDecline is blocked while no fake local processor exists.

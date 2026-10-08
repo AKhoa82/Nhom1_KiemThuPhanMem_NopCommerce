@@ -10,7 +10,7 @@ if ([string]::IsNullOrWhiteSpace($ModelPath)) {
     $ModelPath = Join-Path $pairwiseDirectory "model.pict"
 }
 if ([string]::IsNullOrWhiteSpace($CsvPath)) {
-    $CsvPath = Join-Path $pairwiseDirectory "generated-cases.csv"
+    $CsvPath = Join-Path $pairwiseDirectory "test-data\generated-cases.csv"
 }
 
 $resolvedModelPath = (Resolve-Path -LiteralPath $ModelPath).Path
@@ -44,8 +44,9 @@ if ($cases.Count -eq 0) {
 }
 
 $actualColumns = @($cases[0].PSObject.Properties.Name)
-$missingColumns = @($factors | Where-Object { $actualColumns -notcontains $_ })
-$extraColumns = @($actualColumns | Where-Object { $factors -notcontains $_ })
+$requiredColumns = @("CaseId") + $factors
+$missingColumns = @($requiredColumns | Where-Object { $actualColumns -notcontains $_ })
+$extraColumns = @($actualColumns | Where-Object { $requiredColumns -notcontains $_ })
 if ($missingColumns.Count -gt 0 -or $extraColumns.Count -gt 0) {
     throw "CSV/model columns differ. Missing: $($missingColumns -join ', '); Extra: $($extraColumns -join ', ')"
 }
@@ -91,6 +92,10 @@ function Test-FeasibleAssignment {
 
     # C04 - Remove means deleting the final line and stopping checkout.
     if ($Assignment.CartAction -eq "Remove" -and
+        $Assignment.CartComposition -ne "OneLine") {
+        return $false
+    }
+    if ($Assignment.CartAction -eq "Remove" -and
         ($Assignment.Address -ne "NA" -or
          $Assignment.ShippingMethod -ne "NA" -or
          $Assignment.PaymentMethod -ne "NA")) {
@@ -110,6 +115,12 @@ function Test-FeasibleAssignment {
 
     # C06 - NA is valid only after an earlier stopping reason.
     if ($Assignment.ShippingMethod -eq "NA" -and
+        $Assignment.CartAction -ne "Remove" -and
+        $Assignment.Address -ne "MissingRequired" -and
+        $Assignment.QuantityClass -ne "ExceedsAvailableStock") {
+        return $false
+    }
+    if ($Assignment.PaymentMethod -eq "NA" -and
         $Assignment.CartAction -ne "Remove" -and
         $Assignment.Address -ne "MissingRequired" -and
         $Assignment.QuantityClass -ne "ExceedsAvailableStock") {
@@ -207,7 +218,7 @@ for ($rowIndex = 0; $rowIndex -lt $cases.Count; $rowIndex++) {
     }
 
     if (-not (Test-FeasibleAssignment $assignment)) {
-        $infeasibleGeneratedRows.Add("PW-{0:D3}" -f ($rowIndex + 1))
+        $infeasibleGeneratedRows.Add([string]$case.CaseId)
         continue
     }
 

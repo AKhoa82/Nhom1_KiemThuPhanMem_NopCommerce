@@ -1,0 +1,23 @@
+GeneratedAt=2026-10-08T20:06:13.1754969+07:00
+Commit=954c0753e9902f6fbedc2c657061652c6921fdac
+PictPath=D:\Nhom1_KiemThuPhanMem_NopCommerce\qa\pairwise\tools\pict.exe
+PictVersion=3.7.4
+PictSHA256=80ABA862739CF18B4FAA13D408163324D188A1C4EFCCDD977D9C5BA3F8950BBD
+ModelSHA256=70DDF6677F992FE6317A43B8CEE5CAFFCF4DB14BB8041C3B2F16FB85644AAB5F
+GeneratedCasesSHA256=9C39B01B35380CA99DB817798B24C3DDC8A807F2390468289388E8CAFC1B8FA8
+PairwiseCommand=pict.exe model.pict /o:2 /r:10380
+ExhaustiveCommand=pict.exe model.pict /o:max
+Seed=10380
+PairwiseCases=14
+FeasibleExhaustiveCases=420
+GeneratedCases=qa/pairwise/test-data/generated-cases.csv
+ScenarioMapping=qa/pairwise/test-data/scenario-mapping.csv
+
+[Pairwise stderr]
+Used seed: 10380
+
+
+
+[Exhaustive stderr]
+
+
