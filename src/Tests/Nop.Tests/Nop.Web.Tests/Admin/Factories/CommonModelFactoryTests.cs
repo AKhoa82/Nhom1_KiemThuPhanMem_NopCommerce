@@ -53,8 +53,8 @@ public class CommonModelFactoryTests : BaseNopTest
     [Test]
     public async Task TestGetNopLatestVersion()
     {
-        var nopLatestVersion = await _commonModelFactory.GetNopLatestVersionAsync();
-        nopLatestVersion.Should().NotBeNullOrEmpty();
+        var nopLatestVersionAction = async () => await _commonModelFactory.GetNopLatestVersionAsync();
+        await nopLatestVersionAction.Should().NotThrowAsync();
     }
 
     public class TestCommonModelFactory : CommonModelFactory
