@@ -45,10 +45,10 @@ Các đường dẫn dưới đây là gợi ý để cả nhóm biết delivera
 | T03     | `docs/architecture.md`                                      | Sơ đồ component/container, module/dependency, data flow và các điểm liên quan tới test.           |
 | T04-T05 | `docs/test-design/cart-checkout-scenarios.md`               | Scenario ID, precondition, input, steps, expected result/invariant và dữ liệu cho Cart/Checkout.  |
 | T06-T07 | `qa/pairwise/model.pict`, `qa/pairwise/generated-cases.csv` | Factors/values/constraints, phiên bản và lệnh PICT, dữ liệu sinh ra cùng mapping về scenario.     |
-| T08-T10 | `qa/automation/README.md`, mã test trong `qa/automation/`   | Dependency/config, lệnh chạy từng test/toàn bộ, assertion, logs và nơi lưu report.                |
+| T08-T10 | `docs/automation-harness.md`, mã test trong `qa/automation/` | Dependency/config, lệnh chạy từng test/toàn bộ, assertion, logs và nơi lưu report.                |
 | T11     | PR review và checklist quality gate trên Jira               | Reviewer, phạm vi đã kiểm tra, góp ý, kết quả và các gate còn chặn merge.                         |
 | T12-T13 | `qa/results/<SHA>/<YYYY-MM-DD>/summary.md`, `defects.md`    | Môi trường, tổng/pass/fail/skip, pair coverage, logs, defect, bước tái hiện, severity và RCA.     |
-| T14     | `README.md`, `setup.md`, `qa/automation/README.md`          | Hướng dẫn cài, tạo dữ liệu, pin SHA, chạy test, xem report, reset dữ liệu và giới hạn.            |
+| T14     | `README.md`, `setup.md`, `docs/automation-harness.md`    | Hướng dẫn cài, tạo dữ liệu, pin SHA, chạy test, xem report, reset dữ liệu và giới hạn.            |
 | T15-T16 | `docs/report/`, `docs/demo-runbook.md`                      | Outline báo cáo/slide, trình tự demo, lệnh chạy, người trình bày theo Jira và phương án dự phòng. |
 
 Không cần tạo tất cả thư mục ngay từ đầu. Tạo file khi task bắt đầu và liên kết từ Jira; không tạo bản sao nội dung giữa README, setup guide và report.

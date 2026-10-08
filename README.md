@@ -4,6 +4,8 @@
 
 > Kiến trúc Shopping Cart và Checkout: [T03 - Architecture](docs/architecture.md).
 
+> Thiết kế automation harness: [T08 - Automation Harness](docs/automation-harness.md).
+
 > Quy trình Jira, Git/PR, review và lưu deliverable: [Hướng dẫn làm việc nhóm](docs/TEAM_WORKFLOW.md).
 [![Repository](https://img.shields.io/badge/GitHub-Nhom1__KiemThuPhanMem__NopCommerce-181717?logo=github)](https://github.com/AKhoa82/Nhom1_KiemThuPhanMem_NopCommerce)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
