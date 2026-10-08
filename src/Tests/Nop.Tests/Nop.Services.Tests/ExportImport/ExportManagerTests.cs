@@ -285,14 +285,14 @@ public class ExportManagerTests : ServiceTest
         PropertiesShouldEqual(testBillingAddress, manager, replacePairs, "CreatedOnUtc", "BillingCountry");
 
         var country = await _countryService.GetCountryByAddressAsync(testBillingAddress);
-        manager.GetDefaultProperties.First(p => p.PropertyName == "BillingCountry").StringValue.Should().Be(country.Name);
+        manager.GetDefaultProperties.First(p => p.PropertyName == "BillingCountry").StringValue.Should().Be(country?.Name ?? string.Empty);
 
         const string shippingPattern = "Shipping";
         replacePairs = addressFields.ToDictionary(p => shippingPattern + p, p => p);
         var testShippingAddress = await _addressService.GetAddressByIdAsync((order.PickupInStore ? order.PickupAddressId : order.ShippingAddressId) ?? 0);
         PropertiesShouldEqual(testShippingAddress, manager, replacePairs, "CreatedOnUtc", "ShippingCountry");
         country = await _countryService.GetCountryByAddressAsync(testShippingAddress);
-        manager.GetDefaultProperties.First(p => p.PropertyName == "ShippingCountry").StringValue.Should().Be(country.Name);
+        manager.GetDefaultProperties.First(p => p.PropertyName == "ShippingCountry").StringValue.Should().Be(country?.Name ?? string.Empty);
     }
 
     [Test]
