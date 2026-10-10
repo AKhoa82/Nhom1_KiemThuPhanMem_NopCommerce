@@ -11,10 +11,12 @@ export default defineConfig({
     ['html', { outputFolder: './reports/html', open: 'never' }],
     ['junit', { outputFile: './reports/junit.xml' }],
     ['json', { outputFile: './reports/results.json' }],
+    ['./reporters/pairwise-summary-reporter.ts'],
   ],
   use: {
     baseURL: process.env.NOP_BASE_URL ?? 'http://localhost/',
     browserName: 'chromium',
+    ignoreHTTPSErrors: process.env.NOP_IGNORE_HTTPS_ERRORS !== 'false',
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
   },

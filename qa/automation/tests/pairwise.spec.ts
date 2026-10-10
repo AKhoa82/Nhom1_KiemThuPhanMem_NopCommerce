@@ -1,75 +1,149 @@
-import { test } from '@playwright/test';
-import { assertAddressValidationBlocked, assertCartEmpty, assertCartHasItems, assertCouponResult, assertNoCheckoutContinuation, assertStockBlocked } from './helpers/assertions';
-import { applyCoupon, beginCheckout, loginRegisteredCustomer, prepareCartForRow, removePrimaryCartLine, requestedQuantity, submitMissingRequiredBillingAddress, updatePrimaryCartLine } from './helpers/cart-checkout';
+import { test, type Page } from '@playwright/test';
+import { assertAddressValidationBlocked, assertCartEmpty, assertCartLine, assertCartLineCount, assertCheckoutCompleted, assertCouponResult, assertStockBlocked } from './helpers/assertions';
+import { addOutOfStockProduct, addSimpleProduct, addVariantProduct, applyCouponCode, beginCheckout, completeLocalCheckout, invalidCoupon, loginRegisteredCustomer, removeCartLine, submitMissingRequiredBillingAddress, updateCartLine, validCoupon } from './helpers/cart-checkout';
 import { FixtureBlockedError, resetFixture } from './helpers/fixtures';
-import { loadPairwiseCases } from './helpers/pairwise-data';
+import { loadPairwiseCases, type PairwiseCase } from './helpers/pairwise-data';
 import { blockedReason } from './helpers/runtime-config';
 
 const pairwiseCases = loadPairwiseCases();
+const simple = 'PW-Simple-Stock';
+const variant = 'PW-Shirt-Variants';
+
+async function runCase(page: Page, row: PairwiseCase): Promise<void> {
+  if (row.customerType === 'Registered') await loginRegisteredCustomer(page);
+
+  switch (row.caseId) {
+    case 'PW-001':
+      await addSimpleProduct(page, 1);
+      await updateCartLine(page, simple, 2);
+      await assertCartLine(page, simple, 2);
+      await applyCouponCode(page, invalidCoupon);
+      await assertCouponResult(page, 'Invalid');
+      await beginCheckout(page);
+      await submitMissingRequiredBillingAddress(page);
+      await assertAddressValidationBlocked(page);
+      return;
+    case 'PW-002':
+      await addVariantProduct(page, 1, 'RedS');
+      await addSimpleProduct(page, 1);
+      await assertCartLineCount(page, 2);
+      await assertCartLine(page, variant, 1, ['Red', 'S']);
+      await applyCouponCode(page, invalidCoupon);
+      await assertCouponResult(page, 'Invalid');
+      await beginCheckout(page);
+      await completeLocalCheckout(page);
+      await assertCheckoutCompleted(page);
+      return;
+    case 'PW-003':
+      await addVariantProduct(page, 2, 'RedS');
+      await applyCouponCode(page, validCoupon);
+      await assertCouponResult(page, 'Valid');
+      await removeCartLine(page, variant);
+      await assertCartEmpty(page);
+      return;
+    case 'PW-004':
+      await addSimpleProduct(page, 1);
+      await updateCartLine(page, simple, 11);
+      await assertStockBlocked(page);
+      return;
+    case 'PW-005':
+      await addSimpleProduct(page, 1);
+      await removeCartLine(page, simple);
+      await assertCartEmpty(page);
+      return;
+    case 'PW-006':
+      await addSimpleProduct(page, 10);
+      await assertCartLine(page, simple, 10);
+      await applyCouponCode(page, validCoupon);
+      await assertCouponResult(page, 'Valid');
+      await beginCheckout(page);
+      await completeLocalCheckout(page);
+      await assertCheckoutCompleted(page);
+      return;
+    case 'PW-007':
+      await addVariantProduct(page, 2, 'RedS');
+      await addSimpleProduct(page, 1);
+      await assertCartLineCount(page, 2);
+      await beginCheckout(page);
+      await completeLocalCheckout(page);
+      await assertCheckoutCompleted(page);
+      return;
+    case 'PW-008':
+      await addVariantProduct(page, 3, 'BlueM');
+      await applyCouponCode(page, invalidCoupon);
+      await assertCouponResult(page, 'Invalid');
+      await removeCartLine(page, variant);
+      await assertCartEmpty(page);
+      return;
+    case 'PW-009':
+      await addVariantProduct(page, 1, 'BlueM');
+      await addSimpleProduct(page, 1);
+      await updateCartLine(page, variant, 3);
+      await assertCartLine(page, variant, 3, ['Blue', 'M']);
+      await beginCheckout(page);
+      await completeLocalCheckout(page);
+      await assertCheckoutCompleted(page);
+      return;
+    case 'PW-010':
+      await addOutOfStockProduct(page);
+      await assertStockBlocked(page);
+      return;
+    case 'PW-011':
+      await addSimpleProduct(page, 1);
+      await addVariantProduct(page, 1, 'RedS');
+      await updateCartLine(page, simple, 1);
+      await applyCouponCode(page, validCoupon);
+      await assertCouponResult(page, 'Valid');
+      await beginCheckout(page);
+      await submitMissingRequiredBillingAddress(page);
+      await assertAddressValidationBlocked(page);
+      return;
+    case 'PW-012':
+      await addVariantProduct(page, 3, 'BlueM');
+      await assertCartLine(page, variant, 3, ['Blue', 'M']);
+      await beginCheckout(page);
+      await submitMissingRequiredBillingAddress(page);
+      await assertAddressValidationBlocked(page);
+      return;
+    case 'PW-013':
+      await addVariantProduct(page, 1, 'RedS');
+      await applyCouponCode(page, invalidCoupon);
+      await assertCouponResult(page, 'Invalid');
+      await updateCartLine(page, variant, 6);
+      await assertStockBlocked(page);
+      return;
+    case 'PW-014':
+      await addSimpleProduct(page, 1);
+      await applyCouponCode(page, validCoupon);
+      await assertCouponResult(page, 'Valid');
+      await updateCartLine(page, simple, 11);
+      await assertStockBlocked(page);
+      return;
+    default:
+      throw new Error(`No implementation exists for ${row.caseId}.`);
+  }
+}
 
 for (const row of pairwiseCases) {
   const title = `${row.caseId} ${row.expectedPath}: ${row.reason}`;
   const blocked = blockedReason(row);
 
   test.describe(() => {
-    if (blocked) {
-      // Skip at discovery time so a missing local fixture never asks Playwright
-      // to launch Chromium or becomes a misleading product-test failure.
-      test.skip(true, blocked);
-    }
+    if (blocked) test.skip(true, blocked);
 
     test(title, async ({ page }, testInfo) => {
-    testInfo.annotations.push({ type: 'scenario', description: row.scenarioId });
-    testInfo.annotations.push({ type: 'expected-path', description: row.expectedPath });
-    try {
-      await resetFixture(page, row);
-    } catch (error) {
-      if (error instanceof FixtureBlockedError) {
-        test.skip(true, error.message);
-        return;
+      testInfo.annotations.push({ type: 'scenario', description: row.scenarioId });
+      testInfo.annotations.push({ type: 'expected-path', description: row.expectedPath });
+      try {
+        await resetFixture(page, row);
+      } catch (error) {
+        if (error instanceof FixtureBlockedError) {
+          test.skip(true, error.message);
+          return;
+        }
+        throw error;
       }
-      throw error;
-    }
-
-    if (row.customerType === 'Registered') await loginRegisteredCustomer(page);
-    await prepareCartForRow(page, row);
-
-    const stockBlocked = row.inventoryState === 'OutOfStock' || row.quantityClass === 'ExceedsAvailableStock';
-    if (row.cartAction === 'Update') await updatePrimaryCartLine(page, requestedQuantity(row));
-    if (stockBlocked) {
-      await assertStockBlocked(page);
-      await assertNoCheckoutContinuation(page);
-      return;
-    }
-
-    await assertCartHasItems(page);
-    if (row.coupon !== 'None') {
-      await applyCoupon(page, row.coupon);
-      await assertCouponResult(page, row.coupon);
-    }
-
-    if (row.cartAction === 'Remove') {
-      await removePrimaryCartLine(page);
-      await assertCartEmpty(page);
-      return;
-    }
-
-    if (row.address === 'MissingRequired') {
-      await beginCheckout(page);
-      await submitMissingRequiredBillingAddress(page);
-      await assertAddressValidationBlocked(page);
-      return;
-    }
-
-    if (row.address === 'NA') {
-      await assertNoCheckoutContinuation(page);
-      return;
-    }
-
-    // The reset endpoint is a prerequisite for this branch. The checkout UI is
-    // reached only after every cart/coupon assertion above has passed.
-    await beginCheckout(page);
-    throw new Error('Blocked: checkout completion needs the environment-owned local address/shipping/payment fixture.');
+      await runCase(page, row);
     });
   });
 }

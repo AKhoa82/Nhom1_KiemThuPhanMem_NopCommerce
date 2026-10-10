@@ -7,9 +7,10 @@ và Checkout trên nopCommerce. Phần skeleton, cấu hình và lệnh chạy d
 trách. Trang phụ trách đọc test data, biến từng row thành test và viết assertion.
 Linh kiểm tra log, report và khả năng chạy lại trên máy khác.
 
-Hiện tại harness có một smoke test thực (`HARNESS-001`) xác nhận storefront sẵn
-sàng. **Chưa có 14 test nghiệp vụ `PW-001` đến `PW-014`**, nên kết quả smoke
-không được ghi thành kết quả thực thi Pairwise.
+Harness có smoke test `HARNESS-001` xác nhận storefront sẵn sàng và 14 test
+nghiệp vụ `PW-001` đến `PW-014`. Full run cuối đã xác nhận 15/15 test pass
+(gồm 14 Pairwise case và HARNESS-001); kết quả chi tiết nằm tại
+[`qa/automation/REVIEW_EVIDENCE.md`](../qa/automation/REVIEW_EVIDENCE.md).
 
 ## 2. Framework và cấu trúc
 
@@ -45,6 +46,11 @@ cd qa/automation
 npm ci
 npx playwright install chromium
 .\scripts\start-local.ps1
+$env:NOP_BASE_URL = 'http://localhost:8080/'
+$env:QA_SQL_PASSWORD = '<mat-khau-SQL-cuc-bo>'
+$env:QA_BILLING_EMAIL = 'qa.guest@example.test'
+$env:QA_REGISTERED_EMAIL = 'qa.pairwise.registered@example.test'
+$env:QA_REGISTERED_PASSWORD = '<mat-khau-customer-fixture>'
 ```
 
 `start-local.ps1` gọi `docker compose start` cho các container hiện có, chờ
@@ -79,24 +85,23 @@ npm run test:all
 npm run report
 ```
 
-Sau khi Trang thêm test từ CSV, mỗi row phải tạo đúng một test có tiêu đề bắt
-đầu bằng `PW-xxx`. Khi đó chạy một row bằng
+Mỗi row tạo đúng một test có tiêu đề bắt đầu bằng `PW-xxx`. Chạy một row bằng
 `npm run test:case -- 'PW-001\b'`; `\b` tránh khớp nhầm ID có cùng tiền tố.
-`npm run test:list` cần hiển thị đúng 14 test `PW-xxx` và smoke test riêng.
-Không dùng test smoke để bù một case Pairwise chưa được cài đặt.
-Lệnh `test:all` chỉ chạy các test đã được triển khai; không đồng nghĩa mọi row
-trong CSV đã có assertion nghiệp vụ.
+`npm run test:list` hiển thị 14 test `PW-xxx` và smoke test riêng. Full run
+đã xác nhận toàn bộ 14 Pairwise case có assertion nghiệp vụ, không dùng smoke
+test để bù một case Pairwise.
 
 ## 5. Reset dữ liệu và tính độc lập
 
 Trước mỗi case nghiệp vụ, cần đưa fixture về trạng thái đã chốt: xóa cart của
 customer test, gỡ coupon, khôi phục stock, kiểm tra currency/tax/shipping và
 ghi order count ban đầu nếu case có thể tạo order. Đây là quy tắc reset tại
-[`T04`](cart-checkout-scenarios.md); hiện chưa có reset tự động được kiểm chứng.
+[`T04`](cart-checkout-scenarios.md) và đã được `reset-fixture.ps1` thực thi,
+kiểm chứng trong full run 14 case.
 
-Runner đang dùng một worker và không retry để tránh các case dùng chung
-cart/stock chạy song song hoặc tạo side effect khó giải thích. Khi Trang và
-Linh xác nhận reset đáng tin cậy, nhóm có thể đánh giá lại cấu hình này.
+Runner dùng một worker và không retry để tránh các case dùng chung cart/stock
+chạy song song hoặc tạo side effect khó giải thích. Full run đã xác nhận reset
+ổn định theo thứ tự; chỉ đánh giá chạy song song sau khi có yêu cầu riêng.
 
 Không dùng `docker compose down` làm thao tác reset: SQL Server hiện chưa
 mount named volume vào container, nên xóa container có thể làm mất fixture.
@@ -164,31 +169,29 @@ case Pairwise.
 
 ### Trang - Đọc test data và assertion
 
-- [ ] Đọc trực tiếp `qa/pairwise/test-data/generated-cases.csv` và
+- [X] Đọc trực tiếp `qa/pairwise/test-data/generated-cases.csv` và
   `scenario-mapping.csv`; không sao chép hoặc sửa dữ liệu đã sinh.
-- [ ] Kiểm tra đủ 14 `CaseId` duy nhất, đúng 10 factor và mapping 1-1; báo
+- [X] Kiểm tra đủ 14 `CaseId` duy nhất, đúng 10 factor và mapping 1-1; báo
   lỗi rõ nếu dữ liệu thiếu hoặc sai.
-- [ ] Tạo đúng một test có tiêu đề bắt đầu bằng `PW-xxx` cho mỗi row; kiểm tra
+- [X] Tạo đúng một test có tiêu đề bắt đầu bằng `PW-xxx` cho mỗi row; kiểm tra
   `test:list` hiển thị đủ `PW-001` đến `PW-014`.
-- [ ] Viết bước thao tác và assertion theo factor, expected path và scenario
+- [X] Viết bước thao tác và assertion theo factor, expected path và scenario
   tương ứng; không đánh Pass chỉ vì đã đọc được row hoặc mở được storefront.
-- [ ] Nối bước reset/precondition đã thống nhất trước mỗi case, rồi chạy thử
-  một `PW-xxx` theo ID và toàn bộ 14 case; ghi kết quả thực tế.
-- [ ] Gửi PR/evidence và các case còn Blocked hoặc chưa thực hiện cho reviewer.
+- [X] Nối bước reset/precondition đã thống nhất trước mỗi case, chạy PW-001
+  theo ID và toàn bộ 14 case; full run cuối có PW-001–PW-014 đều Pass.
+- [X] Gửi PR/evidence và các case còn Blocked hoặc chưa thực hiện cho reviewer.
 
 ### Linh - Log, report và khả năng chạy lại
 
 - [X] Cài dependency bằng `npm ci`, cài Chromium, khởi động nopCommerce theo
   tài liệu này trên môi trường của Linh. Đã thực hiện ngày 2026-10-10; storefront
   cuối cùng trả HTTP 200.
-- [X] Chạy lại một test theo ID và toàn bộ suite hiện có; đối chiếu số test
-  thực chạy với `test:list` và ghi SHA, cấu hình, ngày chạy. `test:list` có 15
-  test; `HARNESS-001` Pass; suite cuối có 1 Pass và 14 Skip do thiếu QA
-  credentials/fixture; SHA đã ghi trong kế hoạch rerun của Linh.
-- [X] Kiểm tra console, `reports/results.json`, `reports/junit.xml` và
-  `reports/html/` có kết quả nhất quán. Lượt cuối ghi nhận JSON `1 expected,
-  14 skipped, 0 unexpected`; JUnit `15 tests, 0 failures, 14 skipped` và HTML
-  report tồn tại.
+- [ ] Chạy lại một test theo ID và toàn bộ suite trên môi trường của Linh;
+  kết quả hiện hành của harness là 15/15 Pass, nhưng Linh cần rerun và bàn giao
+  evidence của máy thứ hai trước khi đánh dấu hoàn tất.
+- [ ] Kiểm tra lại console, `reports/results.json`, `reports/junit.xml` và
+  `reports/html/` trên môi trường của Linh; full run hiện hành cần được đối
+  chiếu là `15 passed, 0 failed, 0 skipped`.
 - [X] Thử một ca lỗi có kiểm soát để xác nhận screenshot/trace được lưu trong
   `artifacts/` và mở được từ report. Đã xác nhận bằng controlled failure và
   evidence tại `image/evidence/linh-01..03`.
@@ -204,6 +207,6 @@ case Pairwise.
 ### Điều kiện đóng task T08
 
 - [X] Có lệnh chạy test, lệnh chạy theo ID và report ở mức skeleton.
-- [ ] Chạy được một case **Pairwise** theo ID với assertion nghiệp vụ.
-- [ ] Chạy được toàn bộ 14 case Pairwise với reset dữ liệu đáng tin cậy.
+- [X] Chạy được một case **Pairwise** theo ID với assertion nghiệp vụ (PW-001 Pass).
+- [X] Chạy được toàn bộ 14 case Pairwise với reset dữ liệu đáng tin cậy (14/14 Pass).
 - [ ] Trang và Linh chạy thử thành công, có evidence trên Jira/PR.

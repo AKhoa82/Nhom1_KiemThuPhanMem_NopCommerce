@@ -23,6 +23,7 @@ export async function resetFixture(page: Page, row: PairwiseCase): Promise<Fixtu
       '-CaseId', row.caseId,
       '-Container', runtimeConfig.databaseContainer,
       '-Database', runtimeConfig.databaseName,
+      '-StoreContainer', runtimeConfig.storeContainer,
     ], {
       env: process.env,
       windowsHide: true,
@@ -36,16 +37,47 @@ export async function resetFixture(page: Page, row: PairwiseCase): Promise<Fixtu
     throw new Error(`Fixture reset failed for ${row.caseId}: ${detail.trim()}`);
   }
 
-  await page.goto('/cart');
-  await clearCart(page);
+  await openCartWhenStoreReady(page);
+  await verifyRuntimeFixture(page, row);
   return {};
 }
 
-export async function clearCart(page: Page): Promise<void> {
-  const removeCheckboxes = page.locator('input[name="removefromcart"]');
-  const count = await removeCheckboxes.count();
-  if (count === 0) return;
-  for (let index = 0; index < count; index += 1) await removeCheckboxes.nth(index).check();
-  await page.locator('#updatecart').click();
-  await page.waitForLoadState('domcontentloaded');
+async function openCartWhenStoreReady(page: Page): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    try {
+      await page.goto('/cart', { waitUntil: 'domcontentloaded', timeout: 5_000 });
+      return;
+    } catch (error) {
+      lastError = error;
+      await page.waitForTimeout(1_000);
+    }
+  }
+  throw new FixtureBlockedError(`FIXTURE_BLOCKED: Store did not become ready after fixture reset: ${String(lastError)}`);
+}
+
+async function verifyRuntimeFixture(page: Page, row: PairwiseCase): Promise<void> {
+  const productPath = row.inventoryState === 'OutOfStock'
+    ? runtimeConfig.outOfStockProductPath
+    : row.productType === 'ConfigurablePhysical'
+      ? runtimeConfig.configurableProductPath
+      : runtimeConfig.simpleProductPath;
+  const response = await page.goto(productPath, { waitUntil: 'domcontentloaded' });
+  if (!response?.ok() || await page.locator('.product-details-page').count() !== 1) {
+    throw new FixtureBlockedError(`FIXTURE_BLOCKED: Product slug '${productPath}' is unavailable for ${row.caseId}.`);
+  }
+
+  if (row.productType !== 'ConfigurablePhysical') return;
+
+  const attributes = page.locator('select[name^="product_attribute_"]');
+  if (await attributes.count() !== 2) {
+    throw new FixtureBlockedError(`FIXTURE_BLOCKED: ${row.caseId} requires exactly two PW-SHIRT variant selectors.`);
+  }
+  const [colors, sizes] = await Promise.all([
+    attributes.nth(0).locator('option').allTextContents(),
+    attributes.nth(1).locator('option').allTextContents(),
+  ]);
+  if (!colors.includes('Red') || !colors.includes('Blue') || !sizes.includes('S') || !sizes.includes('M')) {
+    throw new FixtureBlockedError(`FIXTURE_BLOCKED: ${row.caseId} requires Red/Blue and S/M values on PW-SHIRT.`);
+  }
 }
