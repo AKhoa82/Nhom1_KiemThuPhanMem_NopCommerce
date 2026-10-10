@@ -178,17 +178,28 @@ case Pairwise.
 
 ### Linh - Log, report và khả năng chạy lại
 
-- [ ] Cài dependency bằng `npm ci`, cài Chromium, khởi động nopCommerce theo
-  tài liệu này trên môi trường của Linh.
-- [ ] Chạy lại một test theo ID và toàn bộ suite hiện có; đối chiếu số test
-  thực chạy với `test:list` và ghi SHA, cấu hình, ngày chạy.
-- [ ] Kiểm tra console, `reports/results.json`, `reports/junit.xml` và
-  `reports/html/` có kết quả nhất quán.
-- [ ] Thử một ca lỗi có kiểm soát để xác nhận screenshot/trace được lưu trong
-  `artifacts/` và mở được từ report.
-- [ ] Kiểm tra việc reset cho phép chạy lại cùng case; phân biệt lỗi môi
-  trường/fixture với assertion sản phẩm theo mục 7.
-- [ ] Ghi kết quả chạy lại, log/report và vấn đề phát hiện trên Jira/PR.
+- [X] Cài dependency bằng `npm ci`, cài Chromium, khởi động nopCommerce theo
+  tài liệu này trên môi trường của Linh. Đã thực hiện ngày 2026-10-10; storefront
+  cuối cùng trả HTTP 200.
+- [X] Chạy lại một test theo ID và toàn bộ suite hiện có; đối chiếu số test
+  thực chạy với `test:list` và ghi SHA, cấu hình, ngày chạy. `test:list` có 15
+  test; `HARNESS-001` Pass; suite cuối có 1 Pass và 14 Skip do thiếu QA
+  credentials/fixture; SHA đã ghi trong kế hoạch rerun của Linh.
+- [X] Kiểm tra console, `reports/results.json`, `reports/junit.xml` và
+  `reports/html/` có kết quả nhất quán. Lượt cuối ghi nhận JSON `1 expected,
+  14 skipped, 0 unexpected`; JUnit `15 tests, 0 failures, 14 skipped` và HTML
+  report tồn tại.
+- [X] Thử một ca lỗi có kiểm soát để xác nhận screenshot/trace được lưu trong
+  `artifacts/` và mở được từ report. Đã xác nhận bằng controlled failure và
+  evidence tại `image/evidence/linh-01..03`.
+- [X] Kiểm tra việc reset cho phép chạy lại cùng case; phân biệt lỗi môi
+  trường/fixture với assertion sản phẩm theo mục 7. Đã chạy thử `PW-003` và một
+  spec rerun tạm gọi `resetFixture` theo luồng kiểm chứng. Vòng đầu bị
+  `Blocked`: slug fixture mặc định sai, nhãn thuộc tính thực tế là `red/blue`
+  thay vì `Red/Blue`, và add-to-cart không tạo cart line; đây không phải lỗi sản phẩm.
+- [X] Ghi kết quả chạy lại, log/report và vấn đề phát hiện trong
+  `docs/linh-log-report-rerun-plan.md` cùng evidence tại `image/evidence/`.
+  Việc đăng lại lên Jira/PR vẫn là bước bàn giao thủ công chưa thực hiện.
 
 ### Điều kiện đóng task T08
 
