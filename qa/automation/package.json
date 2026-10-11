@@ -1,0 +1,16 @@
+{
+  "name": "nopcommerce-pairwise-automation",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "test:all": "playwright test",
+    "test:case": "playwright test --grep",
+    "test:list": "playwright test --list",
+    "report": "playwright show-report reports/html"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.0",
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2"
+  }
+}
