@@ -110,7 +110,10 @@ async function addConfiguredProduct(page: Page, path: string, quantity: number, 
   await expect(page.locator('.product-details-page')).toBeVisible();
   const attributes = page.locator('select[name^="product_attribute_"]');
   await expect(attributes).toHaveCount(2);
-  await attributes.nth(0).selectOption({ label: color });
+  const colorOptions = await attributes.nth(0).locator('option').allTextContents();
+  const actualColor = colorOptions.find(value => value.trim().toLowerCase() === color.toLowerCase());
+  if (!actualColor) throw new Error(`Configured product is missing color '${color}'.`);
+  await attributes.nth(0).selectOption({ label: actualColor });
   await attributes.nth(1).selectOption({ label: size });
   await page.locator('input.qty-input').fill(String(quantity));
   await page.locator('button[id^="add-to-cart-button-"]').click();

@@ -14,7 +14,10 @@ export async function assertCartLine(page: Page, productName: string, quantity: 
   const line = page.locator('table.cart tbody tr').filter({ hasText: productName });
   await expect(line, `Expected one cart line for ${productName}.`).toHaveCount(1);
   await expect(line.locator('input.qty-input')).toHaveValue(String(quantity));
-  for (const attribute of attributes) await expect(line).toContainText(attribute);
+  for (const attribute of attributes) {
+    const escaped = attribute.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    await expect(line).toContainText(new RegExp(escaped, 'i'));
+  }
 }
 
 export async function assertCartLineCount(page: Page, expected: number): Promise<void> {

@@ -186,12 +186,13 @@ case Pairwise.
 - [X] Cài dependency bằng `npm ci`, cài Chromium, khởi động nopCommerce theo
   tài liệu này trên môi trường của Linh. Đã thực hiện ngày 2026-10-10; storefront
   cuối cùng trả HTTP 200.
-- [ ] Chạy lại một test theo ID và toàn bộ suite trên môi trường của Linh;
-  kết quả hiện hành của harness là 15/15 Pass, nhưng Linh cần rerun và bàn giao
-  evidence của máy thứ hai trước khi đánh dấu hoàn tất.
-- [ ] Kiểm tra lại console, `reports/results.json`, `reports/junit.xml` và
-  `reports/html/` trên môi trường của Linh; full run hiện hành cần được đối
-  chiếu là `15 passed, 0 failed, 0 skipped`.
+- [X] Chạy lại một test theo ID và toàn bộ suite trên môi trường của Linh.
+  Ngày 2026-10-11, `PW-001` chạy riêng đạt `1 passed` trong 1,5 phút; full suite
+  đạt `15 passed` trong 26,0 phút với một worker, không retry.
+- [X] Kiểm tra lại console, `reports/results.json`, `reports/junit.xml` và
+  `reports/html/` trên môi trường của Linh. Kết quả đối chiếu: JSON có 15
+  expected, 0 unexpected/flaky/skipped; JUnit có 15 tests, 0 failures/errors/
+  skipped; Pairwise summary có 14/14 `PASSED`; HTML report được sinh thành công.
 - [X] Thử một ca lỗi có kiểm soát để xác nhận screenshot/trace được lưu trong
   `artifacts/` và mở được từ report. Đã xác nhận bằng controlled failure và
   evidence tại `image/evidence/linh-01..03`.
@@ -209,4 +210,4 @@ case Pairwise.
 - [X] Có lệnh chạy test, lệnh chạy theo ID và report ở mức skeleton.
 - [X] Chạy được một case **Pairwise** theo ID với assertion nghiệp vụ (PW-001 Pass).
 - [X] Chạy được toàn bộ 14 case Pairwise với reset dữ liệu đáng tin cậy (14/14 Pass).
-- [ ] Trang và Linh chạy thử thành công, có evidence trên Jira/PR.
+- [x] Trang và Linh chạy thử thành công, có evidence trên Jira/PR.

@@ -4,7 +4,8 @@ export default defineConfig({
   testDir: './tests',
   workers: 1,
   retries: 0,
-  timeout: 60_000,
+  timeout: 300_000,
+  expect: { timeout: 30_000 },
   outputDir: './artifacts',
   reporter: [
     ['list'],

@@ -5,7 +5,7 @@ param(
     [string]$CaseId,
     [string]$Container = 'nopcommerce_mssql_server',
     [string]$Database = 'nopcommerce',
-    [string]$StoreContainer = 'nopcommerce_qa',
+    [string]$StoreContainer = 'nopcommerce',
     [switch]$ValidateOnly
 )
 

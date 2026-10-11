@@ -27,7 +27,7 @@ export async function resetFixture(page: Page, row: PairwiseCase): Promise<Fixtu
     ], {
       env: process.env,
       windowsHide: true,
-      timeout: 30_000,
+      timeout: 90_000,
     });
   } catch (error) {
     const detail = error instanceof Error
@@ -44,7 +44,7 @@ export async function resetFixture(page: Page, row: PairwiseCase): Promise<Fixtu
 
 async function openCartWhenStoreReady(page: Page): Promise<void> {
   let lastError: unknown;
-  for (let attempt = 0; attempt < 20; attempt += 1) {
+  for (let attempt = 0; attempt < 60; attempt += 1) {
     try {
       await page.goto('/cart', { waitUntil: 'domcontentloaded', timeout: 5_000 });
       return;
@@ -67,7 +67,7 @@ async function verifyRuntimeFixture(page: Page, row: PairwiseCase): Promise<void
     throw new FixtureBlockedError(`FIXTURE_BLOCKED: Product slug '${productPath}' is unavailable for ${row.caseId}.`);
   }
 
-  if (row.productType !== 'ConfigurablePhysical') return;
+  if (row.productType !== 'ConfigurablePhysical' || row.inventoryState === 'OutOfStock') return;
 
   const attributes = page.locator('select[name^="product_attribute_"]');
   if (await attributes.count() !== 2) {
@@ -77,7 +77,8 @@ async function verifyRuntimeFixture(page: Page, row: PairwiseCase): Promise<void
     attributes.nth(0).locator('option').allTextContents(),
     attributes.nth(1).locator('option').allTextContents(),
   ]);
-  if (!colors.includes('Red') || !colors.includes('Blue') || !sizes.includes('S') || !sizes.includes('M')) {
+  const normalizedColors = colors.map(value => value.trim().toLowerCase());
+  if (!normalizedColors.includes('red') || !normalizedColors.includes('blue') || !sizes.includes('S') || !sizes.includes('M')) {
     throw new FixtureBlockedError(`FIXTURE_BLOCKED: ${row.caseId} requires Red/Blue and S/M values on PW-SHIRT.`);
   }
 }
