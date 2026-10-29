@@ -11,13 +11,12 @@ export async function assertCartHasItems(page: Page): Promise<void> {
 
 export async function assertCartLine(page: Page, productName: string, quantity: number, attributes: string[] = []): Promise<void> {
   await page.goto('/cart');
-  const line = page.locator('table.cart tbody tr').filter({ hasText: productName });
+  let line = page.locator('table.cart tbody tr').filter({ hasText: productName });
+  for (const attribute of attributes) {
+    line = line.filter({ hasText: attribute });
+  }
   await expect(line, `Expected one cart line for ${productName}.`).toHaveCount(1);
   await expect(line.locator('input.qty-input')).toHaveValue(String(quantity));
-  for (const attribute of attributes) {
-    const escaped = attribute.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    await expect(line).toContainText(new RegExp(escaped, 'i'));
-  }
 }
 
 export async function assertCartLineCount(page: Page, expected: number): Promise<void> {

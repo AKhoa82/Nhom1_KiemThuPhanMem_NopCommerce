@@ -13,6 +13,7 @@ export default defineConfig({
     ['junit', { outputFile: './reports/junit.xml' }],
     ['json', { outputFile: './reports/results.json' }],
     ['./reporters/pairwise-summary-reporter.ts'],
+    ['./reporters/cart-risk-summary-reporter.ts'],
   ],
   use: {
     baseURL: process.env.NOP_BASE_URL ?? 'http://localhost/',

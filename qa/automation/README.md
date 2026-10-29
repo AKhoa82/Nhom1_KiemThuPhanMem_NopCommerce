@@ -31,6 +31,7 @@ $env:QA_REGISTERED_PASSWORD = '<mat-khau-customer-fixture>'
 npm run test:list
 npm run test:case -- 'PW-001\b'
 npm run test:all
+npm run test:cart-risk
 npm run report
 ```
 
@@ -43,6 +44,7 @@ Without required local values, every `PW-xxx` test is deliberately skipped as
 - `reports/junit.xml`: CI/JUnit results.
 - `reports/html/`: Playwright HTML report.
 - `reports/pairwise-summary.md` and `reports/pairwise-summary.json`: one result per Pairwise ID, classified as environment, product, or automation failure.
+- `reports/cart-risk-summary.md` and `reports/cart-risk-summary.json`: result for `CART-01`–`CART-14` and `CART-REPEAT-01`.
 - `artifacts/`: screenshot and trace for failed tests.
 
 These generated folders and `.env` are ignored by Git.
