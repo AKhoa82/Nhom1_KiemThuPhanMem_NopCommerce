@@ -4,6 +4,9 @@ Tài liệu này hợp nhất 26 rủi ro của nhóm: 14 scenario Cart hiện c
 Checkout hiện có và ba luồng bổ sung `CART-MERGE-01`, `CART-REPEAT-01`,
 `CHK-RACE-01`. Issue cha: [SCRUM-80](https://anhkhoa080205.atlassian.net/browse/SCRUM-80).
 
+Baseline, quy tắc chấm và các điểm cần đối chiếu trước khi ký duyệt nằm trong
+[review SCRUM-81 của Khoa](SCRUM-81-risk-baseline-review-khoa.md).
+
 ## 1. Quy ước chấm
 
 - Impact (I): `1` = ảnh hưởng nhỏ/hiển thị; `2` = hỏng một luồng hoặc sai dữ liệu
