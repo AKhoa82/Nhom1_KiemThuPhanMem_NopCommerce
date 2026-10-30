@@ -25,7 +25,7 @@ Tài liệu này là nội dung sẵn để cập nhật Jira. Việc có tệp 
 - Mỗi dòng High có trạng thái đúng cùng link evidence, hoặc blocker/accepted risk và owner; `Not Run` không được đổi thành `Blocked` chỉ vì chưa thực hiện.
 - Tài liệu bàn giao: [`SCRUM-81-risk-baseline-review-khoa.md`](SCRUM-81-risk-baseline-review-khoa.md), [`SCRUM-80-risk-register.md`](SCRUM-80-risk-register.md), report Cart và Pairwise của lượt chạy đã ghi nhận.
 
-**Tình trạng kiểm chứng 30/10/2026:** Đã rà mẫu số/công thức, chạy lại Cart 15/15 Pass và Pairwise 14/14 Pass trên fixture local. Chưa có bản SCRUM-83 của Linh ở Git/Jira API trong phiên này; chưa ký duyệt SCRUM-80.
+**Tình trạng kiểm chứng 30/10/2026:** Đã rà mẫu số/công thức, chạy lại Cart 15/15 Pass và Pairwise 14/14 Pass trên fixture local. Chưa có bản SCRUM-83 của Linh trong Git; Jira chưa xác minh được vì kết nối Atlassian MCP chưa được thiết lập trong phiên này. Chưa ký duyệt SCRUM-80.
 
 ## 2. Nội dung cho SCRUM-83 — [Linh] Chấm nhóm Checkout và luồng bổ sung
 
@@ -49,7 +49,7 @@ Nếu SCRUM-83 đã tồn tại, **cập nhật mô tả issue đó**, không t�
 
 ## 3. Subtask Linh cần bổ sung dưới SCRUM-80
 
-Chỉ tạo subtask sau khi kiểm tra Jira chưa có issue tương đương. SCRUM-83 là subtask của SCRUM-80 nên subtask này là **issue cùng cấp dưới SCRUM-80**, không lồng dưới SCRUM-83.
+Chỉ tạo subtask sau khi kiểm tra Jira chưa có issue tương đương. Nếu SCRUM-83 là subtask của SCRUM-80, issue bổ sung này phải **cùng cấp dưới SCRUM-80**, không lồng dưới SCRUM-83.
 
 **Summary:** `[Linh] N01 — Đối chiếu bằng chứng và trạng thái 11 rủi ro Checkout/luồng mới`
 

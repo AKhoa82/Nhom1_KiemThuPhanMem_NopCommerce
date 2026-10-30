@@ -36,7 +36,7 @@ Quy ước trạng thái: `Pass` cần bằng chứng thực thi đúng expected
 | Liên kết | Tất cả đường dẫn **nội bộ repository** trong bảng 26 dòng đều trỏ tới tệp tồn tại ở nhánh đang review. | Link đến test file chỉ xác nhận có mã test, không thay thế report của từng lượt chạy. Gắn commit/run ID và bằng chứng thực thi có thể truy cập khi chốt kết quả. |
 | Cart của Trang | Tài liệu SCRUM-82 ghi `15 passed`, `0 failed`, `0 skipped`, SQL read-only và link test `cart-risk.spec.ts`. | Tại thời điểm review ban đầu, Khoa chưa chạy lại suite. Lượt chạy lại và report local được ghi ở mục 5; cần gắn report/run ID khi ký duyệt cuối. |
 | Checkout/Payment | Review của Linh có ảnh cho `CHK-01`, `ADDR-01`, `ADDR-02`, `PAY-LOCAL-01`; `SHP-01` là `Partial`, `PAY-FAIL-01` thiếu fake processor. | Giữ `CHK-01` là Pass có điều kiện vì finding currency; `SHP-01` chưa Pass đầy đủ; `SHP-02` cần request invalid trực tiếp; `PAY-FAIL-01` giữ Blocked với blocker cụ thể. |
-| Luồng mới | Bảng hiện ghi `CART-MERGE-01` và `CHK-RACE-01` là Blocked vì chưa có test mới. Hai lỗi tương ứng đã từng được tái hiện trong lượt bổ sung trước đây, nhưng chưa có bằng chứng của **toàn bộ case mới** trên baseline hiện tại. | Ghi rõ “historical repro; current-cycle Not Run” nếu chưa thực sự bị chặn, hoặc nêu fixture/harness cụ thể đang thiếu để giữ Blocked. Liên kết ảnh/SQL lịch sử và không tính chúng vào 15 case Cart của Trang hay 14 PW cũ. |
+| Luồng mới | `CART-MERGE-01` và `CHK-RACE-01` từng bị ghi Blocked vì chưa có test mới. Hai lỗi tương ứng đã được mô tả ở lượt bổ sung trước đây, nhưng tệp ảnh/report không có trên nhánh này và chưa có bằng chứng của **toàn bộ case mới** trên baseline hiện tại. | Ma trận đã sửa thành current-cycle `Not Run`. Gắn lại ảnh/SQL lịch sử khi có thể truy cập và không tính chúng vào 15 case Cart của Trang hay 14 PW cũ. |
 | Phân công | Bảng hợp nhất hiện ghi Khoa là Owner của cả 11 dòng còn lại, trong khi SCRUM-83 giao Linh chấm nhóm còn lại. | Linh đối chiếu/đề xuất điểm và bằng chứng; cập nhật Owner hoặc thêm cột Reviewer để phân biệt người chấm với người duyệt. Khoa chỉ ký sau khi đọc bản của Linh. |
 
 ## 4. Risk coverage và quyết định review
@@ -71,7 +71,7 @@ Lần chạy `PW-001` đầu tiên thất bại ở `#billing-form` vì store đ
 | `npm run test:cart-risk` | **15/15 Passed**, 0 Failed, 0 Skipped | `qa/automation/reports/cart-risk-summary.md` |
 | `playwright test tests/pairwise.spec.ts` | **14/14 Passed**, 0 Failed, 0 Skipped | `qa/automation/reports/pairwise-summary.md`; JSON/JUnit/HTML cùng thư mục `reports/` |
 
-Truy vấn SQL read-only sau lượt chạy xác nhận vẫn có 3 sản phẩm PW, 4 biến thể, 1 coupon, 1 tài khoản QA và cấu hình one-page = `False`. Kết quả chạy lại chứng thực bộ Cart và Pairwise trên fixture này; **không** chứng thực riêng `CART-MERGE-01`, `CHK-RACE-01`, `SHP-02` hoặc `PAY-FAIL-01`. Hai lỗi mới và các ca còn Blocked/Partial vẫn phải báo riêng theo ma trận 26 rủi ro.
+Truy vấn SQL read-only sau lượt chạy xác nhận vẫn có 3 sản phẩm PW, 4 biến thể, 1 coupon, 1 tài khoản QA và cấu hình one-page = `False`. Kết quả chạy lại chứng thực bộ Cart và Pairwise trên fixture này; **không** chứng thực riêng `CART-MERGE-01`, `CHK-RACE-01`, `SHP-02` hoặc `PAY-FAIL-01`. Hai lỗi mới và các ca còn Not Run/Blocked/Partial vẫn phải báo riêng theo ma trận 26 rủi ro.
 
 ## 6. Review phần Linh hiện có và khoảng trống SCRUM-83
 
@@ -82,9 +82,9 @@ Ngày 30/10/2026, repository chỉ có [`linh-order-payment-review-summary.md`](
 | `CHK-01`, `ADDR-01`, `ADDR-02`, `PAY-LOCAL-01` | Tài liệu Linh có ảnh và diễn giải luồng checkout local, địa chỉ hợp lệ/thiếu FirstName, Order/Payment Pending. | Có căn cứ lịch sử cho các trạng thái đã ghi; `CHK-01` còn finding khác ký hiệu tiền tệ, không được nâng thành Pass không điều kiện. |
 | `CHK-02` | Tài liệu Linh cũ ghi Not run. Bộ Pairwise ngày 30/10 có các ca guest checkout Pass. | Có bằng chứng mới từ bộ Pairwise, phải dẫn đúng report/run mới thay vì gán thành kết quả Linh đã chạy ngày 05–06/10. |
 | `SHP-01` | Linh chỉ xác nhận Ground trên Confirm; chưa chứng minh lựa chọn được giữ và lưu đủ theo expected riêng. | Giữ Partial. |
-| `SHP-02` | Chưa có request shipping rỗng/sai/không khả dụng được gửi. | Đổi `Blocked` thành `Not Run` nếu không chỉ ra được blocker môi trường/dữ liệu cụ thể; lên lịch chạy ca âm tính. |
+| `SHP-02` | Chưa có request shipping rỗng/sai/không khả dụng được gửi. | Ma trận đã sửa thành `Not Run`; lên lịch chạy ca âm tính. |
 | `PAY-FAIL-01` | Check / Money Order không tạo nhánh decline; chưa có fake processor local. | `Blocked` có căn cứ; ghi owner và kế hoạch tạo processor hoặc quyết định accepted risk. |
 | `INV-01` | Tài liệu Linh cũ ghi Not run; lượt giao diện bổ sung sau đó ghi nhận Pass khi tồn kho giảm trước Confirm. | Dẫn đúng bằng chứng lượt bổ sung; không ghi là Linh đã chạy trong review cũ. |
-| `CART-MERGE-01`, `CHK-RACE-01` | Có hai lỗi tái hiện trong lượt bổ sung lịch sử; chưa có full case mới và bằng chứng của vòng Sprint 2. | Ghi `Not Run` ở vòng này nếu chỉ thiếu thực thi; chỉ dùng `Blocked` khi nêu rõ blocker thực tế. Không ghi hai lỗi là Pass. |
+| `CART-MERGE-01`, `CHK-RACE-01` | Có hai lỗi được mô tả trong lượt bổ sung lịch sử; tệp ảnh/report không có trên nhánh này; chưa có full case mới và bằng chứng của vòng Sprint 2. | Ma trận đã sửa thành `Not Run`; chỉ dùng `Blocked` khi nêu rõ blocker thực tế. Không ghi hai lỗi là Pass. |
 
 Ma trận hiện gán Khoa làm Owner của cả 11 dòng, dù SCRUM-83 giao Linh chấm nhóm này. Cần phân biệt người chấm/người phụ trách kiểm thử với người duyệt, hoặc sửa Owner theo phân công Jira. Phần Linh ở Sprint 2 phải có 11 dòng I/L, score, mức, lý do riêng cho từng dòng, ưu tiên, trạng thái và link case/evidence; đồng thời giải thích các dòng High chưa chạy. Sau khi bản này xuất hiện, Khoa đối chiếu từng dòng rồi mới ký SCRUM-81. Kết quả `15/15` Cart và `14/14` Pairwise không thay thế bước review đó.

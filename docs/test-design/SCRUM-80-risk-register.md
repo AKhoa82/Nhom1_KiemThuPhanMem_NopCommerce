@@ -20,8 +20,9 @@ Baseline, quy tắc chấm và các điểm cần đối chiếu trước khi k�
   concurrency được theo dõi riêng; `253/253` pair coverage không phải risk
   coverage và không được dùng để kết luận một scenario đã Pass.
 - `Pass` chỉ được ghi khi có execution evidence trực tiếp. `Partial` không được
-  xem là Pass. Mọi dòng High chưa chạy phải ghi `Blocked` hoặc `Accepted risk`
-  kèm lý do.
+  xem là Pass. Dòng High chưa chạy được ghi `Not Run`; chỉ ghi `Blocked` khi có
+  điều kiện tiên quyết cụ thể bị chặn. Trước khi đóng SCRUM-80, các dòng High
+  này cần được chạy hoặc có quyết định `Accepted risk` kèm owner và lý do.
 
 ## 2. Ma trận 26 dòng
 
@@ -48,18 +49,20 @@ Baseline, quy tắc chấm và các điểm cần đối chiếu trước khi k�
 | `ADDR-02` | 3 | 2 | 6 / High | Chấp nhận thiếu required field có thể tạo order không giao được và dữ liệu khách hàng không hợp lệ | Negative + historical regression / P1 | Pass — [scenario](cart-checkout-scenarios.md#addr-02---từ-chối-address-thiếu-trường-bắt-buộc), [test PW-001/PW-011/PW-012](../../qa/automation/tests/pairwise.spec.ts), [evidence ảnh 08–09](../linh-order-payment-review-summary.md#2-kết-quả-đọc-từ-evidence) | Khoa |
 | `PAY-LOCAL-01` | 3 | 2 | 6 / High | Chọn/lưu sai payment method có thể tạo sai trạng thái thanh toán hoặc thu sai cách | Pairwise / P1 | Pass trong luồng local tối giản — [scenario](cart-checkout-scenarios.md#pay-local-01---chọn-payment-method-local), [evidence](../linh-order-payment-review-summary.md#5-ma-trận-scenario-sau-khi-bổ-sung-evidence) | Khoa |
 | `SHP-01` | 2 | 2 | 4 / Medium | Chọn sai shipping option làm sai phí hoặc giao hàng, nhưng evidence hiện mới xác nhận Ground ở Confirm | Pairwise / P2 | Partial — [scenario](cart-checkout-scenarios.md#shp-01---chọn-phương-thức-giao-hàng-local-hợp-lệ), [evidence và gap](../linh-order-payment-review-summary.md#6-findings-sau-dynamic-review) | Khoa |
-| `SHP-02` | 3 | 2 | 6 / High | Server chấp nhận option rỗng/giả mạo có thể làm sai phí và tạo order không giao được | Negative / P1 | Blocked — chưa có execution trực tiếp cho request shipping rỗng/sai/không còn khả dụng; [scenario](cart-checkout-scenarios.md#shp-02---shipping-method-rỗng-sai-định-dạng-hoặc-không-còn-khả-dụng) | Khoa |
+| `SHP-02` | 3 | 2 | 6 / High | Server chấp nhận option rỗng/giả mạo có thể làm sai phí và tạo order không giao được | Negative / P1 | Not Run trong Sprint 2 — chưa gửi request shipping rỗng/sai/không còn khả dụng; cần ca âm tính và order delta; [scenario](cart-checkout-scenarios.md#shp-02---shipping-method-rỗng-sai-định-dạng-hoặc-không-còn-khả-dụng) | Khoa |
 | `PAY-FAIL-01` | 3 | 2 | 6 / High | Xử lý decline sai có thể tạo order Paid/Complete giả hoặc làm mất cart khi khách retry | Negative + sequence / P1 | Blocked — chưa có fake payment processor local; [scenario và điều kiện gỡ blocker](cart-checkout-scenarios.md#pay-fail-01---payment-processor-local-từ-chối-giao-dịch), [review evidence](../linh-order-payment-review-summary.md#5-ma-trận-scenario-sau-khi-bổ-sung-evidence) | Khoa |
 | `INV-01` | 3 | 3 | 9 / High | Nếu revalidation tồn kho hỏng, hậu quả là oversell dù lượt bổ sung đã Pass | Boundary + state change / P1 | Pass ở lượt bổ sung theo SCRUM-80; vẫn giữ High theo hậu quả — [scenario](cart-checkout-scenarios.md#inv-01---tồn-kho-giảm-xuống-không-đủ-trước-khi-xác-nhận-order), [Jira evidence](https://anhkhoa080205.atlassian.net/browse/SCRUM-80) | Khoa |
-| `CART-MERGE-01` | 3 | 2 | 6 / High | Merge guest cart vào account có thể mất item, nhân đôi quantity, gộp nhầm variant hoặc rò cart giữa customer | Sequence + identity transition / P1 | Blocked — chưa có test/evidence trực tiếp; [scenario bổ sung](#cart-merge-01---merge-guest-cart-sau-khi-đăng-nhập), theo dõi tại [SCRUM-80](https://anhkhoa080205.atlassian.net/browse/SCRUM-80) | Khoa |
-| `CHK-RACE-01` | 3 | 2 | 6 / High | Hai request Confirm đồng thời có thể tạo hai order, trừ stock hai lần hoặc xử lý payment hai lần | Concurrency / P1 | Blocked — cần harness phát hai request đồng thời và SQL evidence order/stock; [scenario bổ sung](#chk-race-01---hai-request-confirm-order-đồng-thời), theo dõi tại [SCRUM-80](https://anhkhoa080205.atlassian.net/browse/SCRUM-80) | Khoa |
+| `CART-MERGE-01` | 3 | 2 | 6 / High | Merge guest cart vào account có thể mất item, nhân đôi quantity, gộp nhầm variant hoặc rò cart giữa customer | Sequence + identity transition / P1 | Not Run đầy đủ trong Sprint 2 — lỗi đã được mô tả trong báo cáo trước nhưng tệp ảnh/report không có ở nhánh này; cần chạy lại full case trên baseline mới; [scenario bổ sung](#cart-merge-01---merge-guest-cart-sau-khi-đăng-nhập) | Khoa |
+| `CHK-RACE-01` | 3 | 2 | 6 / High | Hai request Confirm đồng thời có thể tạo hai order, trừ stock hai lần hoặc xử lý payment hai lần | Concurrency / P1 | Not Run đầy đủ trong Sprint 2 — lỗi đã được mô tả trong báo cáo trước nhưng tệp ảnh/report không có ở nhánh này; cần hai response và SQL snapshot cho full case; [scenario bổ sung](#chk-race-01---hai-request-confirm-order-đồng-thời) | Khoa |
 
 ## 3. Phần nghiệm thu của Khoa — 11 dòng
 
-Phần của Khoa là 9 dòng từ `CHK-01` đến `INV-01`, cộng
+Phần còn lại là 9 dòng từ `CHK-01` đến `INV-01`, cộng
 `CART-MERGE-01` và `CHK-RACE-01`. Cả 11 dòng đã có I/L, score/mức, lý do,
-ưu tiên, trạng thái, link và owner trong ma trận trên. Các dòng High chưa Pass
-đã ghi rõ `Blocked`; không suy diễn Pass từ pair coverage.
+ưu tiên, trạng thái, link và owner trong ma trận trên. Linh được giao chấm nhóm
+đó trong SCRUM-83; Khoa review baseline và bằng chứng. Các dòng High chưa chạy
+được ghi đúng `Not Run` hoặc `Blocked` theo điều kiện thực tế; đây là khoảng
+trống nghiệm thu SCRUM-80, không được suy diễn Pass từ pair coverage.
 
 ### CART-MERGE-01 — Merge guest cart sau khi đăng nhập
 
@@ -104,6 +107,7 @@ một trong hai bug lịch sử nói trên.
 | Trần Thị Phương Trang | Đối chiếu Cart, tồn kho, merge cart và mức Impact | Chờ review nhóm |
 | Đỗ Đặng Diệu Linh | Đối chiếu Pairwise K06, evidence Order/Payment và hai bug lịch sử | Chờ review nhóm |
 
-Chỉ đóng SCRUM-80 khi đủ chữ ký/review của ba người; mọi dòng High đã Pass hoặc
-còn `Blocked`/`Accepted risk` có owner và kế hoạch xử lý; link evidence truy cập
-được; và báo cáo không dùng `253/253` pair coverage thay cho risk coverage.
+Chỉ đóng SCRUM-80 khi đủ chữ ký/review của ba người; mọi dòng High đã có kết quả
+thực thi hoặc quyết định `Accepted risk` có owner và lý do. Dòng `Blocked` cần
+blocker và kế hoạch gỡ; dòng `Not Run` vẫn là việc còn mở. Link evidence phải
+truy cập được; báo cáo không dùng `253/253` pair coverage thay cho risk coverage.
