@@ -55,12 +55,14 @@ Baseline, quy tắc chấm và các điểm cần đối chiếu trước khi k�
 | `CART-MERGE-01` | 3 | 2 | 6 / High | Merge guest cart vào account có thể mất item, nhân đôi quantity, gộp nhầm variant hoặc rò cart giữa customer | Sequence + identity transition / P1 | Not Run đầy đủ trong Sprint 2 — lỗi đã được mô tả trong báo cáo trước nhưng tệp ảnh/report không có ở nhánh này; cần chạy lại full case trên baseline mới; [scenario bổ sung](#cart-merge-01---merge-guest-cart-sau-khi-đăng-nhập) | Khoa |
 | `CHK-RACE-01` | 3 | 2 | 6 / High | Hai request Confirm đồng thời có thể tạo hai order, trừ stock hai lần hoặc xử lý payment hai lần | Concurrency / P1 | Not Run đầy đủ trong Sprint 2 — lỗi đã được mô tả trong báo cáo trước nhưng tệp ảnh/report không có ở nhánh này; cần hai response và SQL snapshot cho full case; [scenario bổ sung](#chk-race-01---hai-request-confirm-order-đồng-thời) | Khoa |
 
-## 3. Phần nghiệm thu của Khoa — 11 dòng
+## 3. Nhóm 11 rủi ro Checkout và luồng bổ sung
 
 Phần còn lại là 9 dòng từ `CHK-01` đến `INV-01`, cộng
 `CART-MERGE-01` và `CHK-RACE-01`. Cả 11 dòng đã có I/L, score/mức, lý do,
 ưu tiên, trạng thái, link và owner trong ma trận trên. Linh được giao chấm nhóm
-đó trong SCRUM-83; Khoa review baseline và bằng chứng. Các dòng High chưa chạy
+đó trong SCRUM-83; cột Owner hiện ghi Khoa là người theo dõi thực thi, còn Khoa
+review baseline và bằng chứng. Cần xác nhận lại vai trò này trên Jira khi có
+quyền truy cập. Các dòng High chưa chạy
 được ghi đúng `Not Run` hoặc `Blocked` theo điều kiện thực tế; đây là khoảng
 trống nghiệm thu SCRUM-80, không được suy diễn Pass từ pair coverage.
 
@@ -106,6 +108,11 @@ một trong hai bug lịch sử nói trên.
 | Lê Anh Khoa | Chấm và bảo vệ lý do 11 dòng Checkout/luồng bổ sung; bổ sung evidence cho dòng mình sở hữu | Chờ review nhóm |
 | Trần Thị Phương Trang | Đối chiếu Cart, tồn kho, merge cart và mức Impact | Chờ review nhóm |
 | Đỗ Đặng Diệu Linh | Đối chiếu Pairwise K06, evidence Order/Payment và hai bug lịch sử | Chờ review nhóm |
+
+Jira đã giao việc rà soát bằng chứng và trạng thái 11 dòng cho Linh tại
+[SCRUM-112](https://anhkhoa080205.atlassian.net/browse/SCRUM-112), bổ sung cho
+phần chấm đã ghi tại [SCRUM-83](https://anhkhoa080205.atlassian.net/browse/SCRUM-83).
+Trạng thái Done của SCRUM-83 không thay thế bước đối chiếu evidence còn mở.
 
 Chỉ đóng SCRUM-80 khi đủ chữ ký/review của ba người; mọi dòng High đã có kết quả
 thực thi hoặc quyết định `Accepted risk` có owner và lý do. Dòng `Blocked` cần

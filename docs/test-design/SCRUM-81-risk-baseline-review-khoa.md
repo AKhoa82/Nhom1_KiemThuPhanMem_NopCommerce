@@ -43,6 +43,8 @@ Quy ước trạng thái: `Pass` cần bằng chứng thực thi đúng expected
 
 Risk coverage phải báo theo **26 scenario**. Tối thiểu cần ba số riêng: số scenario có bằng chứng thực thi đủ để kết luận Pass/Fail, số scenario Partial, và số scenario Blocked/Not Run/Accepted risk. Với nhóm High, lập danh sách riêng từng ID cùng người phụ trách và kế hoạch gỡ blocker/retest. Không cộng `253/253` vào tử số hoặc mẫu số của chỉ số này.
 
+Theo trạng thái đang ghi trong ma trận 26 dòng ở nhánh này: **20 Pass không điều kiện, 1 Pass có điều kiện (`CHK-01`), 1 Partial (`SHP-01`), 3 Not Run (`SHP-02`, `CART-MERGE-01`, `CHK-RACE-01`) và 1 Blocked (`PAY-FAIL-01`)**. Đây là phép đếm trạng thái tài liệu, chưa thay thế bước đối chiếu report và ký duyệt của Linh/Khoa. Ba ca High đang Not Run vẫn là việc mở trước khi đóng SCRUM-80; `PAY-FAIL-01` cần bộ xử lý thanh toán giả lập hoặc quyết định chấp nhận rủi ro có owner.
+
 **Kết luận SCRUM-81:** chốt được mẫu số 26, baseline tài liệu, chế độ checkout cần dùng khi so sánh, và quy tắc chấm I/L. Bảng 26 dòng qua kiểm tra cấu trúc và phép tính. Bộ Cart của Trang đã chạy lại 15/15 Pass theo mục 5. **Chưa ký duyệt đóng SCRUM-80** cho đến khi đối chiếu bản chấm của Linh và giải quyết các khoảng trống evidence/trạng thái nêu trên. Kết quả chạy lại không phải tuyên bố đã chạy đủ 26 scenario.
 
 ## 5. Lượt chạy kiểm chứng phục vụ SCRUM-81 ngày 30/10/2026
@@ -88,3 +90,9 @@ Ngày 30/10/2026, repository chỉ có [`linh-order-payment-review-summary.md`](
 | `CART-MERGE-01`, `CHK-RACE-01` | Có hai lỗi được mô tả trong lượt bổ sung lịch sử; tệp ảnh/report không có trên nhánh này; chưa có full case mới và bằng chứng của vòng Sprint 2. | Ma trận đã sửa thành `Not Run`; chỉ dùng `Blocked` khi nêu rõ blocker thực tế. Không ghi hai lỗi là Pass. |
 
 Ma trận hiện gán Khoa làm Owner của cả 11 dòng, dù SCRUM-83 giao Linh chấm nhóm này. Cần phân biệt người chấm/người phụ trách kiểm thử với người duyệt, hoặc sửa Owner theo phân công Jira. Phần Linh ở Sprint 2 phải có 11 dòng I/L, score, mức, lý do riêng cho từng dòng, ưu tiên, trạng thái và link case/evidence; đồng thời giải thích các dòng High chưa chạy. Sau khi bản này xuất hiện, Khoa đối chiếu từng dòng rồi mới ký SCRUM-81. Kết quả `15/15` Cart và `14/14` Pairwise không thay thế bước review đó.
+
+## 7. Đối chiếu Jira sau khi kết nối Atlassian MCP
+
+Ngày 30/10/2026, Jira xác nhận [SCRUM-80](https://anhkhoa080205.atlassian.net/browse/SCRUM-80) đang In Progress và có bốn subtask: [SCRUM-81](https://anhkhoa080205.atlassian.net/browse/SCRUM-81) của Khoa (To Do), SCRUM-82 của Trang (Done), [SCRUM-83](https://anhkhoa080205.atlassian.net/browse/SCRUM-83) của Linh (Done) và [SCRUM-112](https://anhkhoa080205.atlassian.net/browse/SCRUM-112) của Linh (To Do). SCRUM-81 đã được bổ sung mô tả, tiêu chí nghiệm thu và link tài liệu. SCRUM-112 là việc rà soát evidence/trạng thái của 11 rủi ro, không lặp phần chấm của SCRUM-83.
+
+Mô tả SCRUM-83 hiện ghi các ca `SHP-02`, `CART-MERGE-01`, `CHK-RACE-01` là Blocked vì chưa chạy hoặc thiếu bằng chứng. Ma trận ở nhánh này ghi `Not Run` cho ba ca đó; cần Linh đối chiếu và cập nhật kết luận Jira theo kết quả thực thi thật. Trạng thái Done của SCRUM-83 không tự thay thế bảng 11 dòng kèm evidence truy cập được. SCRUM-112 đã được gán cho Linh để đóng khoảng trống này; Khoa chưa ký duyệt SCRUM-80.
