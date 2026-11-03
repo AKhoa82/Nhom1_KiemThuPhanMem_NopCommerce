@@ -38,10 +38,87 @@ WHERE ga.KeyGroup = 'Customer'
   AND ga.Value LIKE '%PW-CART-10PCT%';
 `;
 
-  return executeSql(sql);
+  return executeReadonlySql(sql);
 }
 
-function executeSql(sql: string): Promise<string> {
+/**
+ * Read-only checkout snapshot keyed by the synthetic checkout email.
+ * The output deliberately excludes the email itself and any address text so
+ * that the attachment contains only identifiers, counts and test state.
+ */
+export async function queryCheckoutEvidence(customerEmail: string): Promise<string> {
+  if (!runtimeConfig.sqlPassword) {
+    throw new Error('FIXTURE_BLOCKED: QA_SQL_PASSWORD is required for checkout SQL evidence.');
+  }
+
+  const escapedEmail = customerEmail.replaceAll("'", "''");
+  const sql = `
+SET NOCOUNT ON;
+DECLARE @Email nvarchar(255) = N'${escapedEmail}';
+DECLARE @CustomerId int = (
+  SELECT TOP 1 Id FROM Customer WHERE Email = @Email AND Deleted = 0 ORDER BY Id DESC
+);
+
+SELECT CONCAT('CUSTOMER_ID|', COALESCE(CONVERT(varchar(32), @CustomerId), '-'));
+
+SELECT CONCAT('ORDER_COUNT|', COUNT_BIG(1))
+FROM [Order] o
+LEFT JOIN Address ba ON ba.Id = o.BillingAddressId
+WHERE o.Deleted = 0
+  AND (@CustomerId IS NOT NULL AND o.CustomerId = @CustomerId
+       OR ba.Email = @Email);
+
+SELECT CONCAT(
+  'ORDER|', o.Id, '|', o.OrderStatusId, '|', o.PaymentStatusId, '|',
+  COALESCE(o.PaymentMethodSystemName, '-'), '|',
+  CONVERT(varchar(64), o.OrderTotal)
+)
+FROM [Order] o
+LEFT JOIN Address ba ON ba.Id = o.BillingAddressId
+WHERE o.Deleted = 0
+  AND (@CustomerId IS NOT NULL AND o.CustomerId = @CustomerId
+       OR ba.Email = @Email)
+ORDER BY o.Id;
+
+SELECT CONCAT('CART_COUNT|', COUNT_BIG(1))
+FROM ShoppingCartItem sci
+WHERE sci.ShoppingCartTypeId = 1
+  AND @CustomerId IS NOT NULL
+  AND sci.CustomerId = @CustomerId;
+
+SELECT CONCAT('CART|', p.Sku, '|', sci.Quantity, '|',
+              REPLACE(REPLACE(COALESCE(sci.AttributesXml, ''), CHAR(13), ' '), CHAR(10), ' '))
+FROM ShoppingCartItem sci
+INNER JOIN Product p ON p.Id = sci.ProductId
+WHERE sci.ShoppingCartTypeId = 1
+  AND @CustomerId IS NOT NULL
+  AND sci.CustomerId = @CustomerId
+ORDER BY sci.Id;
+
+SELECT CONCAT('PRODUCT|', p.Sku, '|', p.StockQuantity)
+FROM Product p
+WHERE p.Sku IN ('PW-SIMPLE-001', 'PW-SHIRT', 'PW-OOS-001') AND p.Deleted = 0;
+
+SELECT CONCAT('VARIANT|', p.Sku, '|', pac.StockQuantity, '|',
+              REPLACE(REPLACE(COALESCE(pac.AttributesXml, ''), CHAR(13), ' '), CHAR(10), ' '))
+FROM ProductAttributeCombination pac
+INNER JOIN Product p ON p.Id = pac.ProductId
+WHERE p.Sku = 'PW-SHIRT'
+ORDER BY pac.Id;
+
+SELECT CONCAT('ATTR|', ga.[Key], '|',
+              REPLACE(REPLACE(COALESCE(ga.Value, ''), CHAR(13), ' '), CHAR(10), ' '))
+FROM GenericAttribute ga
+WHERE ga.KeyGroup = 'Customer'
+  AND @CustomerId IS NOT NULL
+  AND ga.EntityId = @CustomerId
+  AND ga.[Key] IN ('SelectedShippingOption', 'SelectedPaymentMethod', 'CheckoutAttributes');
+`;
+
+  return executeReadonlySql(sql);
+}
+
+export function executeReadonlySql(sql: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const child = spawn('docker.exe', [
       'exec', '-i', runtimeConfig.databaseContainer,

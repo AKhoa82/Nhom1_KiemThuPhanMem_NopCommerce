@@ -12,6 +12,7 @@ export default defineConfig({
     ['html', { outputFolder: './reports/html', open: 'never' }],
     ['junit', { outputFile: './reports/junit.xml' }],
     ['json', { outputFile: './reports/results.json' }],
+    ['./reporters/run-manifest-reporter.ts'],
     ['./reporters/pairwise-summary-reporter.ts'],
     ['./reporters/cart-risk-summary-reporter.ts'],
   ],

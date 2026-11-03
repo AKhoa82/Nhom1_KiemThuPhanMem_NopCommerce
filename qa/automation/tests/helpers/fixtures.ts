@@ -4,12 +4,13 @@ import { resolve } from 'node:path';
 import type { Page } from '@playwright/test';
 import type { PairwiseCase } from './pairwise-data';
 import { runtimeConfig } from './runtime-config';
+import { queryCheckoutEvidence } from './sql-fixture';
 
 const execFile = promisify(execFileCallback);
 const resetScript = resolve(__dirname, '../../scripts/reset-fixture.ps1');
 
 export interface FixtureBaseline {
-  orderCountBefore?: number;
+  checkoutEvidenceBefore?: string;
 }
 
 export class FixtureBlockedError extends Error {}
@@ -39,7 +40,17 @@ export async function resetFixture(page: Page, row: PairwiseCase): Promise<Fixtu
 
   await openCartWhenStoreReady(page);
   await verifyRuntimeFixture(page, row);
-  return {};
+
+  if (row.address !== 'Complete') return {};
+
+  const customerEmail = row.customerType === 'Registered'
+    ? runtimeConfig.registeredEmail
+    : runtimeConfig.billing.email;
+  if (!customerEmail) {
+    throw new FixtureBlockedError(`FIXTURE_BLOCKED: checkout evidence requires a synthetic email for ${row.caseId}.`);
+  }
+
+  return { checkoutEvidenceBefore: await queryCheckoutEvidence(customerEmail) };
 }
 
 async function openCartWhenStoreReady(page: Page): Promise<void> {

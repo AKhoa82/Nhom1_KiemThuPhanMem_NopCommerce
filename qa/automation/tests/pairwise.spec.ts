@@ -1,9 +1,10 @@
 import { test, type Page } from '@playwright/test';
-import { assertAddressValidationBlocked, assertCartEmpty, assertCartLine, assertCartLineCount, assertCheckoutCompleted, assertCouponResult, assertStockBlocked } from './helpers/assertions';
+import { assertAddressValidationBlocked, assertCartEmpty, assertCartLine, assertCartLineCount, assertCheckoutCompleted, assertCheckoutOrderEvidence, assertCouponResult, assertStockBlocked } from './helpers/assertions';
 import { addOutOfStockProduct, addSimpleProduct, addVariantProduct, applyCouponCode, beginCheckout, completeLocalCheckout, invalidCoupon, loginRegisteredCustomer, removeCartLine, submitMissingRequiredBillingAddress, updateCartLine, validCoupon } from './helpers/cart-checkout';
 import { FixtureBlockedError, resetFixture } from './helpers/fixtures';
 import { loadPairwiseCases, type PairwiseCase } from './helpers/pairwise-data';
 import { blockedReason } from './helpers/runtime-config';
+import { queryCheckoutEvidence } from './helpers/sql-fixture';
 
 const pairwiseCases = loadPairwiseCases();
 const simple = 'PW-Simple-Stock';
@@ -135,7 +136,24 @@ for (const row of pairwiseCases) {
       testInfo.annotations.push({ type: 'scenario', description: row.scenarioId });
       testInfo.annotations.push({ type: 'expected-path', description: row.expectedPath });
       try {
-        await resetFixture(page, row);
+        const baseline = await resetFixture(page, row);
+        if (baseline.checkoutEvidenceBefore) {
+          await testInfo.attach('checkout-before.sql.txt', {
+            body: baseline.checkoutEvidenceBefore,
+            contentType: 'text/plain',
+          });
+        }
+        await runCase(page, row);
+
+        if (baseline.checkoutEvidenceBefore && row.address === 'Complete') {
+          const customerEmail = row.customerType === 'Registered'
+            ? process.env.QA_REGISTERED_EMAIL?.trim()
+            : process.env.QA_BILLING_EMAIL?.trim();
+          if (!customerEmail) throw new Error(`Checkout evidence email is missing for ${row.caseId}.`);
+          const after = await queryCheckoutEvidence(customerEmail);
+          await testInfo.attach('checkout-after.sql.txt', { body: after, contentType: 'text/plain' });
+          await assertCheckoutOrderEvidence(baseline.checkoutEvidenceBefore, after);
+        }
       } catch (error) {
         if (error instanceof FixtureBlockedError) {
           test.skip(true, error.message);
@@ -143,7 +161,6 @@ for (const row of pairwiseCases) {
         }
         throw error;
       }
-      await runCase(page, row);
     });
   });
 }
