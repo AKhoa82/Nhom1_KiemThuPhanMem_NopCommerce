@@ -96,3 +96,4 @@ Pairwise execution: 14/14 passed, 0 failed, 0 skipped (+ 1 HARNESS-001 passed)
 
 Đề nghị Khoa đối chiếu từng link scenario, test, manifest và ký duyệt SCRUM-81.
 ```
+
