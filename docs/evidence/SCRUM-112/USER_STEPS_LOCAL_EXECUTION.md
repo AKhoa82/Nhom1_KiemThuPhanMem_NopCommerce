@@ -165,8 +165,8 @@ Sau khi chạy xong, gửi cho reviewer:
 2. `11-risk-status-tracker.md` đã điền đủ 11 dòng.
 3. Report/ảnh/SQL đã làm sạch.
 4. Commit SHA và lệnh chạy.
-5. Comment bàn giao theo mẫu trong kế hoạch tại
-   `docs/KE_HOACH_HOAN_THIEN_NHIEM_VU.md`.
+5. Comment bàn giao theo mẫu trong báo cáo tại
+   `docs/evidence/SCRUM-112/SCRUM-112-KET-QUA-BAN-GIAO.md`.
 
 Khoa chỉ ký SCRUM-81 sau khi reviewer mở được tất cả link và xác nhận tổng
 trạng thái theo mẫu số 26.
