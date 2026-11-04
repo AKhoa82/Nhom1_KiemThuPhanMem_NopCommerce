@@ -127,10 +127,11 @@ Sau khi hoàn tất nghiệm thu case `PAY-FAIL-01`:
 Sau khi hoàn tất chụp ảnh và chạy test, bạn copy đoạn nội dung dưới đây để đăng comment bàn giao trên issue Jira **SCRUM-81**:
 
 ```markdown
-Đã hoàn thành rà soát evidence và trạng thái 11 rủi ro Checkout và luồng bổ sung phục vụ SCRUM-81 tại commit 1edaf26874f0b43bb1e74132c3ad4d461c24c942.
+Đã hoàn thành rà soát evidence và trạng thái 11 rủi ro Checkout và luồng bổ sung phục vụ SCRUM-81:
 
+- Báo cáo bàn giao SCRUM-112: docs/evidence/SCRUM-112/SCRUM-112-KET-QUA-BAN-GIAO.md
+- Bảng đối chiếu 11 rủi ro: docs/evidence/SCRUM-112/11-risk-status-tracker.md
 - Risk register cập nhật: docs/test-design/SCRUM-80-risk-register.md
-- Bảng theo dõi 11 rủi ro: docs/evidence/SCRUM-112/11-risk-status-tracker.md
 - Run manifests: docs/evidence/SCRUM-112/RUN-*.md (đủ 11 manifest cho từng scenario)
 - Bằng chứng hình ảnh UI:
   + image/evidence/scrum-112/ADDR-02-keep-fields.png (giữ field khi validation lỗi theo nopCommerce #7203)
@@ -146,11 +147,15 @@ Sau khi hoàn tất chụp ảnh và chạy test, bạn copy đoạn nội dung 
   + Chưa xác minh cục bộ: 1 (INV-01)
   + Fail: 0
 - Pairwise model coverage: 253/253 feasible pairs (Pairwise execution: 14/14 passed)
-- Các vấn đề còn mở cần lưu ý:
-  + CHK-01: Finding D-01 ký hiệu currency storefront (100 đ) vs Admin ($100.00).
-  + CHK-RACE-01: Đã có concurrency barrier harness trong checkout-risk.spec.ts.
+- Các vấn đề High risk còn mở:
+  + CHK-01: Finding D-01 format currency; đề xuất Accepted Risk (Khoa, 07/11).
+  + PAY-FAIL-01: Blocked do thiếu fake payment processor trong CI (Khoa, 06/11).
+  + SHP-02: Not Run trong Sprint 2; kế hoạch chạy 3 dataset (Khoa, 04/11).
+  + INV-01: Chưa xác minh cục bộ trong Sprint 2; ghi nhận đúng lượt bổ sung Jira (Trang + Khoa, 07/11).
+  + CART-MERGE-01: Not Run trong Sprint 2; kế hoạch chạy merge cart (Trang + Khoa, 05/11).
+  + CHK-RACE-01: Not Run trong Sprint 2; kế hoạch chạy barrier concurrency (Khoa, 06/11).
 
-Đề nghị Khoa đối chiếu từng link manifest, rà soát finding D-01 và ký duyệt SCRUM-81.
+Đề nghị Khoa đối chiếu từng link scenario, test, manifest và ký duyệt SCRUM-81.
 ```
 
 ---
