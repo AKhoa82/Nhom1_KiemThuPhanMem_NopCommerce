@@ -32,8 +32,16 @@ npm run test:list
 npm run test:case -- 'PW-001\b'
 npm run test:all
 npm run test:cart-risk
+npm run test:n02-cart
 npm run report
 ```
+
+For the current local N02 fixture, set `NOP_BASE_URL` to `http://localhost/`
+and `QA_CONFIGURABLE_PRODUCT_PATH` to `/pw-shirt-variants` before
+`npm run test:n02-cart`. The default
+`/pw-shirt-variants-2` path returns 404 in this store. `CART-REPEAT-01` needs
+the SQL password; `CART-MERGE-01` also needs the registered customer's email
+and password.
 
 Without required local values, every `PW-xxx` test is deliberately skipped as
 `Blocked: environment/fixture` rather than reported as a product failure.
@@ -45,6 +53,7 @@ Without required local values, every `PW-xxx` test is deliberately skipped as
 - `reports/html/`: Playwright HTML report.
 - `reports/pairwise-summary.md` and `reports/pairwise-summary.json`: one result per Pairwise ID, classified as environment, product, or automation failure.
 - `reports/cart-risk-summary.md` and `reports/cart-risk-summary.json`: result for `CART-01`–`CART-14` and `CART-REPEAT-01`.
+- `tests/n02-cart.spec.ts`: SCRUM-86 cases for cart merge over stock, valid and exact-stock controls, variant separation, and repeat-add behavior. Run them with `npm run test:n02-cart`; read the per-test result in `reports/html/`, `reports/junit.xml`, or `reports/results.json`. This suite is separate from the 14 PW pairwise cases and does not change their 253-pair coverage.
 - `artifacts/`: screenshot and trace for failed tests.
 
 These generated folders and `.env` are ignored by Git.
