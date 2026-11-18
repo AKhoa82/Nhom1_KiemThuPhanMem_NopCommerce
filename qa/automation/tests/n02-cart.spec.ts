@@ -87,6 +87,7 @@ async function inspectOriginalGuestCart(
   browser: Browser,
   testInfo: TestInfo,
   cookieValue: string,
+  variant: Variant = 'RedS',
 ): Promise<number> {
   const context = await browser.newContext({ baseURL });
   try {
@@ -94,7 +95,7 @@ async function inspectOriginalGuestCart(
     const guestPage = await context.newPage();
     await guestPage.goto('/cart');
     await screenshot(guestPage, testInfo, 'original-guest-after-login');
-    const line = await cartLine(guestPage, 'RedS');
+    const line = await cartLine(guestPage, variant);
     if (await line.count() === 0) return 0;
     return Number(await line.locator('input.qty-input').inputValue());
   } finally {
@@ -145,34 +146,46 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     ['MERGE-VALID', 2, 2],
     ['MERGE-EXACT', 2, 3],
   ] as const) {
-    test(`CART-MERGE-01 ${caseId}: same variant merges within stock`, async ({ page }, testInfo) => {
-      await prepareMerge(page, testInfo, accountQuantity, guestQuantity);
+    test(`CART-MERGE-01 ${caseId}: same variant merges within stock`, async ({ page, browser }, testInfo) => {
+      const { guestCookie, feedback } = await prepareMerge(page, testInfo, accountQuantity, guestQuantity);
       const totalQuantity = accountQuantity + guestQuantity;
       await assertCartLineCount(page, 1);
       await assertCartLine(page, product, totalQuantity, ['Red', 'S']);
       await expectAmount(page, 'order-subtotal', totalQuantity * unitPrice);
       await expectAmount(page, 'order-total', totalQuantity * unitPrice);
+      expect(feedback, 'Successful merge should not show an error or warning.').toBe('');
+      expect(await inspectOriginalGuestCart(browser, testInfo, guestCookie),
+        'Successfully migrated guest items should no longer remain in the source cart.').toBe(0);
       await page.reload({ waitUntil: 'domcontentloaded' });
       await assertCartLine(page, product, totalQuantity, ['Red', 'S']);
       await screenshot(page, testInfo, 'after-refresh');
     });
   }
 
-  test('CART-MERGE-01 MERGE-VARIANT: different variants remain separate', async ({ page }, testInfo) => {
-    await prepareMerge(page, testInfo, 1, 1, 'BlueM');
+  test('CART-MERGE-01 MERGE-VARIANT: different variants remain separate', async ({ page, browser }, testInfo) => {
+    const { guestCookie, feedback } = await prepareMerge(page, testInfo, 1, 1, 'BlueM');
     await assertCartLineCount(page, 2);
     await assertCartLine(page, product, 1, ['Red', 'S']);
     await assertCartLine(page, product, 1, ['Blue', 'M']);
     await expectAmount(page, 'order-subtotal', 2 * unitPrice);
     await expectAmount(page, 'order-total', 2 * unitPrice);
+    expect(feedback, 'Successful merge should not show an error or warning.').toBe('');
+    expect(await inspectOriginalGuestCart(browser, testInfo, guestCookie, 'BlueM'),
+      'Successfully migrated guest variant should no longer remain in the source cart.').toBe(0);
     await page.reload({ waitUntil: 'domcontentloaded' });
     await assertCartLineCount(page, 2);
+    await assertCartLine(page, product, 1, ['Red', 'S']);
+    await assertCartLine(page, product, 1, ['Blue', 'M']);
     await screenshot(page, testInfo, 'after-refresh');
   });
 
   test('CART-REPEAT-01 REPEAT-SAME: adding 2 then 3 makes one line with correct total', async ({ page }, testInfo) => {
     await addVariantProduct(page, 2, 'RedS');
     await page.goto('/cart');
+    await assertCartLineCount(page, 1);
+    await assertCartLine(page, product, 2, ['Red', 'S']);
+    await expectAmount(page, 'order-subtotal', 2 * unitPrice);
+    await expectAmount(page, 'order-total', 2 * unitPrice);
     await screenshot(page, testInfo, 'after-first-add');
     await addVariantProduct(page, 3, 'RedS');
     await page.goto('/cart');
@@ -182,6 +195,9 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     await assertCartLine(page, product, 5, ['Red', 'S']);
     await expectAmount(page, 'order-subtotal', 5 * unitPrice);
     await expectAmount(page, 'order-total', 5 * unitPrice);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await assertCartLineCount(page, 1);
+    await assertCartLine(page, product, 5, ['Red', 'S']);
   });
 
   test('CART-REPEAT-01 REPEAT-DIFFERENT: another variant remains a separate line', async ({ page }, testInfo) => {
@@ -196,5 +212,9 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     await assertCartLine(page, product, 1, ['Blue', 'M']);
     await expectAmount(page, 'order-subtotal', 6 * unitPrice);
     await expectAmount(page, 'order-total', 6 * unitPrice);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await assertCartLineCount(page, 2);
+    await assertCartLine(page, product, 5, ['Red', 'S']);
+    await assertCartLine(page, product, 1, ['Blue', 'M']);
   });
 });
