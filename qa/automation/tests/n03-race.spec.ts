@@ -229,7 +229,7 @@ test.describe('SCRUM-90 N03 two-tab Confirm race', () => {
 
     expect(requests.A && requests.B, 'Both tabs must send a Confirm POST.').toBeTruthy();
     expect(timingValid, `Confirm POSTs must be within ${maxDispatchGapMs} ms.`).toBe(true);
-    expect(countDelta, 'Two Confirm requests must not create two orders.').toBeLessThanOrEqual(1);
+    expect(countDelta, 'The two Confirm requests should create exactly one order.').toBe(1);
     expect(leakedSql, 'The storefront must not expose SQL errors.').toBe(false);
   });
 });
