@@ -1,10 +1,10 @@
 {
   "source": "qa/automation/reports/results.json (local, sanitized extract)",
-  "startTimeUtc": "2026-11-18T14:31:15.37Z",
-  "durationMs": 242851.0,
-  "passed": 6,
-  "failed": 1,
-  "skipped": 1,
+  "startTimeUtc": "2026-11-18T15:10:16.921Z",
+  "durationMs": 258088.0,
+  "passed": 7,
+  "failed": 2,
+  "skipped": 0,
   "cases": [
     {
       "title": "SHP-01: selected local shipping option survives returning to the step",
@@ -24,7 +24,7 @@
     },
     {
       "title": "PAY-FAIL-01: local decline keeps cart and does not create an order",
-      "status": "skipped"
+      "status": "passed"
     },
     {
       "title": "INV-01: stock reduction before confirm blocks checkout",
@@ -33,6 +33,10 @@
     {
       "title": "CART-MERGE-01: guest cart merges correctly with registered user cart",
       "status": "passed"
+    },
+    {
+      "title": "CART-MERGE-01-OVERSTOCK: rejected merge must not silently lose guest items",
+      "status": "failed"
     },
     {
       "title": "CHK-RACE-01: concurrent confirm order requests prevent double order creation",

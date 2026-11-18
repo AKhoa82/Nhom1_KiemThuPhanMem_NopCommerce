@@ -48,10 +48,10 @@ Checkout hiện có và ba luồng bổ sung `CART-MERGE-01`, `CART-REPEAT-01`,
 | `PAY-LOCAL-01` | 3 | 2 | 6 / High | Chọn/lưu sai payment method có thể tạo sai trạng thái thanh toán hoặc thu sai cách | Pairwise / P1 | Pass trong luồng local tối giản — [manifest](../evidence/SCRUM-112/RUN-PAY-LOCAL-01.md), [scenario](cart-checkout-scenarios.md#pay-local-01---chọn-payment-method-local), [evidence](../linh-order-payment-review-summary.md#5-ma-trận-scenario-sau-khi-bổ-sung-evidence) | Khoa |
 | `SHP-01` | 2 | 2 | 4 / Medium | Chọn sai shipping option làm sai phí hoặc giao hàng; lượt chạy mới đã kiểm tra lựa chọn Ground được giữ khi quay lại | Pairwise / P2 | Pass 18/11 — [run](../evidence/SCRUM-112/RUN-20261118-N01.md), [scenario](cart-checkout-scenarios.md#shp-01---chọn-phương-thức-giao-hàng-local-hợp-lệ), [test](../../qa/automation/tests/checkout-risk.spec.ts) | Khoa |
 | `SHP-02` | 3 | 2 | 6 / High | Server chấp nhận option rỗng/giả mạo có thể làm sai phí và tạo order không giao được | Negative / P1 | Pass 3/3 dataset 18/11 — [run](../evidence/SCRUM-112/RUN-20261118-N01.md), [test](../../qa/automation/tests/checkout-risk.spec.ts), [scenario](cart-checkout-scenarios.md#shp-02---shipping-method-rỗng-sai-định-dạng-hoặc-không-còn-khả-dụng) | Khoa |
-| `PAY-FAIL-01` | 3 | 2 | 6 / High | Xử lý decline sai có thể tạo order Paid/Complete giả hoặc làm mất cart khi khách retry | Negative + sequence / P1 | Blocked: mã plugin QA có trong repository nhưng chưa active trong container local; [run](../evidence/SCRUM-112/RUN-20261118-N01.md), [scenario](cart-checkout-scenarios.md#pay-fail-01---payment-processor-local-từ-chối-giao-dịch), [test](../../qa/automation/tests/checkout-risk.spec.ts) | Khoa |
+| `PAY-FAIL-01` | 3 | 2 | 6 / High | Xử lý decline sai có thể tạo order Paid/Complete giả hoặc làm mất cart khi khách retry | Negative + sequence / P1 | Pass 18/11 với plugin QA local; decline và retry không tạo đơn, giỏ còn — [run](../evidence/SCRUM-112/RUN-20261118-N01.md), [scenario](cart-checkout-scenarios.md#pay-fail-01---payment-processor-local-từ-chối-giao-dịch), [test](../../qa/automation/tests/checkout-risk.spec.ts) | Khoa |
 | `INV-01` | 3 | 3 | 9 / High | Nếu revalidation tồn kho hỏng, hậu quả là oversell; điểm rủi ro không giảm chỉ vì một lần Pass | Boundary + state change / P1 | Pass 18/11 với cache reset sau SQL update — [run](../evidence/SCRUM-112/RUN-20261118-N01.md), [scenario](cart-checkout-scenarios.md#inv-01---tồn-kho-giảm-xuống-không-đủ-trước-khi-xác-nhận-order), [test](../../qa/automation/tests/checkout-risk.spec.ts) | Trang + Khoa |
-| `CART-MERGE-01` | 3 | 2 | 6 / High | Merge guest cart vào account có thể mất item, nhân đôi quantity, gộp nhầm variant hoặc rò cart giữa customer | Sequence + identity transition / P1 | Partial: nhánh hợp lệ Pass 18/11; nhánh vượt kho có lỗi lịch sử và cần retest — [run](../evidence/SCRUM-112/RUN-20261118-N01.md), [scenario bổ sung](#cart-merge-01---merge-guest-cart-sau-khi-đăng-nhập), [test](../../qa/automation/tests/checkout-risk.spec.ts) | Trang + Khoa |
-| `CHK-RACE-01` | 3 | 2 | 6 / High | Hai request Confirm đồng thời có thể tạo hai order, trừ stock hai lần hoặc lộ lỗi kỹ thuật cho khách | Concurrency / P1 | Fail 18/11: một đơn, một response lộ lỗi SQL — [run](../evidence/SCRUM-112/RUN-20261118-N01.md), [scenario bổ sung](#chk-race-01---hai-request-confirm-order-đồng-thời), [test](../../qa/automation/tests/checkout-risk.spec.ts) | Khoa |
+| `CART-MERGE-01` | 3 | 2 | 6 / High | Merge guest cart vào account có thể mất item, nhân đôi quantity, gộp nhầm variant hoặc rò cart giữa customer | Sequence + identity transition / P1 | Fail 18/11: nhánh hợp lệ Pass, nhánh vượt kho mất 2 món guest (6 → 4) — [run](../evidence/SCRUM-112/RUN-20261118-N01.md), [scenario bổ sung](#cart-merge-01---merge-guest-cart-sau-khi-đăng-nhập), [test](../../qa/automation/tests/checkout-risk.spec.ts), [defect SCRUM-96](https://anhkhoa080205.atlassian.net/browse/SCRUM-96) | Trang + Khoa |
+| `CHK-RACE-01` | 3 | 2 | 6 / High | Hai request Confirm đồng thời có thể tạo hai order, trừ stock hai lần hoặc lộ lỗi kỹ thuật cho khách | Concurrency / P1 | Fail 18/11: một đơn, một response lộ lỗi SQL — [run](../evidence/SCRUM-112/RUN-20261118-N01.md), [scenario bổ sung](#chk-race-01---hai-request-confirm-order-đồng-thời), [test](../../qa/automation/tests/checkout-risk.spec.ts), [defect SCRUM-100](https://anhkhoa080205.atlassian.net/browse/SCRUM-100) | Khoa |
 
 ## 3. Phần nghiệm thu của Khoa — 11 dòng
 
@@ -105,27 +105,28 @@ một trong hai bug lịch sử nói trên.
 
 | Reviewer | Trách nhiệm | Trạng thái |
 | --- | --- | --- |
-| Lê Anh Khoa | Chốt baseline và rà soát 11 dòng Checkout/luồng bổ sung | Có [review baseline](SCRUM-81-risk-baseline-review-khoa.md); chờ duyệt kết quả tích hợp 18/11 |
-| Trần Thị Phương Trang | Đối chiếu Cart, tồn kho, merge cart và mức Impact | Đã bàn giao 15 dòng qua SCRUM-82; chưa có xác nhận riêng cho lượt chạy 18/11 |
-| Đỗ Đặng Diệu Linh | Đối chiếu Pairwise K06, evidence Order/Payment và hai bug lịch sử | Có bảng 11 dòng SCRUM-112; chưa có xác nhận riêng cho lượt chạy 18/11 |
+| Lê Anh Khoa | Chốt baseline và rà soát 11 dòng Checkout/luồng bổ sung | Đã đối chiếu bản tích hợp và [lượt chạy 18/11](../evidence/SCRUM-112/RUN-20261118-N01.md) trong [review N01](SCRUM-81-risk-baseline-review-khoa.md) |
+| Trần Thị Phương Trang | Đối chiếu Cart, tồn kho, merge cart và mức Impact | Đã bàn giao phần chấm 15 dòng Cart qua [SCRUM-82](https://anhkhoa080205.atlassian.net/browse/SCRUM-82); lượt chạy mới do Khoa tích hợp, không gán cho Trang |
+| Đỗ Đặng Diệu Linh | Đối chiếu Pairwise K06, evidence Order/Payment và hai bug lịch sử | Đã bàn giao phần 11 dòng qua [SCRUM-83](https://anhkhoa080205.atlassian.net/browse/SCRUM-83) và [SCRUM-112](https://anhkhoa080205.atlassian.net/browse/SCRUM-112); lượt chạy mới do Khoa tích hợp |
 
-Chỉ đóng SCRUM-80 khi đủ review của ba người; mọi dòng High có kết quả thực thi
-hoặc quyết định `Accepted risk` có owner và lý do. `Blocked` cần blocker và kế
-hoạch gỡ; `Not Run` vẫn là việc còn mở. Link evidence phải truy cập được; không
-dùng `253/253` pair coverage thay cho risk coverage.
+Ba phần review đã được bàn giao theo các issue nêu trên và bản tích hợp đã được
+đối chiếu. Mọi dòng High có kết quả thực thi hoặc bằng chứng lịch sử được ghi rõ
+nguồn; không còn Blocked/Not Run. Hai dòng Fail được nối với defect để sửa và
+retest sau N01. Link evidence đã được kiểm tra tồn tại; `253/253` pair coverage
+được báo riêng với risk coverage.
 
 
 ## 6. Tổng hợp trạng thái 26 scenario
 
 ```text
 Risk register: 26 scenario
-- Pass: 20 (15 dòng Cart + ADDR-01 + ADDR-02 + SHP-01 + SHP-02 + INV-01)
+- Pass: 21 (15 dòng Cart + ADDR-01 + ADDR-02 + SHP-01 + SHP-02 + PAY-FAIL-01 + INV-01)
 - Pass có điều kiện: 2 (CHK-01 + PAY-LOCAL-01)
 - Pass trong PW test: 1 (CHK-02 trong PW-002/PW-007/PW-009)
-- Partial: 1 (CART-MERGE-01: nhánh hợp lệ Pass, nhánh vượt kho cần retest)
+- Partial: 0
 - Not Run: 0
-- Blocked: 1 (PAY-FAIL-01)
-- Fail: 1 (CHK-RACE-01: một response lộ lỗi SQL)
+- Blocked: 0
+- Fail: 2 (CART-MERGE-01 mất 2 món guest; CHK-RACE-01 một response lộ lỗi SQL)
 
 Pairwise model coverage: 253/253 feasible pairs
 Pairwise execution: 14/14 passed, 0 failed, 0 skipped (+ 1 HARNESS-001 passed)
@@ -133,6 +134,7 @@ Pairwise execution: 14/14 passed, 0 failed, 0 skipped (+ 1 HARNESS-001 passed)
 
 Số liệu risk coverage là tình trạng 26 scenario tại ngày 18/11/2026; xem
 [lượt chạy local](../evidence/SCRUM-112/RUN-20261118-N01.md). Kết quả Pairwise
-là lượt chạy riêng trước đó. SCRUM-80 còn mở do `PAY-FAIL-01` Blocked,
-`CART-MERGE-01` chưa hoàn tất nhánh vượt kho và cần ba thành viên xác nhận bản
-tích hợp; `CHK-RACE-01` đã được thực thi và ghi nhận Fail, cần mở defect/retest.
+là lượt chạy riêng trước đó. Hai scenario Fail đã có execution evidence và
+được chuyển sang theo dõi vòng đời defect/retest. Việc nghiệm thu N01 đánh giá
+độ đầy đủ và độ chính xác của risk register, không yêu cầu sản phẩm phải không
+còn lỗi. `CHK-01` vẫn có finding về định dạng tiền tệ và được báo riêng.

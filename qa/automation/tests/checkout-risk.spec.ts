@@ -159,6 +159,12 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
     if (!before) throw new Error('PAY-FAIL-01 requires checkout SQL baseline evidence.');
     await attachEvidence(testInfo, 'pay-fail-01-before.sql.txt', before);
 
+    const ground = page.locator('input[name="shippingoption"][value^="Ground___"]');
+    await expect(ground).toHaveCount(1);
+    await ground.check();
+    await page.locator('.shipping-method-next-step-button').click();
+    await expect(page).toHaveURL(/checkout\/paymentmethod/i);
+
     const qaDecline = page.locator('input[name="paymentmethod"][value="Payments.QaDecline"]');
     if (await qaDecline.count() !== 1) {
       test.skip(true, 'FIXTURE_BLOCKED: Payments.QaDecline is not active. Install and activate the QA-only local plugin before this test.');
@@ -315,6 +321,59 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
     const snapshot = await queryCheckoutEvidence(runtimeConfig.registeredEmail);
     await attachEvidence(testInfo, 'cart-merge-01-after.sql.txt', snapshot);
     assertCheckoutCartCount(snapshot, 3);
+  });
+
+  test('CART-MERGE-01-OVERSTOCK: rejected merge must not silently lose guest items', async ({ page }, testInfo) => {
+    testInfo.annotations.push({ type: 'scenario', description: 'CART-MERGE-01' });
+    try {
+      await resetFixture(page, resetRow!);
+    } catch (error) {
+      if (error instanceof FixtureBlockedError) {
+        test.skip(true, error.message);
+        return;
+      }
+      throw error;
+    }
+
+    // Direct SQL changes bypass inventory cache; restart web before arranging carts.
+    await executeReadonlySql("UPDATE Product SET StockQuantity = 5 WHERE Sku = 'PW-SIMPLE-001'");
+    await execFile('docker.exe', ['restart', runtimeConfig.storeContainer], {
+      windowsHide: true,
+      timeout: 30_000,
+    });
+    await expect.poll(async () => {
+      try { return (await page.request.get('/', { timeout: 5_000 })).status(); }
+      catch { return 0; }
+    }).toBe(200);
+
+    await loginRegisteredCustomer(page);
+    await addSimpleProduct(page, 4);
+    await page.locator('a.ico-logout').click();
+    await page.waitForLoadState('domcontentloaded');
+    await addSimpleProduct(page, 2);
+
+    const totalSimpleQuantity = async (): Promise<number> => {
+      const snapshot = await executeReadonlySql(`
+        SET NOCOUNT ON;
+        SELECT CONCAT('TOTAL|', COALESCE(SUM(sci.Quantity), 0))
+        FROM ShoppingCartItem sci
+        INNER JOIN Product p ON p.Id = sci.ProductId
+        WHERE p.Sku = 'PW-SIMPLE-001' AND sci.ShoppingCartTypeId = 1;
+      `);
+      return Number(snapshot.split('\n').find(line => line.startsWith('TOTAL|'))?.split('|')[1]);
+    };
+    const before = await totalSimpleQuantity();
+    await attachEvidence(testInfo, 'cart-merge-overstock-before.txt', `total simple quantity: ${before}`);
+
+    await page.goto('/login');
+    await page.locator('#Email').fill(runtimeConfig.registeredEmail);
+    await page.locator('#Password').fill(runtimeConfig.registeredPassword);
+    await page.locator('button.login-button').click();
+    await expect(page.locator('a.ico-account')).toBeVisible();
+
+    const after = await totalSimpleQuantity();
+    await attachEvidence(testInfo, 'cart-merge-overstock-after.txt', `total simple quantity: ${after}`);
+    expect(after, 'A rejected merge must preserve the guest items or account for them explicitly.').toBe(before);
   });
 
   test('CHK-RACE-01: concurrent confirm order requests prevent double order creation', async ({ page, request }, testInfo) => {

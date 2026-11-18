@@ -1,9 +1,9 @@
 # Run manifest — PAY-FAIL-01
 
 - Ngày thực thi: **18/11/2026**, local Docker, checkout nhiều bước.
-- Trạng thái: **Blocked / skipped**.
+- Trạng thái: **Pass** trong lượt cuối 18/11/2026.
 - Lệnh: từ `qa/automation`, nạp cấu hình QA local và chạy `npx playwright test tests/checkout-risk.spec.ts`.
 - Mã test: [checkout-risk.spec.ts](../../../qa/automation/tests/checkout-risk.spec.ts).
-- Kết quả: Test phát hiện Payments.QaDecline chưa active trên store local và skip với lý do FIXTURE_BLOCKED. Mã plugin có trong repo, chưa có bằng chứng plugin triển khai/hoạt động trong container.
-- Giới hạn: Cần kích hoạt plugin QA local và chạy decline/retry, hoặc có quyết định Accepted risk với owner và lý do. Chưa có evidence Pass/Fail.
+- Kết quả: Đã build, cài và bật Payments.QaDecline trong store QA local. Confirm bị từ chối với thông báo `QA decline`, không tạo đơn, giỏ còn. Retry cũng bị từ chối và không tạo đơn. Test Pass trong bộ 9 test.
+- Giới hạn: Plugin chỉ dùng trong môi trường local; cần bật lại nếu đã hoàn nguyên cấu hình sau demo.
 - Bản tóm tắt đã loại bí mật và thống kê từ Playwright JSON report: [RUN-20261118-N01.md](RUN-20261118-N01.md). Image web là container đã tồn tại; chưa xác minh SHA build của image. Report chi tiết và artifact được Git ignore, giữ trên máy chạy.

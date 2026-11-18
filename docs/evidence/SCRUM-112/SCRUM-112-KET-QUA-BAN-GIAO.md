@@ -4,18 +4,17 @@ Linh đã rà soát 11 rủi ro Checkout/luồng bổ sung và phân biệt đú
 
 ## Kết luận hiện hành
 
-- **26 scenario** trong [risk register](../../test-design/SCRUM-80-risk-register.md): 20 Pass, 2 Pass có điều kiện, 1 Pass trong PW test, 1 Partial, 1 Fail, 1 Blocked.
-- Lượt Playwright mới có **6 Pass, 1 Fail, 1 skipped** trên 8 test. SHP-02 gồm ba dataset.
-- SHP-01 và SHP-02 đã Pass ở lượt mới. INV-01 Pass khi stock giảm trực tiếp trong SQL rồi restart web để xóa cache. CART-MERGE-01 Pass nhánh gộp hợp lệ nhưng nhánh vượt kho còn mở. CHK-RACE-01 Fail do một response lộ lỗi SQL; chỉ một đơn được tạo. PAY-FAIL-01 Blocked vì plugin QA chưa active.
+- **26 scenario** trong [risk register](../../test-design/SCRUM-80-risk-register.md): 21 Pass, 2 Pass có điều kiện, 1 Pass trong PW test, 2 Fail, không còn Partial/Blocked/Not Run.
+- Lượt Playwright cuối có **7 Pass, 2 Fail, 0 skipped** trên 9 test. SHP-02 gồm ba dataset; CART-MERGE-01 gồm nhánh hợp lệ và vượt kho.
+- SHP-01, SHP-02 và PAY-FAIL-01 đã Pass ở lượt mới. INV-01 Pass khi stock giảm trực tiếp trong SQL rồi restart web để xóa cache. CART-MERGE-01 Fail ở nhánh vượt kho (6 → 4 món); CHK-RACE-01 Fail do một response lộ lỗi SQL, dù chỉ một đơn được tạo.
 - 253/253 là coverage của **cặp giá trị trong model Pairwise**, không phải risk coverage 26 scenario.
 - Bảng này không tuyên bố 26/26 scenario Pass. Hai lỗi lịch sử nopCommerce #7467 và #7203 được theo dõi ở CHK-02 và ADDR-02, không được tính thành hai scenario mới.
 
 ## Hạng mục chưa thể đóng
 
-1. **PAY-FAIL-01 — Khoa, High:** triển khai và kích hoạt Payments.QaDecline rồi chạy decline/retry; nếu không làm được, cần quyết định Accepted risk có người phê duyệt, lý do và ngày. Hiện vẫn Blocked.
-2. **CART-MERGE-01 — Trang + Khoa, High:** chạy thêm tình huống vượt tồn kho và đối chiếu lỗi mất giỏ đã tái hiện trước đây. Không dùng kết quả nhánh hợp lệ thay cho nhánh âm tính.
-3. **CHK-RACE-01 — Khoa, High:** ghi defect và theo dõi sửa/retest lỗi hiển thị nguyên thông báo SQL. Fail đã được chứng minh, nên đây là việc xử lý defect, không phải ca chưa chạy.
-4. **CHK-01 — Khoa, High:** quyết định xử lý finding D-01 về format tiền tệ hoặc ghi accepted risk sau review; chưa tự giả định đã chấp nhận.
-5. **Review nhóm:** Trang và Linh xác nhận bản tích hợp sau lượt chạy mới; Khoa ký duyệt SCRUM-81/SCRUM-80 theo tiêu chí Jira. Trạng thái Done của SCRUM-112 chỉ xác nhận bước rà soát của Linh, không tự đóng issue cha.
+1. **CART-MERGE-01 — Trang + Khoa, High:** theo dõi defect mất hai món guest khi gộp vượt kho, thống nhất expected, sửa và retest. Fail đã có bằng chứng.
+2. **CHK-RACE-01 — Khoa, High:** theo dõi defect lộ lỗi SQL, sửa và retest. Fail đã có bằng chứng.
+3. **CHK-01 — Khoa, High:** xử lý finding D-01 về format tiền tệ hoặc ghi quyết định accepted risk sau review; đây là finding riêng, không phải ca chưa chạy.
+4. **Review nhóm:** Trang và Linh đã hoàn thành các phần chấm/rà soát của mình trong SCRUM-82, SCRUM-83 và SCRUM-112; bản tích hợp đã được đối chiếu trong [kết luận SCRUM-81](../../test-design/SCRUM-81-risk-baseline-review-khoa.md#8-kết-luận-nghiệm-thu-bản-tích-hợp-18112026). Vòng đời sửa lỗi thuộc các task defect tiếp theo.
 
-Bản báo cáo này có thể dùng làm nội dung bàn giao trên SCRUM-81. Các manifest cũ có ngày và snapshot dự kiến được giữ như hồ sơ lịch sử; kết quả ngày 18/11 ở file run mới là nguồn ưu tiên cho năm scenario đã chạy lại.
+Bản báo cáo này là nội dung bàn giao trên SCRUM-81. Kết quả ngày 18/11 trong file run mới là nguồn ưu tiên cho các scenario đã chạy lại.

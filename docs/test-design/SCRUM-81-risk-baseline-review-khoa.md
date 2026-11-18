@@ -6,12 +6,12 @@ Người thực hiện: Lê Anh Khoa. Issue: [SCRUM-81](https://anhkhoa080205.at
 > dưới là ảnh chụp của review cũ. Nguồn hiện hành là [risk register 26 dòng](SCRUM-80-risk-register.md),
 > [bảng bàn giao 11 dòng](../evidence/SCRUM-112/11-risk-status-tracker.md) và
 > [lượt chạy mới](../evidence/SCRUM-112/RUN-20261118-N01.md). Lượt mới ghi
-> SHP-01, SHP-02 và INV-01 Pass; CART-MERGE-01 chỉ Pass nhánh hợp lệ;
-> CHK-RACE-01 Fail vì lộ lỗi SQL; PAY-FAIL-01 vẫn Blocked. Risk coverage hiện
-> là 20 Pass, 2 Pass có điều kiện, 1 Pass trong PW, 1 Partial, 1 Fail và 1
-> Blocked. Khoa chưa ký duyệt đóng SCRUM-81/SCRUM-80 vì ca High PAY-FAIL-01
-> chưa có execution hoặc quyết định Accepted risk; nhánh vượt kho của
-> CART-MERGE-01 và xác nhận của nhóm cho bản tích hợp còn mở.
+> SHP-01, SHP-02, PAY-FAIL-01 và INV-01 Pass; CART-MERGE-01 Fail ở nhánh
+> vượt kho (6 → 4 món), CHK-RACE-01 Fail vì lộ lỗi SQL. Risk coverage hiện
+> là 21 Pass, 2 Pass có điều kiện, 1 Pass trong PW, 2 Fail; không còn ca
+> High Not Run/Blocked. Hai Fail là defect cần sửa và retest ở vòng đời lỗi,
+> không làm mất giá trị của bản đánh giá rủi ro. Bản tích hợp đã được đối chiếu
+> với phần Trang/Linh bàn giao; xem kết luận nghiệm thu ở cuối tài liệu.
 
 ## 1. Baseline và mẫu số
 
@@ -107,3 +107,25 @@ Ma trận hiện gán Khoa làm Owner của cả 11 dòng, dù SCRUM-83 giao Lin
 Ngày 30/10/2026, Jira xác nhận [SCRUM-80](https://anhkhoa080205.atlassian.net/browse/SCRUM-80) đang In Progress và có bốn subtask: [SCRUM-81](https://anhkhoa080205.atlassian.net/browse/SCRUM-81) của Khoa (To Do), SCRUM-82 của Trang (Done), [SCRUM-83](https://anhkhoa080205.atlassian.net/browse/SCRUM-83) của Linh (Done) và [SCRUM-112](https://anhkhoa080205.atlassian.net/browse/SCRUM-112) của Linh (To Do). SCRUM-81 đã được bổ sung mô tả, tiêu chí nghiệm thu và link tài liệu. SCRUM-112 là việc rà soát evidence/trạng thái của 11 rủi ro, không lặp phần chấm của SCRUM-83.
 
 Mô tả SCRUM-83 hiện ghi các ca `SHP-02`, `CART-MERGE-01`, `CHK-RACE-01` là Blocked vì chưa chạy hoặc thiếu bằng chứng. Ma trận ở nhánh này ghi `Not Run` cho ba ca đó; cần Linh đối chiếu và cập nhật kết luận Jira theo kết quả thực thi thật. Trạng thái Done của SCRUM-83 không tự thay thế bảng 11 dòng kèm evidence truy cập được. SCRUM-112 đã được gán cho Linh để đóng khoảng trống này; Khoa chưa ký duyệt SCRUM-80.
+
+## 8. Kết luận nghiệm thu bản tích hợp 18/11/2026
+
+Các mục 1–7 là ảnh chụp review cũ. Bản tích hợp sau khi nhận SCRUM-82,
+SCRUM-83 và SCRUM-112 đã được đối chiếu lại bằng [ma trận 26 dòng](SCRUM-80-risk-register.md)
+và [lượt chạy mới](../evidence/SCRUM-112/RUN-20261118-N01.md):
+
+- Đủ 26 ID duy nhất, 15 dòng Cart và 11 dòng Checkout/luồng bổ sung; cả 26
+  điểm `I × L` và mức Low/Medium/High đúng thang đã chốt. Mỗi dòng có lý do,
+  ưu tiên, owner, link scenario/test/evidence. Các link tương đối đã được kiểm
+  tra tồn tại.
+- Bộ 9 test Checkout risk cuối có 7 Pass, 2 Fail. `PAY-FAIL-01` đã chạy
+  decline/retry bằng plugin QA local; `CART-MERGE-01` Fail nhánh vượt kho do
+  mất hai món guest; `CHK-RACE-01` Fail vì lộ lỗi SQL nhưng chỉ tạo một đơn.
+  Hai Fail liên kết với SCRUM-96 và SCRUM-100 để sửa/retest.
+- Tổng 26 scenario: 21 Pass, 2 Pass có điều kiện, 1 Pass trong PW test,
+  2 Fail; không còn Partial/Blocked/Not Run. Pairwise 253/253 là chỉ số
+  model riêng. Finding D-01 của CHK-01 được giữ như giới hạn đã biết.
+- Phần Trang và Linh đã được bàn giao trong các subtask riêng; Khoa đã đối
+  chiếu bản hợp nhất và cập nhật trạng thái theo run mới. N01 đạt tiêu chí
+  đánh giá và ưu tiên rủi ro. Hai lỗi sản phẩm vẫn mở trong vòng đời defect;
+  việc sửa lỗi không phải điều kiện hoàn thành risk register N01.
