@@ -1,0 +1,11 @@
+{
+  "Group": "Payment methods",
+  "FriendlyName": "QA Decline (local only)",
+  "SystemName": "Payments.QaDecline",
+  "Version": "1.00.0",
+  "SupportedVersions": [ "5.00" ],
+  "Author": "Nhom1 QA",
+  "DisplayOrder": 999,
+  "FileName": "Nop.Plugin.Payments.QaDecline.dll",
+  "Description": "QA-only local payment processor that deterministically declines every payment. Never enable in production."
+}

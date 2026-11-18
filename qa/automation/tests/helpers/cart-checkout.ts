@@ -222,6 +222,15 @@ async function completeAddressStep(page: Page, prefix: 'BillingNewAddress' | 'Sh
   await expect(page).toHaveURL(/checkout\/(shippingaddress|shippingmethod|paymentmethod)/i);
 }
 
+export async function reachShippingMethod(page: Page): Promise<void> {
+  await completeAddressStep(page, 'BillingNewAddress', '#billing-address-select', '#billingaddress-next-button');
+  if (await page.locator('#shipping-address-select').count()) {
+    await completeAddressStep(page, 'ShippingNewAddress', '#shipping-address-select', '#shippingaddress-next-button');
+  }
+  await page.goto('/checkout/shippingmethod', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('input[name="shippingoption"]').first()).toBeVisible();
+}
+
 export async function completeLocalCheckout(page: Page): Promise<void> {
   await completeAddressStep(page, 'BillingNewAddress', '#billing-address-select', '#billingaddress-next-button');
   if (await page.locator('#shipping-address-select').count()) {

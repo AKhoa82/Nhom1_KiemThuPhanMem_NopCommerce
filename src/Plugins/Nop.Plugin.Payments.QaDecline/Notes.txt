@@ -1,0 +1,6 @@
+QA-only plugin for PAY-FAIL-01.
+
+The processor always returns a failed ProcessPaymentResult with a deterministic
+error. It performs no network or database I/O and must never be enabled in a
+production environment. Install/activate it only in the disposable local QA
+store, run the decline and retry scenario, then deactivate/uninstall it.

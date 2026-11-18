@@ -25,6 +25,14 @@ x64/
 
 # Visual Studio Code files
 .vscode/
+.git/
+.github/
+
+# Local QA dependencies and reports are not copied by the Dockerfile.
+qa/automation/node_modules/
+qa/automation/reports/
+qa/automation/artifacts/
+qa/automation/test-results/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
