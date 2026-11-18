@@ -1,4 +1,6 @@
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
+import { execFile as execFileCallback } from 'node:child_process';
+import { promisify } from 'node:util';
 import {
   assertCheckoutCartCount,
   assertCheckoutOrderCountUnchanged,
@@ -17,6 +19,7 @@ import { executeReadonlySql, queryCheckoutEvidence } from './helpers/sql-fixture
 
 const resetRow = loadPairwiseCases().find(row => row.caseId === 'PW-006');
 if (!resetRow) throw new Error('PW-006 is required for checkout shipping-risk fixture reset.');
+const execFile = promisify(execFileCallback);
 
 const missingEnvironment = (): string | undefined => {
   const missing: string[] = [];
@@ -87,16 +90,17 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
     if (!before) throw new Error('SHP-01 requires checkout SQL baseline evidence.');
     await attachEvidence(testInfo, 'shp-01-before.sql.txt', before);
 
-    const options = page.locator('input[name="shippingoption"]');
-    await expect(options).toHaveCount(1);
-    const selectedValue = await options.first().inputValue();
-    await options.first().check();
+    const ground = page.locator('input[name="shippingoption"][value^="Ground___"]');
+    await expect(ground).toHaveCount(1);
+    const selectedValue = await ground.inputValue();
+    await ground.check();
     await page.locator('.shipping-method-next-step-button').click();
-    await expect(page).toHaveURL(/checkout\/paymentmethod/i);
+    await expect(page).toHaveURL(/checkout\/(paymentmethod|paymentinfo|confirm)/i);
 
     await page.goto('/checkout/shippingmethod', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('input[name="shippingoption"]').first()).toBeChecked();
-    await expect(page.locator('input[name="shippingoption"]').first()).toHaveValue(selectedValue);
+    const selectedGround = page.locator('input[name="shippingoption"][value^="Ground___"]');
+    await expect(selectedGround).toBeChecked();
+    await expect(selectedGround).toHaveValue(selectedValue);
 
     const after = await queryCheckoutEvidence(runtimeConfig.registeredEmail);
     await attachEvidence(testInfo, 'shp-01-after.sql.txt', after);
@@ -220,8 +224,25 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
     const before = await queryCheckoutEvidence(runtimeConfig.registeredEmail);
     await attachEvidence(testInfo, 'inv-01-before.sql.txt', before);
 
-    // Simulate stock reduction to 4 (cart has 5)
+    // Direct SQL changes bypass nopCommerce's inventory cache. Restart the local
+    // web container so Confirm reads the new stock value, then verify the setup.
     await executeReadonlySql("UPDATE Product SET StockQuantity = 4 WHERE Sku = 'PW-SIMPLE-001'");
+    await execFile('docker.exe', ['restart', runtimeConfig.storeContainer], {
+      windowsHide: true,
+      timeout: 30_000,
+    });
+    for (let attempt = 0; attempt < 30; attempt += 1) {
+      try {
+        const response = await page.request.get('/', { timeout: 5_000 });
+        if (response.ok()) break;
+      } catch {
+        // The local web container is still restarting.
+      }
+      await page.waitForTimeout(1_000);
+    }
+    const reducedStock = await queryCheckoutEvidence(runtimeConfig.registeredEmail);
+    await attachEvidence(testInfo, 'inv-01-stock-reduced.sql.txt', reducedStock);
+    expect(reducedStock).toContain('PRODUCT|PW-SIMPLE-001|4');
 
     // Customer clicks Confirm
     await page.locator('.confirm-order-next-step-button').click();
@@ -352,10 +373,15 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
       request.post(confirmUrl, { headers, data: body }),
     ]);
     const elapsed = Date.now() - t0;
+    const responseBodies = await Promise.all([res1.text(), res2.text()]);
+    const exposedSqlError = responseBodies.map(text =>
+      /Cannot insert duplicate key|AK_Order_OrderGuid|SqlException|Microsoft\.Data\.SqlClient/i.test(text));
 
     const responseLog = [
       `Request 1: Status ${res1.status()} (${res1.statusText()})`,
       `Request 2: Status ${res2.status()} (${res2.statusText()})`,
+      `SQL error exposed in response 1: ${exposedSqlError[0]}`,
+      `SQL error exposed in response 2: ${exposedSqlError[1]}`,
       `Elapsed: ${elapsed}ms`,
     ].join('\n');
     await attachEvidence(testInfo, 'chk-race-01-responses.txt', responseLog);
@@ -368,7 +394,8 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
     const afterCount = Number(after.split('\n').find(l => l.startsWith('ORDER_COUNT|'))?.split('|')[1] || '0');
     const orderDelta = afterCount - beforeCount;
 
-    expect(orderDelta, `Concurrency race condition: expected at most 1 order created, but found ${orderDelta} orders created!`).toBeLessThanOrEqual(1);
+    expect(orderDelta, `Expected exactly one order from the two valid Confirm requests, found ${orderDelta}.`).toBe(1);
+    expect(exposedSqlError, 'A customer-facing response exposed a raw SQL exception.').toEqual([false, false]);
   });
 });
 

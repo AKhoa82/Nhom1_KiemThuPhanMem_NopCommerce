@@ -1,0 +1,42 @@
+{
+  "source": "qa/automation/reports/results.json (local, sanitized extract)",
+  "startTimeUtc": "2026-11-18T14:31:15.37Z",
+  "durationMs": 242851.0,
+  "passed": 6,
+  "failed": 1,
+  "skipped": 1,
+  "cases": [
+    {
+      "title": "SHP-01: selected local shipping option survives returning to the step",
+      "status": "passed"
+    },
+    {
+      "title": "SHP-02-DS01: invalid shipping option is not accepted",
+      "status": "passed"
+    },
+    {
+      "title": "SHP-02-DS02: invalid shipping option is not accepted",
+      "status": "passed"
+    },
+    {
+      "title": "SHP-02-DS03: invalid shipping option is not accepted",
+      "status": "passed"
+    },
+    {
+      "title": "PAY-FAIL-01: local decline keeps cart and does not create an order",
+      "status": "skipped"
+    },
+    {
+      "title": "INV-01: stock reduction before confirm blocks checkout",
+      "status": "passed"
+    },
+    {
+      "title": "CART-MERGE-01: guest cart merges correctly with registered user cart",
+      "status": "passed"
+    },
+    {
+      "title": "CHK-RACE-01: concurrent confirm order requests prevent double order creation",
+      "status": "failed"
+    }
+  ]
+}

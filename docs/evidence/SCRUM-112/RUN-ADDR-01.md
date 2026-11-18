@@ -21,10 +21,10 @@
 
 ## Bằng chứng thực thi (Evidence links)
 
-- **Ảnh:** [`image/review/REVIEW-06-order-addresses.png`](../../image/review/REVIEW-06-order-addresses.png) (Admin lưu Billing Address đầy đủ) và [`REVIEW-07-order-shipping-method.png`](../../image/review/REVIEW-07-order-shipping-method.png) (Shipping Address lưu khớp Billing Address).
+- **Ảnh:** [`image/review/REVIEW-06-order-addresses.png`](../../../image/review/REVIEW-06-order-addresses.png) (Admin lưu Billing Address đầy đủ) và [`REVIEW-07-order-shipping-method.png`](../../../image/review/REVIEW-07-order-shipping-method.png) (Shipping Address lưu khớp Billing Address).
 - **SQL trước:** `ORDER_COUNT|0`
 - **SQL sau:** `ORDER_COUNT|1`, bảng `Address` lưu đúng FirstName, LastName, Email, City, Address1, Zip, Country, State.
-- **Report/log:** [`docs/linh-order-payment-review-summary.md`](../linh-order-payment-review-summary.md#2-kết-quả-đọc-từ-evidence).
+- **Report/log:** [`docs/linh-order-payment-review-summary.md`](../../linh-order-payment-review-summary.md#2-kết-quả-đọc-từ-evidence).
 
 ## Giới hạn đã biết (Known limitations)
 

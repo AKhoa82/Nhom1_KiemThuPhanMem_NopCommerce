@@ -21,10 +21,10 @@
 
 ## Bằng chứng thực thi (Evidence links)
 
-- **Ảnh:** [`image/review/REVIEW-02-confirm-order.png`](../../image/review/REVIEW-02-confirm-order.png) (Payment method: Check / Money Order hiển thị trên Confirm) và [`REVIEW-05-order-details.png`](../../image/review/REVIEW-05-order-details.png) (Admin Order Details lưu Payment method: Check / Money Order).
+- **Ảnh:** [`image/review/REVIEW-02-confirm-order.png`](../../../image/review/REVIEW-02-confirm-order.png) (Payment method: Check / Money Order hiển thị trên Confirm) và [`REVIEW-05-order-details.png`](../../../image/review/REVIEW-05-order-details.png) (Admin Order Details lưu Payment method: Check / Money Order).
 - **SQL trước:** `ORDER_COUNT|0`
 - **SQL sau:** `ORDER_COUNT|1`, `PaymentMethodSystemName = 'Payments.CheckMoneyOrder'`, `OrderStatusId = 10` (Pending), `PaymentStatusId = 10` (Pending).
-- **Report/log:** [`docs/linh-order-payment-review-summary.md`](../linh-order-payment-review-summary.md#4-đối-chiếu-static-review-với-dynamic-evidence).
+- **Report/log:** [`docs/linh-order-payment-review-summary.md`](../../linh-order-payment-review-summary.md#4-đối-chiếu-static-review-với-dynamic-evidence).
 
 ## Giới hạn đã biết (Known limitations)
 

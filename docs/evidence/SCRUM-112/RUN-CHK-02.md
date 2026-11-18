@@ -24,7 +24,7 @@
 - **Ảnh:** Màn hình checkout Completed guest và danh sách Orders trong Admin.
 - **SQL trước:** `ORDER_COUNT|0`, `CART_COUNT|0`
 - **SQL sau:** `ORDER_COUNT|1`, `ORDER|<Id>|10|10|Payments.CheckMoneyOrder|<Total>`, `CART_COUNT|0`, billing email = `qa.guest@example.test`.
-- **Report/log:** [`qa/automation/REVIEW_EVIDENCE.md`](../../qa/automation/REVIEW_EVIDENCE.md#evidence-đã-xác-minh) và snapshot Playwright `checkout-after.sql.txt`.
+- **Report/log:** [`qa/automation/REVIEW_EVIDENCE.md`](../../../qa/automation/REVIEW_EVIDENCE.md#evidence-đã-xác-minh) và snapshot Playwright `checkout-after.sql.txt`.
 
 ## Giới hạn đã biết (Known limitations)
 

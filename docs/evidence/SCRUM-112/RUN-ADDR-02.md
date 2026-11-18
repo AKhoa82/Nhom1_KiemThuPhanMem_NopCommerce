@@ -21,10 +21,10 @@
 
 ## Bằng chứng thực thi (Evidence links)
 
-- **Ảnh:** [`image/review/REVIEW-08-address-firstname-required.png`](../../image/review/REVIEW-08-address-firstname-required.png) (`First name is required.` hiển thị trên UI) và [`REVIEW-09-orders-unchanged-after-address-error.png`](../../image/review/REVIEW-09-orders-unchanged-after-address-error.png) (Order list giữ nguyên không đổi, delta = 0).
+- **Ảnh:** [`image/review/REVIEW-08-address-firstname-required.png`](../../../image/review/REVIEW-08-address-firstname-required.png) (`First name is required.` hiển thị trên UI) và [`REVIEW-09-orders-unchanged-after-address-error.png`](../../../image/review/REVIEW-09-orders-unchanged-after-address-error.png) (Order list giữ nguyên không đổi, delta = 0).
 - **SQL trước:** `ORDER_COUNT|1`, `CART_COUNT|1`
 - **SQL sau:** `ORDER_COUNT|1` (delta = 0), `CART_COUNT|1` (cart không bị mất).
-- **Report/log:** [`docs/linh-order-payment-review-summary.md`](../linh-order-payment-review-summary.md#2-kết-quả-đọc-từ-evidence).
+- **Report/log:** [`docs/linh-order-payment-review-summary.md`](../../linh-order-payment-review-summary.md#2-kết-quả-đọc-từ-evidence).
 
 ## Giới hạn đã biết (Known limitations)
 

@@ -11,8 +11,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-if ($Container -ne 'nopcommerce_mssql_server' -or $Database -ne 'nopcommerce') {
-    throw 'FIXTURE_BLOCKED: reset-fixture.ps1 only permits the local nopcommerce test container/database.'
+$localDatabaseNames = @('nopcommerce', (([char]0x200B) + 'nopcommerce'))
+if ($Container -ne 'nopcommerce_mssql_server' -or $Database -notin $localDatabaseNames) {
+    throw 'FIXTURE_BLOCKED: reset-fixture.ps1 only permits the local nopcommerce test container/database names.'
 }
 
 if ([string]::IsNullOrWhiteSpace($env:QA_SQL_PASSWORD)) {
