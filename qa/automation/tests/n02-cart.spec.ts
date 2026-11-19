@@ -1,17 +1,15 @@
 import { expect, test, type Browser, type Page, type TestInfo } from '@playwright/test';
 import { assertCartLine, assertCartLineCount } from './helpers/assertions';
 import { addVariantProduct, loginRegisteredCustomer } from './helpers/cart-checkout';
-import { FixtureBlockedError, resetFixture } from './helpers/fixtures';
-import { loadPairwiseCases } from './helpers/pairwise-data';
+import { FixtureBlockedError } from './helpers/fixtures';
+import { currentCustomerGuid, n02StoreId, resetN02Fixture } from './helpers/n02-fixture';
 import { runtimeConfig } from './helpers/runtime-config';
-import { queryCartFixtureState } from './helpers/sql-fixture';
-
-const resetRow = loadPairwiseCases().find(row => row.caseId === 'PW-001');
-if (!resetRow) throw new Error('PW-001 is required to reset the N02 local Cart fixture.');
+import { queryN02CartState } from './helpers/sql-fixture';
 
 const product = 'PW-Shirt-Variants';
 const unitPrice = 200; // Existing PW-SHIRT local fixture; check the fixture version before a run.
 const baseURL = process.env.NOP_BASE_URL ?? 'http://localhost/';
+const guestGuidByTest = new Map<string, string>();
 
 type Variant = 'RedS' | 'BlueM';
 
@@ -23,8 +21,14 @@ async function screenshot(page: Page, testInfo: TestInfo, name: string): Promise
 }
 
 async function cartSnapshot(testInfo: TestInfo, name: string): Promise<void> {
+  const guestGuid = guestGuidByTest.get(testInfo.testId);
+  if (!guestGuid) throw new FixtureBlockedError('FIXTURE_BLOCKED: guest GUID was not captured for N02 SQL evidence.');
   await testInfo.attach(`${name}.sql.txt`, {
-    body: await queryCartFixtureState(),
+    body: await queryN02CartState(
+      guestGuid,
+      testInfo.title.startsWith('CART-MERGE-01') ? runtimeConfig.registeredEmail : '',
+      n02StoreId,
+    ),
     contentType: 'text/plain',
   });
 }
@@ -61,12 +65,12 @@ async function prepareMerge(
   await page.locator('a.ico-logout').click();
   await addVariantProduct(page, guestQuantity, guestVariant);
   await page.goto('/cart');
+  const guestCookie = (await page.context().cookies()).find(cookie => cookie.name === '.Nop.Customer');
+  if (!guestCookie) throw new FixtureBlockedError('FIXTURE_BLOCKED: guest customer cookie is unavailable.');
+  guestGuidByTest.set(testInfo.testId, guestCookie.value);
   await assertCartLine(page, product, guestQuantity, guestVariant === 'RedS' ? ['Red', 'S'] : ['Blue', 'M']);
   await screenshot(page, testInfo, 'guest-before-login');
   await cartSnapshot(testInfo, 'guest-before-login');
-
-  const guestCookie = (await page.context().cookies()).find(cookie => cookie.name === '.Nop.Customer');
-  if (!guestCookie) throw new FixtureBlockedError('FIXTURE_BLOCKED: guest customer cookie is unavailable.');
 
   await loginRegisteredCustomer(page);
   const notices = await page.locator(
@@ -113,8 +117,19 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
       needsRegisteredCustomer && !runtimeConfig.registeredPassword && 'QA_REGISTERED_PASSWORD',
     ].filter(Boolean);
     test.skip(missing.length > 0, `FIXTURE_BLOCKED: missing ${missing.join(', ')}.`);
+    let response;
     try {
-      await resetFixture(page, resetRow!);
+      response = await page.goto('/cart', { waitUntil: 'domcontentloaded', timeout: 10_000 });
+    } catch (error) {
+      test.skip(true, `FIXTURE_BLOCKED: N02 storefront is unavailable: ${String(error)}`);
+      return;
+    }
+    expect(response?.ok(), 'N02 storefront /cart must respond successfully.').toBeTruthy();
+    try {
+      const guestGuid = await currentCustomerGuid(page);
+      guestGuidByTest.set(testInfo.testId, guestGuid);
+      const resetReceipt = await resetN02Fixture(page, guestGuid, needsRegisteredCustomer);
+      await testInfo.attach('n02-reset.txt', { body: resetReceipt, contentType: 'text/plain' });
     } catch (error) {
       if (error instanceof FixtureBlockedError) {
         test.skip(true, error.message);
@@ -124,6 +139,8 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     }
     await cartSnapshot(testInfo, 'reset-baseline');
   });
+
+  test.afterEach(({}, testInfo) => guestGuidByTest.delete(testInfo.testId));
 
   test('CART-MERGE-01 MERGE-OVER: guest items are not silently lost above stock', async ({ page, browser }, testInfo) => {
     testInfo.annotations.push({ type: 'defect', description: 'SCRUM-96' });
@@ -182,6 +199,7 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
   test('CART-REPEAT-01 REPEAT-SAME: adding 2 then 3 makes one line with correct total', async ({ page }, testInfo) => {
     await addVariantProduct(page, 2, 'RedS');
     await page.goto('/cart');
+    await cartSnapshot(testInfo, 'after-first-add');
     await assertCartLineCount(page, 1);
     await assertCartLine(page, product, 2, ['Red', 'S']);
     await expectAmount(page, 'order-subtotal', 2 * unitPrice);
@@ -198,6 +216,7 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     await page.reload({ waitUntil: 'domcontentloaded' });
     await assertCartLineCount(page, 1);
     await assertCartLine(page, product, 5, ['Red', 'S']);
+    await cartSnapshot(testInfo, 'after-refresh');
   });
 
   test('CART-REPEAT-01 REPEAT-DIFFERENT: another variant remains a separate line', async ({ page }, testInfo) => {
@@ -216,5 +235,6 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     await assertCartLineCount(page, 2);
     await assertCartLine(page, product, 5, ['Red', 'S']);
     await assertCartLine(page, product, 1, ['Blue', 'M']);
+    await cartSnapshot(testInfo, 'after-refresh');
   });
 });

@@ -1,6 +1,59 @@
 import { spawn } from 'node:child_process';
 import { runtimeConfig } from './runtime-config';
 
+/** N02 evidence is scoped to the two customers and one store in the current run. */
+export async function queryN02CartState(guestGuid: string, accountEmail: string, storeId: number): Promise<string> {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(guestGuid)) {
+    throw new Error('FIXTURE_BLOCKED: invalid guest GUID for N02 SQL snapshot.');
+  }
+  if (!Number.isSafeInteger(storeId) || storeId < 1) {
+    throw new Error('FIXTURE_BLOCKED: invalid store ID for N02 SQL snapshot.');
+  }
+  if (accountEmail && !/^qa\.n02\.[a-zA-Z0-9._%+\-]+@example\.test$/.test(accountEmail)) {
+    throw new Error('FIXTURE_BLOCKED: N02 account must use a dedicated qa.n02.*@example.test email.');
+  }
+  const sql = `
+SET NOCOUNT ON;
+DECLARE @GuestGuid uniqueidentifier = CONVERT(uniqueidentifier, '${guestGuid}');
+DECLARE @AccountEmail nvarchar(255) = N'${accountEmail}';
+DECLARE @StoreId int = ${storeId};
+DECLARE @GuestId int = (SELECT Id FROM Customer WHERE CustomerGuid = @GuestGuid AND Deleted = 0);
+DECLARE @AccountId int = (SELECT TOP 1 Id FROM Customer WHERE Email = @AccountEmail AND Deleted = 0 ORDER BY Id DESC);
+DECLARE @ProductId int = (SELECT Id FROM Product WHERE Sku = 'PW-SHIRT' AND Deleted = 0);
+IF @GuestId IS NULL OR @ProductId IS NULL OR (@AccountEmail <> N'' AND @AccountId IS NULL)
+    THROW 51000, 'FIXTURE_BLOCKED: N02 SQL identity or product is missing.', 1;
+
+SELECT CONCAT('N02_PRODUCT|', @ProductId, '|', p.Sku, '|price=', CONVERT(varchar(40), p.Price),
+    '|inventory=', p.ManageInventoryMethodId, '|backorder=', p.BackorderModeId, '|taxExempt=', p.IsTaxExempt)
+FROM Product p WHERE p.Id = @ProductId;
+SELECT CONCAT('N02_VARIANT|', pac.Id, '|stock=', pac.StockQuantity,
+    '|allowOutOfStock=', pac.AllowOutOfStockOrders, '|', pac.AttributesXml)
+FROM ProductAttributeCombination pac WHERE pac.ProductId = @ProductId ORDER BY pac.Id;
+SELECT CONCAT('N02_CUSTOMER|', v.RoleName, '|id=', v.CustomerId, '|store=', @StoreId,
+    '|cartRows=', COUNT(sci.Id), '|quantity=', COALESCE(SUM(sci.Quantity), 0))
+FROM (VALUES ('Guest', @GuestId), ('Account', @AccountId)) v(RoleName, CustomerId)
+LEFT JOIN ShoppingCartItem sci ON sci.CustomerId = v.CustomerId AND sci.StoreId = @StoreId
+    AND sci.ProductId = @ProductId AND sci.ShoppingCartTypeId = 1
+WHERE v.CustomerId IS NOT NULL
+GROUP BY v.RoleName, v.CustomerId;
+SELECT CONCAT('N02_CART|', v.RoleName, '|customer=', v.CustomerId, '|store=', sci.StoreId,
+    '|item=', sci.Id, '|product=', sci.ProductId, '|qty=', sci.Quantity,
+    '|attributes=', COALESCE(sci.AttributesXml, ''))
+FROM (VALUES ('Guest', @GuestId), ('Account', @AccountId)) v(RoleName, CustomerId)
+JOIN ShoppingCartItem sci ON sci.CustomerId = v.CustomerId AND sci.StoreId = @StoreId
+    AND sci.ProductId = @ProductId AND sci.ShoppingCartTypeId = 1
+WHERE v.CustomerId IS NOT NULL
+ORDER BY v.RoleName, sci.Id;
+SELECT CONCAT('N02_COUPON|', v.RoleName, '|count=', COUNT(ga.Id))
+FROM (VALUES ('Guest', @GuestId), ('Account', @AccountId)) v(RoleName, CustomerId)
+LEFT JOIN GenericAttribute ga ON ga.EntityId = v.CustomerId AND ga.KeyGroup = 'Customer'
+    AND ga.[Key] IN ('DiscountCouponCode', 'GiftCardCouponCodes')
+WHERE v.CustomerId IS NOT NULL
+GROUP BY v.RoleName;
+`;
+  return executeReadonlySql(sql);
+}
+
 /**
  * Read-only SQL snapshot for the local Cart fixtures.
  * The helper intentionally uses only the configured local Docker target.

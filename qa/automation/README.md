@@ -41,7 +41,27 @@ and `QA_CONFIGURABLE_PRODUCT_PATH` to `/pw-shirt-variants` before
 `npm run test:n02-cart`. The default
 `/pw-shirt-variants-2` path returns 404 in this store. `CART-REPEAT-01` needs
 the SQL password; `CART-MERGE-01` also needs the registered customer's email
-and password.
+and password. Use a dedicated `qa.n02.*@example.test` registered account for N02.
+`QA_N02_STORE_ID` defaults to `1` and must name the current test store.
+
+N02 uses `scripts/reset-n02-fixture.ps1`, scoped to the current guest customer
+cookie and the synthetic registered account. It clears only those two test
+customers' Cart rows in the selected store, restores Red/S stock 5 and Blue/M
+stock 3, and restarts the local store to clear cached inventory. The ordinary
+`PW-*` reset script is not used by N02. The N02 test attaches SQL snapshots
+with `CustomerId`, `StoreId`, variant and quantity for both carts; the UI
+assertions check subtotal and total. Product price is verified as 200 by the
+reset preflight, while the SQL snapshot records the current tax setting.
+
+Generate and validate the independent N02 PICT model with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ../pairwise/install-pict.ps1
+node ../pairwise/n02-cart/generate.mjs
+```
+
+Read `../pairwise/n02-cart/coverage-report.md` for generated pair coverage.
+Its `NotRun` column is intentionally separate from the six UI case results.
 
 Without required local values, every `PW-xxx` test is deliberately skipped as
 `Blocked: environment/fixture` rather than reported as a product failure.
