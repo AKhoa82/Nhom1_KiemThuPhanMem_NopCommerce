@@ -51,7 +51,7 @@ LEFT JOIN GenericAttribute ga ON ga.EntityId = v.CustomerId AND ga.KeyGroup = 'C
 WHERE v.CustomerId IS NOT NULL
 GROUP BY v.RoleName;
 `;
-  return executeReadonlySql(sql);
+  return executeReadonlySql(sql, true);
 }
 
 /**
@@ -171,13 +171,14 @@ WHERE ga.KeyGroup = 'Customer'
   return executeReadonlySql(sql);
 }
 
-export function executeReadonlySql(sql: string): Promise<string> {
+export function executeReadonlySql(sql: string, wide = false): Promise<string> {
   return new Promise((resolve, reject) => {
     const child = spawn('docker.exe', [
       'exec', '-i', runtimeConfig.databaseContainer,
       '/opt/mssql-tools18/bin/sqlcmd',
       '-C', '-S', 'localhost', '-U', 'sa', '-P', runtimeConfig.sqlPassword,
-      '-d', runtimeConfig.databaseName, '-b', '-h', '-1', '-W', '-s', '|',
+      '-d', runtimeConfig.databaseName, '-b',
+      ...(wide ? ['-w', '65535', '-y', '0'] : ['-h', '-1', '-W']), '-s', '|',
     ], { windowsHide: true });
 
     let stdout = '';
