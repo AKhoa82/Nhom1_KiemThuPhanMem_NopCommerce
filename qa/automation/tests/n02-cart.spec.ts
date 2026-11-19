@@ -154,6 +154,9 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
       contentType: 'text/plain',
     });
 
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await cartSnapshot(testInfo, 'after-refresh');
+
     expect(accountQuantity, 'The account cart must not exceed stock 5.').toBeLessThanOrEqual(5);
     expect(accountQuantity + guestQuantity, 'The login merge must not silently discard either cart.').toBe(6);
     expect(feedback, 'The buyer must be told why the over-stock merge was rejected.').not.toBe('');
@@ -176,6 +179,7 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
       await page.reload({ waitUntil: 'domcontentloaded' });
       await assertCartLine(page, product, totalQuantity, ['Red', 'S']);
       await screenshot(page, testInfo, 'after-refresh');
+      await cartSnapshot(testInfo, 'after-refresh');
     });
   }
 
@@ -194,6 +198,7 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     await assertCartLine(page, product, 1, ['Red', 'S']);
     await assertCartLine(page, product, 1, ['Blue', 'M']);
     await screenshot(page, testInfo, 'after-refresh');
+    await cartSnapshot(testInfo, 'after-refresh');
   });
 
   test('CART-REPEAT-01 REPEAT-SAME: adding 2 then 3 makes one line with correct total', async ({ page }, testInfo) => {
@@ -221,7 +226,11 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
 
   test('CART-REPEAT-01 REPEAT-DIFFERENT: another variant remains a separate line', async ({ page }, testInfo) => {
     await addVariantProduct(page, 2, 'RedS');
+    await page.goto('/cart');
+    await cartSnapshot(testInfo, 'after-first-add');
     await addVariantProduct(page, 3, 'RedS');
+    await page.goto('/cart');
+    await cartSnapshot(testInfo, 'after-repeat-add');
     await addVariantProduct(page, 1, 'BlueM');
     await page.goto('/cart');
     await screenshot(page, testInfo, 'different-variant-after-add');
