@@ -21,6 +21,6 @@ the temp file afterward.
 
 Each CSV row maps to a concrete fixture. `ExistingUiTest` links the six
 already coded business cases. `NotCoded` marks two additional RepeatAdd
-combinations from the model. `ConfirmedFixtureRun=NotRun` remains until a
-separate run on a confirmed local fixture is recorded; pair coverage alone
-does not imply a UI Pass.
+combinations from the model. `ConfirmedFixtureRun` uses the pinned run in
+`execution.json` for the six coded cases; the other two remain `NotRun`.
+Pair coverage alone does not imply a UI Pass.
