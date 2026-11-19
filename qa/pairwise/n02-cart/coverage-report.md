@@ -7,7 +7,7 @@
 - Feasible pairs: 30
 - Pairs in generated rows: 30
 - Generated pair coverage: 30/30 (100%)
-- Confirmed-fixture execution: Not Run. Generated coverage is not a UI test result.
+- Confirmed-fixture execution: AUTO-20261119100034105 at 546eb14df6a65a7e2eb30329a83239e125b2dac7; 5 passed, 1 failed. Two additional rows remain NotRun. Generated coverage is not a UI test result.
 - Existing UI cases: MERGE-VALID, MERGE-EXACT, MERGE-OVER, MERGE-VARIANT, REPEAT-SAME, REPEAT-DIFFERENT.
 - Additional PICT rows without UI automation: RepeatAdd/BelowStock and RepeatAdd/AboveStock.
 - Values are relation labels. Concrete quantities in generated-cases.csv must be checked against stock before execution.

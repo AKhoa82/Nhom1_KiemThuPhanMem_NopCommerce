@@ -125,13 +125,28 @@ const generatedSet = pairs(generated);
 const missing = [...feasibleSet].filter(pair => !generatedSet.has(pair));
 if (missing.length) throw new Error(`PICT missed ${missing.length} feasible pairs: ${missing.join(', ')}`);
 
+const executionPath = join(directory, 'execution.json');
+const execution = (() => {
+  try { return JSON.parse(readFileSync(executionPath, 'utf8')); }
+  catch (error) { if (error.code === 'ENOENT') return null; throw error; }
+})();
+if (execution) {
+  if (!/^AUTO-\d+$/.test(execution.runId) || !/^[a-f0-9]{40}$/.test(execution.sourceCommit)) {
+    throw new Error('Invalid N02 execution metadata.');
+  }
+  for (const [name, status] of Object.entries(execution.cases)) {
+    if (!['passed', 'failed', 'skipped'].includes(status)) throw new Error(`Invalid N02 result for ${name}`);
+  }
+}
+
 const csvHeader = ['CaseId', ...columns, 'ConcreteFixture', 'QuantityA', 'QuantityB', 'BlueMExtra',
   'RedSStock', 'BlueMStock', 'ExistingUiTest', 'ConfirmedFixtureRun'];
 const dataRows = generated.map((row, index) => {
   const data = fixture(row);
   validateFixture(row, data);
   return [`N02-PW-${String(index + 1).padStart(3, '0')}`, ...columns.map(name => row[name]),
-    data.name, data.q1, data.q2, data.blueM, 5, 3, data.ui || 'NotCoded', 'NotRun'].map(csv).join(',');
+    data.name, data.q1, data.q2, data.blueM, 5, 3, data.ui || 'NotCoded',
+    data.ui ? (execution?.cases[data.ui] ?? 'NotRun') : 'NotRun'].map(csv).join(',');
 });
 writeFileSync(join(directory, 'generated-cases.csv'), [csvHeader.join(','), ...dataRows].join('\n') + '\n');
 const modelHash = createHash('sha256').update(model).digest('hex');
@@ -145,7 +160,9 @@ const report = [
   `- Feasible pairs: ${feasibleSet.size}`,
   `- Pairs in generated rows: ${generatedSet.size}`,
   `- Generated pair coverage: ${generatedSet.size}/${feasibleSet.size} (100%)`,
-  '- Confirmed-fixture execution: Not Run. Generated coverage is not a UI test result.',
+  execution
+    ? `- Confirmed-fixture execution: ${execution.runId} at ${execution.sourceCommit}; ${Object.values(execution.cases).filter(x => x === 'passed').length} passed, ${Object.values(execution.cases).filter(x => x === 'failed').length} failed. Two additional rows remain NotRun. Generated coverage is not a UI test result.`
+    : '- Confirmed-fixture execution: Not Run. Generated coverage is not a UI test result.',
   '- Existing UI cases: MERGE-VALID, MERGE-EXACT, MERGE-OVER, MERGE-VARIANT, REPEAT-SAME, REPEAT-DIFFERENT.',
   '- Additional PICT rows without UI automation: RepeatAdd/BelowStock and RepeatAdd/AboveStock.',
   '- Values are relation labels. Concrete quantities in generated-cases.csv must be checked against stock before execution.',

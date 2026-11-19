@@ -22,8 +22,21 @@ function visit(suite) {
     mkdirSync(caseDirectory, { recursive: true });
     const attachments = [];
     for (const attachment of result.attachments || []) {
-      if (!/^[a-z0-9-]+\.sql\.txt$/.test(attachment.name)) continue;
-      if (!attachment.body) throw new Error(`N02 SQL attachment ${attachment.name} has no body.`);
+      const isSql = /^[a-z0-9-]+\.sql\.txt$/.test(attachment.name);
+      const isScreenshot = /^(?:account-before-login|guest-before-login|after-login|account-after-login|after-refresh|original-guest-after-login|after-first-add|after-repeat-add|different-variant-after-add)\.png$/.test(attachment.name);
+      const isFeedback = /^(?:login-feedback|merge-over-quantities)\.txt$/.test(attachment.name);
+      if (!isSql && !isScreenshot && !isFeedback) continue;
+      if (!attachment.body) throw new Error(`N02 attachment ${attachment.name} has no body.`);
+      if (isScreenshot) {
+        writeFileSync(join(caseDirectory, attachment.name), Buffer.from(attachment.body, 'base64'));
+        attachments.push(attachment.name);
+        continue;
+      }
+      if (isFeedback) {
+        writeFileSync(join(caseDirectory, attachment.name), Buffer.from(attachment.body, 'base64').toString('utf8'));
+        attachments.push(attachment.name);
+        continue;
+      }
       const lines = Buffer.from(attachment.body, 'base64').toString('utf8').split(/\r?\n/)
         .map(line => line.trim()).filter(line => line.startsWith('N02_'));
       if (lines.length === 0 || lines.some(line => !/^N02_(PRODUCT|VARIANT|CUSTOMER|CART|COUPON)\|/.test(line))) {

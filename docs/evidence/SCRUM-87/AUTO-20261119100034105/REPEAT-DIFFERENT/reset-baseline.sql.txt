@@ -1,0 +1,7 @@
+N02_PRODUCT|2|PW-SHIRT|price=200.0000|inventory=2|backorder=0|taxExempt=0
+N02_VARIANT|1|stock=5|allowOutOfStock=0|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></ProductAttributeValue></ProductAttribute></Attributes>
+N02_VARIANT|2|stock=4|allowOutOfStock=0|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>4</Value></ProductAttributeValue></ProductAttribute></Attributes>
+N02_VARIANT|3|stock=6|allowOutOfStock=0|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>2</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></ProductAttributeValue></ProductAttribute></Attributes>
+N02_VARIANT|4|stock=3|allowOutOfStock=0|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>2</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>4</Value></ProductAttributeValue></ProductAttribute></Attributes>
+N02_CUSTOMER|Guest|id=4262|store=1|cartRows=0|quantity=0
+N02_COUPON|Guest|count=0
