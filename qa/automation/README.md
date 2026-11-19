@@ -32,22 +32,34 @@ npm run test:list
 npm run test:case -- 'PW-001\b'
 npm run test:all
 npm run test:cart-risk
-npm run test:n02-cart
 npm run report
 ```
 
-For the current local N02 fixture, set `NOP_BASE_URL` to `http://localhost/`
-and `QA_CONFIGURABLE_PRODUCT_PATH` to `/pw-shirt-variants` before
-`npm run test:n02-cart`. The default
-`/pw-shirt-variants-2` path returns 404 in this store. `CART-REPEAT-01` needs
-the SQL password; `CART-MERGE-01` also needs the registered customer's email
-and password. Use a dedicated `qa.n02.*@example.test` registered account for N02.
-`QA_N02_STORE_ID` defaults to `1` and must name the current test store.
+For the current local N02 fixture, use a registered account created only for
+N02. The reset accepts `qa.n02.*@example.test`, not the `qa.pairwise.*` account
+shown above for the ordinary PW cases. Register it once with
+`node scripts/register-local-qa.cjs` after setting the email and password.
+The default `/pw-shirt-variants-2` path returns 404 in this store.
+
+```powershell
+$env:NOP_BASE_URL = 'http://localhost/'
+$env:QA_CONFIGURABLE_PRODUCT_PATH = '/pw-shirt-variants'
+$env:QA_REGISTERED_EMAIL = 'qa.n02.your-unique-name@example.test'
+$env:QA_REGISTERED_PASSWORD = '<mat-khau-customer-n02>'
+$env:QA_FIXTURE_VERSION = 'SCRUM-87-N02-v1'
+node scripts/register-local-qa.cjs
+npm run test:n02-cart
+```
+
+`CART-REPEAT-01` needs `QA_SQL_PASSWORD`; `CART-MERGE-01` also needs the
+registered account email and password. `QA_N02_STORE_ID` defaults to `1` and
+must name the current test store.
 
 N02 uses `scripts/reset-n02-fixture.ps1`, scoped to the current guest customer
-cookie and the synthetic registered account. It clears only those two test
-customers' Cart rows in the selected store, restores Red/S stock 5 and Blue/M
-stock 3, and restarts the local store to clear cached inventory. The ordinary
+cookie and the synthetic registered account. It clears only their `PW-SHIRT`
+Cart rows in the selected store. Existing coupon or gift-card codes block the
+run without being deleted. It restores Red/S stock 5 and Blue/M stock 3, then
+restarts the local store to clear cached inventory. The ordinary
 `PW-*` reset script is not used by N02. The N02 test attaches SQL snapshots
 with `CustomerId`, `StoreId`, variant and quantity for both carts; the UI
 assertions check subtotal and total. Product price is verified as 200 by the
@@ -61,7 +73,8 @@ node ../pairwise/n02-cart/generate.mjs
 ```
 
 Read `../pairwise/n02-cart/coverage-report.md` for generated pair coverage.
-Its `NotRun` column is intentionally separate from the six UI case results.
+The CSV records UI results from `execution.json`; two additional rows remain
+`NotCoded/NotRun` and generated coverage is separate from UI pass rate.
 
 Without required local values, every `PW-xxx` test is deliberately skipped as
 `Blocked: environment/fixture` rather than reported as a product failure.

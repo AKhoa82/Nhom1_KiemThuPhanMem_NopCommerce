@@ -81,6 +81,11 @@ IF @RedSmallId IS NULL OR @BlueMediumId IS NULL
 IF EXISTS (SELECT 1 FROM ProductAttributeCombination
     WHERE Id IN (@RedSmallId, @BlueMediumId) AND AllowOutOfStockOrders <> 0)
     THROW 51000, 'FIXTURE_BLOCKED: N02 variants permit out-of-stock orders.', 1;
+IF EXISTS (SELECT 1 FROM GenericAttribute
+    WHERE KeyGroup = 'Customer' AND [Key] IN ('DiscountCouponCode', 'GiftCardCouponCodes')
+      AND (EntityId = @GuestId OR EntityId = @AccountId)
+      AND NULLIF(LTRIM(RTRIM([Value])), N'') IS NOT NULL)
+    THROW 51000, 'FIXTURE_BLOCKED: N02 customers have an active coupon or gift card; use clean QA customers.', 1;
 
 IF '$(ValidateOnly)' = '1'
 BEGIN
@@ -94,14 +99,13 @@ BEGIN TRANSACTION;
 DECLARE @OtherCartRowsBefore int = (SELECT COUNT(*) FROM ShoppingCartItem
     WHERE ShoppingCartTypeId = 1 AND StoreId = @StoreId AND ProductId = @ProductId
       AND CustomerId <> @GuestId AND (@AccountId IS NULL OR CustomerId <> @AccountId));
+DECLARE @OtherFixtureRowsBefore int = (SELECT COUNT(*) FROM ShoppingCartItem
+    WHERE (CustomerId = @GuestId OR CustomerId = @AccountId)
+      AND NOT (ShoppingCartTypeId = 1 AND StoreId = @StoreId AND ProductId = @ProductId));
 DELETE FROM ShoppingCartItem
-WHERE ShoppingCartTypeId = 1 AND StoreId = @StoreId
+WHERE ShoppingCartTypeId = 1 AND StoreId = @StoreId AND ProductId = @ProductId
   AND (CustomerId = @GuestId OR CustomerId = @AccountId);
 DECLARE @DeletedCartRows int = @@ROWCOUNT;
-
-DELETE FROM GenericAttribute
-WHERE KeyGroup = 'Customer' AND [Key] IN ('DiscountCouponCode', 'GiftCardCouponCodes')
-  AND (EntityId = @GuestId OR EntityId = @AccountId);
 
 UPDATE ProductAttributeCombination SET StockQuantity = 5 WHERE Id = @RedSmallId;
 UPDATE ProductAttributeCombination SET StockQuantity = 3 WHERE Id = @BlueMediumId;
@@ -109,11 +113,16 @@ IF @OtherCartRowsBefore <> (SELECT COUNT(*) FROM ShoppingCartItem
     WHERE ShoppingCartTypeId = 1 AND StoreId = @StoreId AND ProductId = @ProductId
       AND CustomerId <> @GuestId AND (@AccountId IS NULL OR CustomerId <> @AccountId))
     THROW 51000, 'FIXTURE_BLOCKED: N02 reset changed another customer cart.', 1;
+IF @OtherFixtureRowsBefore <> (SELECT COUNT(*) FROM ShoppingCartItem
+    WHERE (CustomerId = @GuestId OR CustomerId = @AccountId)
+      AND NOT (ShoppingCartTypeId = 1 AND StoreId = @StoreId AND ProductId = @ProductId))
+    THROW 51000, 'FIXTURE_BLOCKED: N02 reset changed a non-N02 cart row.', 1;
 COMMIT TRANSACTION;
 
 SELECT CONCAT('N02_RESET|store=', @StoreId, '|guest=', @GuestId,
     '|account=', COALESCE(CONVERT(varchar(20), @AccountId), '-'),
     '|deletedCartRows=', @DeletedCartRows, '|otherCartRows=', @OtherCartRowsBefore,
+    '|otherFixtureRows=', @OtherFixtureRowsBefore,
     '|redSStock=5|blueMStock=3');
 '@
 
