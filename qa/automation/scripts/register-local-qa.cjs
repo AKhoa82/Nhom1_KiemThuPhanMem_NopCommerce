@@ -1,6 +1,7 @@
 const { chromium } = require('@playwright/test');
+const { existsSync } = require('node:fs');
 
-process.loadEnvFile('.env');
+if (existsSync('.env')) process.loadEnvFile('.env');
 
 (async () => {
   const browser = await chromium.launch();

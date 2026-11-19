@@ -1,0 +1,11 @@
+PRODUCT|PW-SHIRT|10000
+PRODUCT|PW-SIMPLE-001|10
+PRODUCT|PW-OOS-001|0
+VARIANT|PW-SHIRT|5|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></ProductAttributeValue></ProductAttribute></Attribute
+VARIANT|PW-SHIRT|4|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>4</Value></ProductAttributeValue></ProductAttribute></Attribute
+VARIANT|PW-SHIRT|6|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>2</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></ProductAttributeValue></ProductAttribute></Attribute
+VARIANT|PW-SHIRT|3|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>2</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>4</Value></ProductAttributeValue></ProductAttribute></Attribute
+DISCOUNT|PW-CART-10PCT|10.0000|1
+CART|PW-SHIRT|5|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></ProductAttributeValue></ProductAttribute></Attributes>
+COUPON|<DiscountCouponCodes><CouponCode Code="pw-cart-10pct" /></DiscountCouponCodes>
+COUPON|<DiscountCouponCodes><CouponCode Code="pw-cart-10pct" /></DiscountCouponCodes>
