@@ -1,0 +1,12 @@
+{
+  "runId": "AUTO-20261119171317839",
+  "sourceCommit": "a4759a48ff82f19ec36c3e98b17b252d94b6857d",
+  "cases": {
+    "MERGE-OVER": "failed",
+    "MERGE-VALID": "passed",
+    "MERGE-EXACT": "passed",
+    "MERGE-VARIANT": "passed",
+    "REPEAT-SAME": "passed",
+    "REPEAT-DIFFERENT": "passed"
+  }
+}

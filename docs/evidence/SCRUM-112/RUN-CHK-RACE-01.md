@@ -1,33 +1,9 @@
-# Run Manifest — RUN-CHK-RACE-01
+# Run manifest — CHK-RACE-01
 
-## Thông tin thực thi
-
-| Thuộc tính | Giá trị |
-| --- | --- |
-| Run ID | `RUN-20261107-CHKRACE-01` |
-| Scenario ID | `CHK-RACE-01` |
-| Executed at | `2026-11-03T12:50:00Z` |
-| Source commit | `1edaf26874f0b43bb1e74132c3ad4d461c24c942` |
-| Runtime/build commit | `1edaf26874f0b43bb1e74132c3ad4d461c24c942` |
-| Checkout mode | `multi-step` |
-| Base URL/store | `http://localhost/` |
-| Database/fixture version | `PW-local-fixture-v1` |
-| Customer type | `Registered` |
-| Product/SKU and stock | `PW-SIMPLE-001` |
-| Shipping method | `Ground` |
-| Payment method | `Payments.CheckMoneyOrder` |
-| Command/manual procedure | Dùng barrier (Promise.all) phát hai request Confirm đồng thời với cùng checkout state; hoặc chạy `npx playwright test tests/checkout-risk.spec.ts --grep 'CHK-RACE-01'` |
-| Result | `Not Run` (harness concurrency barrier đã dựng thành công) |
-
-## Bằng chứng thực thi (Evidence links)
-
-- **Concurrency harness:** Được tích hợp trong `qa/automation/tests/checkout-risk.spec.ts` (test case `CHK-RACE-01`).
-- **Response log:** Lưu timestamp, request ID, status code và status text của cả 2 request đồng thời.
-- **SQL trước:** `ORDER_COUNT|0`, `CART_COUNT|1`, `PRODUCT|PW-SIMPLE-001|10`.
-- **SQL sau:** `ORDER_COUNT|1` (tối đa 1 order mới, delta <= 1; nếu delta = 2 sẽ fail và mở defect race condition), stock trừ đúng 1 lần.
-- **Report/log:** `qa/automation/tests/checkout-risk.spec.ts`.
-
-## Giới hạn đã biết (Known limitations)
-
-- Tuyệt đối không mô phỏng bằng hai click tuần tự bằng tay. Phải dùng concurrency barrier phát song song hai POST request đến `/checkout/confirm`.
-
+- Ngày thực thi: **18/11/2026**, local Docker, checkout nhiều bước.
+- Trạng thái: **Fail**.
+- Lệnh: từ `qa/automation`, nạp cấu hình QA local và chạy `npx playwright test tests/checkout-risk.spec.ts`.
+- Mã test: [checkout-risk.spec.ts](../../../qa/automation/tests/checkout-risk.spec.ts).
+- Kết quả: Hai POST Confirm phát gần đồng thời; SQL ghi đúng một đơn mới và stock trừ một lần. Một response HTTP 200 chứa lỗi SQL AK_Order_OrderGuid.
+- Giới hạn: Đây là lỗi lộ thông báo SQL, không phải tạo trùng đơn. Không lưu raw response chứa thông tin nội bộ trong Git.
+- Bản tóm tắt đã loại bí mật và thống kê từ Playwright JSON report: [RUN-20261118-N01.md](RUN-20261118-N01.md). Image web là container đã tồn tại; chưa xác minh SHA build của image. Report chi tiết và artifact được Git ignore, giữ trên máy chạy.

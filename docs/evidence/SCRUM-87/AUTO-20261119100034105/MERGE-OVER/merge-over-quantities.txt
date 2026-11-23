@@ -1,0 +1,3 @@
+account=4
+originalGuest=0
+stock=5

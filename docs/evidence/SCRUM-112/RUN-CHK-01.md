@@ -21,10 +21,10 @@
 
 ## Bằng chứng thực thi (Evidence links)
 
-- **Ảnh:** [`image/review/REVIEW-02-confirm-order.png`](../../image/review/REVIEW-02-confirm-order.png), [`REVIEW-03-order-completed.png`](../../image/review/REVIEW-03-order-completed.png), [`REVIEW-04-orders-after.png`](../../image/review/REVIEW-04-orders-after.png), [`REVIEW-05-order-details.png`](../../image/review/REVIEW-05-order-details.png)
+- **Ảnh:** [`image/review/REVIEW-02-confirm-order.png`](../../../image/review/REVIEW-02-confirm-order.png), [`REVIEW-03-order-completed.png`](../../../image/review/REVIEW-03-order-completed.png), [`REVIEW-04-orders-after.png`](../../../image/review/REVIEW-04-orders-after.png), [`REVIEW-05-order-details.png`](../../../image/review/REVIEW-05-order-details.png)
 - **SQL trước:** `ORDER_COUNT|0`, `CART_COUNT|0`
 - **SQL sau:** `ORDER_COUNT|1`, `ORDER|1|10|10|Payments.CheckMoneyOrder|100.00`, `CART_COUNT|0`
-- **Report/log:** [`docs/linh-order-payment-review-summary.md`](../linh-order-payment-review-summary.md#3-kết-quả-thực-tế-của-lượt-chạy)
+- **Report/log:** [`docs/linh-order-payment-review-summary.md`](../../linh-order-payment-review-summary.md#3-kết-quả-thực-tế-của-lượt-chạy)
 
 ## Giới hạn đã biết (Known limitations)
 

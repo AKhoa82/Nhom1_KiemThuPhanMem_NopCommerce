@@ -1,0 +1,12 @@
+# SCRUM-87: N02 Cart model, separate from qa/pairwise/model.pict (14 PW / 253 pairs).
+# QuantityRelation describes the combined quantity for Same variants. For Different,
+# each variant is checked against its own stock, so PerVariant is required.
+Action: LoginMerge, RepeatAdd
+VariantRelation: Same, Different
+QuantityRelation: BelowStock, AtStock, AboveStock, PerVariant
+CustomerContext: GuestToRegistered, SameSession
+
+IF [Action] = "LoginMerge" THEN [CustomerContext] = "GuestToRegistered";
+IF [Action] = "RepeatAdd" THEN [CustomerContext] = "SameSession";
+IF [VariantRelation] = "Different" THEN [QuantityRelation] = "PerVariant";
+IF [VariantRelation] = "Same" THEN [QuantityRelation] <> "PerVariant";

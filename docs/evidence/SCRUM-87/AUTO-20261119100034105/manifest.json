@@ -1,0 +1,112 @@
+{
+  "runId": "AUTO-20261119100034105",
+  "startedAt": "2026-11-19T10:00:34.105Z",
+  "finishedAt": "2026-11-19T10:03:07.942Z",
+  "sourceCommit": "546eb14df6a65a7e2eb30329a83239e125b2dac7",
+  "fixtureVersion": "SCRUM-87-N02-v1",
+  "status": "failed",
+  "cases": [
+    {
+      "caseName": "MERGE-OVER",
+      "caseId": "CART-MERGE-01",
+      "status": "failed",
+      "attachments": [
+        "reset-baseline.sql.txt",
+        "account-before-login.png",
+        "account-before-login.sql.txt",
+        "guest-before-login.png",
+        "guest-before-login.sql.txt",
+        "login-feedback.txt",
+        "after-login.png",
+        "account-after-login.png",
+        "account-after-login.sql.txt",
+        "original-guest-after-login.png",
+        "merge-over-quantities.txt",
+        "after-refresh.sql.txt"
+      ]
+    },
+    {
+      "caseName": "MERGE-VALID",
+      "caseId": "CART-MERGE-01",
+      "status": "passed",
+      "attachments": [
+        "reset-baseline.sql.txt",
+        "account-before-login.png",
+        "account-before-login.sql.txt",
+        "guest-before-login.png",
+        "guest-before-login.sql.txt",
+        "login-feedback.txt",
+        "after-login.png",
+        "account-after-login.png",
+        "account-after-login.sql.txt",
+        "original-guest-after-login.png",
+        "after-refresh.png",
+        "after-refresh.sql.txt"
+      ]
+    },
+    {
+      "caseName": "MERGE-EXACT",
+      "caseId": "CART-MERGE-01",
+      "status": "passed",
+      "attachments": [
+        "reset-baseline.sql.txt",
+        "account-before-login.png",
+        "account-before-login.sql.txt",
+        "guest-before-login.png",
+        "guest-before-login.sql.txt",
+        "login-feedback.txt",
+        "after-login.png",
+        "account-after-login.png",
+        "account-after-login.sql.txt",
+        "original-guest-after-login.png",
+        "after-refresh.png",
+        "after-refresh.sql.txt"
+      ]
+    },
+    {
+      "caseName": "MERGE-VARIANT",
+      "caseId": "CART-MERGE-01",
+      "status": "passed",
+      "attachments": [
+        "reset-baseline.sql.txt",
+        "account-before-login.png",
+        "account-before-login.sql.txt",
+        "guest-before-login.png",
+        "guest-before-login.sql.txt",
+        "login-feedback.txt",
+        "after-login.png",
+        "account-after-login.png",
+        "account-after-login.sql.txt",
+        "original-guest-after-login.png",
+        "after-refresh.png",
+        "after-refresh.sql.txt"
+      ]
+    },
+    {
+      "caseName": "REPEAT-SAME",
+      "caseId": "CART-REPEAT-01",
+      "status": "passed",
+      "attachments": [
+        "reset-baseline.sql.txt",
+        "after-first-add.sql.txt",
+        "after-first-add.png",
+        "after-repeat-add.png",
+        "after-repeat-add.sql.txt",
+        "after-refresh.sql.txt"
+      ]
+    },
+    {
+      "caseName": "REPEAT-DIFFERENT",
+      "caseId": "CART-REPEAT-01",
+      "status": "passed",
+      "attachments": [
+        "reset-baseline.sql.txt",
+        "after-first-add.sql.txt",
+        "after-repeat-add.sql.txt",
+        "different-variant-after-add.png",
+        "different-variant-after-add.sql.txt",
+        "after-refresh.sql.txt"
+      ]
+    }
+  ]
+}
