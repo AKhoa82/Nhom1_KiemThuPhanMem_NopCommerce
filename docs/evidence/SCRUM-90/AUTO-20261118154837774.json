@@ -1,0 +1,41 @@
+{
+  "runId": "AUTO-20261118154837774",
+  "issue": "SCRUM-90",
+  "scenario": "CHK-RACE-01",
+  "defect": "SCRUM-100",
+  "fixture": {
+    "sku": "PW-SHIRT",
+    "variant": "Red/S",
+    "quantity": 4,
+    "stockBefore": 5
+  },
+  "tabs": {
+    "A": {
+      "tab": "A",
+      "startedAtUtc": "2026-11-18T15:48:35.999Z",
+      "startedAtMs": 5429.639,
+      "responseStatus": 302,
+      "responseUrl": "http://localhost/checkout/confirm",
+      "finalUrl": "http://localhost/checkout/completed/16",
+      "click": "fulfilled",
+      "sqlErrorShown": false
+    },
+    "B": {
+      "tab": "B",
+      "startedAtUtc": "2026-11-18T15:48:36.019Z",
+      "startedAtMs": 5450.3711,
+      "responseStatus": 200,
+      "responseUrl": "http://localhost/checkout/confirm",
+      "finalUrl": "http://localhost/checkout/confirm",
+      "click": "fulfilled",
+      "sqlErrorShown": true
+    }
+  },
+  "dispatchGapMs": 20.732100000000173,
+  "maxDispatchGapMs": 250,
+  "orderCountBefore": 6,
+  "orderCountAfter": 7,
+  "orderDelta": 1,
+  "leakedSql": true,
+  "classification": "REPRODUCED_B02"
+}

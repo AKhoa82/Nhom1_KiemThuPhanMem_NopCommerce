@@ -32,6 +32,7 @@ npm run test:list
 npm run test:case -- 'PW-001\b'
 npm run test:all
 npm run test:cart-risk
+npm run test:n03-race
 npm run report
 ```
 
@@ -90,3 +91,27 @@ Without required local values, every `PW-xxx` test is deliberately skipped as
 - `artifacts/`: screenshot and trace for failed tests.
 
 These generated folders and `.env` are ignored by Git.
+
+## SCRUM-90: two tabs at Confirm
+
+`npm run test:n03-race` runs one `CHK-RACE-01` attempt on Chromium. It signs in
+once, opens two tabs in the same browser context, brings both to Confirm, and
+sends both Confirm clicks concurrently. The test records the two POST times,
+statuses, final pages, screenshots, HTML, SQL snapshots, and a trace. The
+machine-readable attempt summary is attached as `n03-attempt.json` in
+`reports/results.json` and visible in the HTML report.
+
+Before **each** invocation, prepare the dedicated local registered account with
+one `PW-SHIRT` Red/S cart line of quantity 4 and Red/S stock of 5. The account
+needs a saved billing address. Ground shipping and Check / Money Order must be
+available. Set `QA_REGISTERED_EMAIL`, `QA_REGISTERED_PASSWORD`, and
+`QA_SQL_PASSWORD`; `NOP_BASE_URL` defaults to `http://localhost/`. The test
+checks the fixture and skips with `FIXTURE_BLOCKED` if it does not match. A
+successful Confirm consumes the cart and stock, so prepare the fixture anew
+before the next invocation. `--repeat-each` alone does not reset it.
+
+The test intentionally fails if a tab exposes a SQL error, if two orders are
+created, or if the two POSTs are farther apart than
+`QA_N03_MAX_DISPATCH_GAP_MS` (default 250 ms). A failed test can therefore be
+valid evidence of a product defect. Keep the generated `reports/` and
+`artifacts/` local: HTML, traces, and screenshots can contain session data.
