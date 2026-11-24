@@ -1,0 +1,12 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="31.223446">
+<testsuite name="n02-cart.spec.ts" timestamp="2026-11-24T09:30:20.498Z" hostname="" tests="1" failures="0" skipped="0" time="28.528" errors="0">
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-ACTIVATION: activation preserves rejected guest cart and returns to recovery" classname="n02-cart.spec.ts" time="28.528">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>

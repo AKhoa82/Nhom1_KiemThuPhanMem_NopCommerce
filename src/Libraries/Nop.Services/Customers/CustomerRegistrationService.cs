@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
+using Nop.Core.Domain.Orders;
 using Nop.Core.Events;
 using Nop.Core.Http;
 using Nop.Services.Authentication;
 using Nop.Services.Authentication.MultiFactor;
+using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Helpers;
 using Nop.Services.Localization;
@@ -12,6 +14,8 @@ using Nop.Services.Logging;
 using Nop.Services.Messages;
 using Nop.Services.Orders;
 using Nop.Services.Security;
+using Nop.Services.Stores;
+using System.Text.Encodings.Web;
 
 namespace Nop.Services.Customers;
 
@@ -34,9 +38,12 @@ public partial class CustomerRegistrationService : ICustomerRegistrationService
     protected readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
     protected readonly INotificationService _notificationService;
     protected readonly IPermissionService _permissionService;
+    protected readonly IProductAttributeFormatter _productAttributeFormatter;
+    protected readonly IProductService _productService;
     protected readonly IRewardPointService _rewardPointService;
     protected readonly IShoppingCartService _shoppingCartService;
     protected readonly IStoreContext _storeContext;
+    protected readonly IStoreService _storeService;
     protected readonly IWebHelper _webHelper;
     protected readonly IWorkContext _workContext;
     protected readonly IWorkflowMessageService _workflowMessageService;
@@ -58,9 +65,12 @@ public partial class CustomerRegistrationService : ICustomerRegistrationService
         INewsLetterSubscriptionService newsLetterSubscriptionService,
         INotificationService notificationService,
         IPermissionService permissionService,
+        IProductAttributeFormatter productAttributeFormatter,
+        IProductService productService,
         IRewardPointService rewardPointService,
         IShoppingCartService shoppingCartService,
         IStoreContext storeContext,
+        IStoreService storeService,
         IWebHelper webHelper,
         IWorkContext workContext,
         IWorkflowMessageService workflowMessageService,
@@ -78,9 +88,12 @@ public partial class CustomerRegistrationService : ICustomerRegistrationService
         _newsLetterSubscriptionService = newsLetterSubscriptionService;
         _notificationService = notificationService;
         _permissionService = permissionService;
+        _productAttributeFormatter = productAttributeFormatter;
+        _productService = productService;
         _rewardPointService = rewardPointService;
         _shoppingCartService = shoppingCartService;
         _storeContext = storeContext;
+        _storeService = storeService;
         _webHelper = webHelper;
         _workContext = workContext;
         _workflowMessageService = workflowMessageService;
@@ -464,7 +477,84 @@ public partial class CustomerRegistrationService : ICustomerRegistrationService
                 await _customerService.UpdateCustomerAsync(customer);
             }
             //migrate shopping cart
-            await _shoppingCartService.MigrateShoppingCartAsync(currentCustomer, customer, true);
+            var cartMigrationWarnings = await _shoppingCartService.MigrateShoppingCartAsync(currentCustomer, customer, true);
+            if (cartMigrationWarnings.Any())
+            {
+                var language = await _workContext.GetWorkingLanguageAsync();
+                var isVietnamese = language?.LanguageCulture?.StartsWith("vi", StringComparison.OrdinalIgnoreCase) == true;
+                var fallbackMessage = isVietnamese
+                    ? "Chưa đăng nhập: có món chưa gộp được. Món vẫn ở giỏ khách. Hãy kiểm tra và thử lại."
+                    : "Sign-in is incomplete: some items could not be merged. They remain in your guest cart. Review the cart and try again.";
+                var message = language == null
+                    ? fallbackMessage
+                    : await _localizationService.GetResourceAsync("Account.Login.CartMergeRejected", language.Id,
+                        logIfNotFound: false, defaultValue: fallbackMessage);
+                var reasons = cartMigrationWarnings.Distinct().ToList();
+                if (isVietnamese)
+                {
+                    var stockTemplate = await _localizationService.GetResourceAsync("ShoppingCart.QuantityExceedsStock", language.Id);
+                    const string quantityPlaceholder = "{0}";
+                    var placeholderIndex = stockTemplate.IndexOf(quantityPlaceholder, StringComparison.Ordinal);
+                    if (placeholderIndex >= 0)
+                    {
+                        var prefix = stockTemplate[..placeholderIndex];
+                        var suffix = stockTemplate[(placeholderIndex + quantityPlaceholder.Length)..];
+                        var clearStockTemplate = await _localizationService.GetResourceAsync(
+                            "Account.Login.CartMergeStockLimit", language.Id,
+                            logIfNotFound: false, defaultValue: "Số lượng vượt tồn kho (tối đa {0} món).");
+                        for (var i = 0; i < reasons.Count; i++)
+                        {
+                            var reason = reasons[i];
+                            if (!reason.StartsWith(prefix, StringComparison.Ordinal) ||
+                                !reason.EndsWith(suffix, StringComparison.Ordinal) ||
+                                reason.Length <= prefix.Length + suffix.Length)
+                                continue;
+
+                            var limit = reason.Substring(prefix.Length, reason.Length - prefix.Length - suffix.Length);
+                            reasons[i] = string.Format(clearStockTemplate, limit);
+                        }
+                    }
+                }
+                var storeTemplate = language == null
+                    ? (isVietnamese ? "Giỏ {0}: {1}." : "Cart at {0}: {1}.")
+                    : await _localizationService.GetResourceAsync("Account.Login.CartMergeStore", language.Id,
+                        logIfNotFound: false, defaultValue: isVietnamese ? "Giỏ {0}: {1}." : "Cart at {0}: {1}.");
+                var remainingItems = await _shoppingCartService.GetShoppingCartAsync(currentCustomer, ShoppingCartType.ShoppingCart);
+                var storeDetails = new List<string>();
+                foreach (var group in remainingItems.GroupBy(item => item.StoreId))
+                {
+                    var store = await _storeService.GetStoreByIdAsync(group.Key);
+                    var storeName = HtmlEncoder.Default.Encode(store?.Name ?? $"#{group.Key}");
+                    if (Uri.TryCreate(store?.Url, UriKind.Absolute, out var storeUrl) &&
+                        (storeUrl.Scheme == Uri.UriSchemeHttp || storeUrl.Scheme == Uri.UriSchemeHttps))
+                    {
+                        var cartUrl = HtmlEncoder.Default.Encode(new Uri(storeUrl, "cart").AbsoluteUri);
+                        storeName = $"<a href=\"{cartUrl}\">{storeName}</a>";
+                    }
+
+                    var items = new List<string>();
+                    foreach (var item in group)
+                    {
+                        var product = await _productService.GetProductByIdAsync(item.ProductId);
+                        if (product == null)
+                            continue;
+
+                        var attributes = store == null || string.IsNullOrEmpty(item.AttributesXml)
+                            ? string.Empty
+                            : await _productAttributeFormatter.FormatAttributesAsync(product, item.AttributesXml,
+                                currentCustomer, store, separator: ", ", htmlEncode: false,
+                                renderPrices: false, allowHyperlinks: false);
+                        var label = $"{product.Name}{(string.IsNullOrEmpty(attributes) ? string.Empty : $" ({attributes})")} ×{item.Quantity}";
+                        items.Add(HtmlEncoder.Default.Encode(label));
+                    }
+
+                    storeDetails.Add(string.Format(HtmlEncoder.Default.Encode(storeTemplate), storeName, string.Join(", ", items)));
+                }
+                _notificationService.WarningNotification(
+                    $"{HtmlEncoder.Default.Encode(message)} {string.Join(" ", storeDetails)} {HtmlEncoder.Default.Encode(string.Join(" ", reasons))}",
+                    encode: false);
+                return new RedirectToRouteResult(NopRouteNames.General.CART, null);
+            }
 
             await _workContext.SetCurrentCustomerAsync(customer);
         }
