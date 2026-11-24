@@ -1612,11 +1612,6 @@ public partial class ShoppingCartService : IShoppingCartService
             return warnings;
         }
 
-        //reset checkout info
-        await ResetCheckoutDataAsync(customer, storeId);
-        if (_shoppingCartSettings.VendorEnabled)
-            await SetShoppingCartVendorAsync(customer, null, storeId);
-
         var cart = await GetShoppingCartAsync(customer, shoppingCartType, storeId);
 
         var shoppingCartItem = await FindShoppingCartItemInTheCartAsync(cart,
@@ -1640,6 +1635,10 @@ public partial class ShoppingCartService : IShoppingCartService
 
             if (warnings.Any())
                 return warnings;
+
+            await ResetCheckoutDataAsync(customer, storeId);
+            if (_shoppingCartSettings.VendorEnabled)
+                await SetShoppingCartVendorAsync(customer, null, storeId);
 
             shoppingCartItem.AttributesXml = attributesXml;
             shoppingCartItem.Quantity = newQuantity;
@@ -1687,6 +1686,10 @@ public partial class ShoppingCartService : IShoppingCartService
             }
 
             var now = DateTime.UtcNow;
+            await ResetCheckoutDataAsync(customer, storeId);
+            if (_shoppingCartSettings.VendorEnabled)
+                await SetShoppingCartVendorAsync(customer, null, storeId);
+
             shoppingCartItem = new ShoppingCartItem
             {
                 ShoppingCartType = shoppingCartType,
@@ -1868,14 +1871,14 @@ public partial class ShoppingCartService : IShoppingCartService
     /// <param name="fromCustomer">From customer</param>
     /// <param name="toCustomer">To customer</param>
     /// <param name="includeCouponCodes">A value indicating whether to coupon codes (discount and gift card) should be also re-applied</param>
-    /// <returns>A task that represents the asynchronous operation</returns>
-    public virtual async Task MigrateShoppingCartAsync(Customer fromCustomer, Customer toCustomer, bool includeCouponCodes)
+    /// <returns>Warnings for items that could not be moved; rejected items remain in the source cart</returns>
+    public virtual async Task<IList<string>> MigrateShoppingCartAsync(Customer fromCustomer, Customer toCustomer, bool includeCouponCodes)
     {
         ArgumentNullException.ThrowIfNull(fromCustomer);
         ArgumentNullException.ThrowIfNull(toCustomer);
 
         if (fromCustomer.Id == toCustomer.Id)
-            return; //the same customer
+            return new List<string>(); //the same customer
 
         var store = await _storeContext.GetCurrentStoreAsync();
         var selectedVendorId = await _genericAttributeService
@@ -1884,21 +1887,28 @@ public partial class ShoppingCartService : IShoppingCartService
         //shopping cart items
         var fromCart = await GetShoppingCartAsync(fromCustomer);
 
+        var warnings = new List<string>();
         for (var i = 0; i < fromCart.Count; i++)
         {
             var sci = fromCart[i];
             var product = await _productService.GetProductByIdAsync(sci.ProductId);
 
-            await AddToCartAsync(toCustomer, product, sci.ShoppingCartType, sci.StoreId,
+            var itemWarnings = await AddToCartAsync(toCustomer, product, sci.ShoppingCartType, sci.StoreId,
                 sci.AttributesXml, sci.CustomerEnteredPrice,
                 sci.RentalStartDateUtc, sci.RentalEndDateUtc, sci.Quantity, false);
-        }
+            if (itemWarnings.Any())
+            {
+                warnings.AddRange(itemWarnings);
+                continue;
+            }
 
-        for (var i = 0; i < fromCart.Count; i++)
-        {
-            var sci = fromCart[i];
+            //Only remove an item from the guest cart after it was moved successfully.
             await DeleteShoppingCartItemAsync(sci);
         }
+
+        //The caller keeps the guest signed out so they can still access rejected items.
+        if (warnings.Any())
+            return warnings;
 
         //copy discount and gift card coupon codes
         if (includeCouponCodes)
@@ -1919,6 +1929,8 @@ public partial class ShoppingCartService : IShoppingCartService
 
         //move selected vendor
         await SetShoppingCartVendorAsync(toCustomer, selectedVendorId, store.Id);
+
+        return warnings;
     }
 
     /// <summary>

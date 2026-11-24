@@ -46,6 +46,10 @@ public class CheckoutModelFactoryTests : ServiceTest
         _rewardPointsSettings = GetService<RewardPointsSettings>();
         _commonSettings = GetService<CommonSettings>();
 
+        //The payment-method cases require reward points to be enabled regardless of earlier fixtures.
+        _rewardPointsSettings.Enabled = true;
+        await _settingService.SaveSettingAsync(_rewardPointsSettings);
+
         _shippingSettings.ActiveShippingRateComputationMethodSystemNames.Add("FixedRateTestShippingRateComputationMethod");
         await _settingService.SaveSettingAsync(_shippingSettings);
 

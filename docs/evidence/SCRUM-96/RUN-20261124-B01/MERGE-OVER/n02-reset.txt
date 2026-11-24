@@ -1,0 +1,1 @@
+N02_RESET|store=1|guest=4304|account=4276|deletedCartRows=2|otherCartRows=29|otherFixtureRows=0|redSStock=5|blueMStock=3

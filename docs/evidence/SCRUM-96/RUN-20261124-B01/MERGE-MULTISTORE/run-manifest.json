@@ -1,0 +1,16 @@
+{
+  "runId": "AUTO-20261124081257059",
+  "startedAt": "2026-11-24T08:12:57.059Z",
+  "finishedAt": "2026-11-24T08:17:38.447Z",
+  "status": "passed",
+  "sourceCommit": "9d57731321fe5d60ed4a42f9837189c0e45ac879",
+  "baseUrl": "http://localhost/",
+  "checkoutMode": "UNSPECIFIED",
+  "fixtureVersion": "SCRUM-87-N02-v1",
+  "databaseContainer": "nopcommerce_mssql_server",
+  "databaseName": "nopcommerce",
+  "storeContainer": "nopcommerce",
+  "hasSqlPassword": true,
+  "hasRegisteredCredential": true,
+  "hasBillingFixture": false
+}

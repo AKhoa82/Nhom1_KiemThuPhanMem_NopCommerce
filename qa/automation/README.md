@@ -66,6 +66,14 @@ with `CustomerId`, `StoreId`, variant and quantity for both carts; the UI
 assertions check subtotal and total. Product price is verified as 200 by the
 reset preflight, while the SQL snapshot records the current tax setting.
 
+`MERGE-MULTISTORE` needs a temporary second local store at `127.0.0.1`.
+Before the full N02 run, use `node --env-file=.env scripts/b01-second-store.cjs setup`,
+restart the `nopcommerce` container, and wait for `/cart` to respond. After
+capturing evidence, use `node --env-file=.env scripts/b01-second-store.cjs cleanup`.
+The case is skipped with `FIXTURE_BLOCKED` when that second store is absent.
+The setup and cleanup scripts only accept the named local database and the
+dedicated N02 account; cleanup refuses unrelated cart rows or orders.
+
 Generate and validate the independent N02 PICT model with:
 
 ```powershell

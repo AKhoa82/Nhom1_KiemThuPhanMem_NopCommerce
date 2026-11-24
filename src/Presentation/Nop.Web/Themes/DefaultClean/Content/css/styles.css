@@ -597,6 +597,14 @@ label, label + * {
 
 .bar-notification.warning {
   background-color: #f39c12;
+  line-height: 1.5;
+  padding-right: 44px;
+}
+
+.bar-notification.warning .content {
+  display: block;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .bar-notification {

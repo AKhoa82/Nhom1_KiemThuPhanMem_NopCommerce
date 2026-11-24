@@ -1,0 +1,50 @@
+<testsuites id="" name="" tests="7" failures="0" skipped="0" errors="0" time="218.53109000000003">
+<testsuite name="n02-cart.spec.ts" timestamp="2026-11-24T07:50:47.802Z" hostname="" tests="7" failures="0" skipped="0" time="215.043" errors="0">
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-OVER: guest items are not silently lost above stock" classname="n02-cart.spec.ts" time="34.869">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-MIXED: accepted line moves while rejected line remains usable" classname="n02-cart.spec.ts" time="39.488">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-VALID: same variant merges within stock" classname="n02-cart.spec.ts" time="28.129">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-EXACT: same variant merges within stock" classname="n02-cart.spec.ts" time="31.877">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-VARIANT: different variants remain separate" classname="n02-cart.spec.ts" time="30.866">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-REPEAT-01 REPEAT-SAME: adding 2 then 3 makes one line with correct total" classname="n02-cart.spec.ts" time="23.238">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-REPEAT-01 REPEAT-DIFFERENT: another variant remains a separate line" classname="n02-cart.spec.ts" time="26.576">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>

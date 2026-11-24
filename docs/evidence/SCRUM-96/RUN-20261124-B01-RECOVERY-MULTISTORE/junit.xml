@@ -1,0 +1,12 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="43.383198">
+<testsuite name="n02-cart.spec.ts" timestamp="2026-11-24T09:34:12.692Z" hostname="" tests="1" failures="0" skipped="0" time="40.506" errors="0">
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-MULTISTORE: each store retains its own cart state across retry" classname="n02-cart.spec.ts" time="40.506">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>

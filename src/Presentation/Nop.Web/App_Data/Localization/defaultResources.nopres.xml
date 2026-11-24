@@ -504,6 +504,15 @@
   <LocaleResource Name="Account.Login.AlreadyLogin">
     <Value>You are already logged in as {0}. You may log in with another account.</Value>
   </LocaleResource>
+  <LocaleResource Name="Account.Login.CartMergeRejected">
+    <Value>Sign-in is incomplete: some items could not be merged. They remain in your guest cart. Review the cart and try again.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Account.Login.CartMergeStockLimit">
+    <Value>Quantity exceeds stock (maximum {0} items).</Value>
+  </LocaleResource>
+  <LocaleResource Name="Account.Login.CartMergeStore">
+    <Value>Cart at {0}: {1}.</Value>
+  </LocaleResource>
   <LocaleResource Name="Account.Login.CheckoutAsGuest">
     <Value>Checkout as Guest</Value>
   </LocaleResource>

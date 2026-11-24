@@ -1,0 +1,66 @@
+<testsuites id="" name="" tests="9" failures="0" skipped="0" errors="0" time="315.36256099999997">
+<testsuite name="n02-cart.spec.ts" timestamp="2026-11-24T15:11:51.736Z" hostname="" tests="9" failures="0" skipped="0" time="310.838" errors="0">
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-OVER: guest items are not silently lost above stock" classname="n02-cart.spec.ts" time="38.661">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-MIXED: accepted line moves while rejected line remains usable" classname="n02-cart.spec.ts" time="38.731">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-VALID: same variant merges within stock" classname="n02-cart.spec.ts" time="28.086">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-EXACT: same variant merges within stock" classname="n02-cart.spec.ts" time="29.595">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-VARIANT: different variants remain separate" classname="n02-cart.spec.ts" time="32.869">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-MULTISTORE: each store retains its own cart state across retry" classname="n02-cart.spec.ts" time="38.342">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-ACTIVATION: activation preserves rejected guest cart and returns to recovery" classname="n02-cart.spec.ts" time="34.162">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-REPEAT-01 REPEAT-SAME: adding 2 then 3 makes one line with correct total" classname="n02-cart.spec.ts" time="35.4">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-REPEAT-01 REPEAT-DIFFERENT: another variant remains a separate line" classname="n02-cart.spec.ts" time="34.992">
+<properties>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>

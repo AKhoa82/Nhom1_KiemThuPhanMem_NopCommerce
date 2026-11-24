@@ -322,8 +322,8 @@ public partial interface IShoppingCartService
     /// <param name="fromCustomer">From customer</param>
     /// <param name="toCustomer">To customer</param>
     /// <param name="includeCouponCodes">A value indicating whether to coupon codes (discount and gift card) should be also re-applied</param>
-    /// <returns>A task that represents the asynchronous operation</returns>
-    Task MigrateShoppingCartAsync(Customer fromCustomer, Customer toCustomer, bool includeCouponCodes);
+    /// <returns>Warnings for items that could not be moved; rejected items remain in the source cart</returns>
+    Task<IList<string>> MigrateShoppingCartAsync(Customer fromCustomer, Customer toCustomer, bool includeCouponCodes);
 
     /// <summary>
     /// Reset data required for checkout

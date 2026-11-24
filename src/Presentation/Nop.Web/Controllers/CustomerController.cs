@@ -966,7 +966,9 @@ public partial class CustomerController : BasePublicController
             _localizationService.GetResourceAsync("ActivityLog.PublicStore.PasswordChanged"));
 
         //authenticate customer after changing password
-        await _customerRegistrationService.SignInCustomerAsync(customer, null, true);
+        var signInResult = await _customerRegistrationService.SignInCustomerAsync(customer, null, true);
+        if (signInResult is RedirectToRouteResult { RouteName: NopRouteNames.General.CART })
+            return signInResult;
 
         model.DisablePasswordChanging = true;
         model.Result = await _localizationService.GetResourceAsync("Account.PasswordRecovery.PasswordHasBeenChanged");
@@ -1444,9 +1446,6 @@ public partial class CustomerController : BasePublicController
         //raise event       
         await _eventPublisher.PublishAsync(new CustomerActivatedEvent(customer));
 
-        //authenticate customer after activation
-        await _customerRegistrationService.SignInCustomerAsync(customer, null, true);
-
         //activating newsletter subscriptions
         var store = await _storeContext.GetCurrentStoreAsync();
         var subscriptions = await _newsLetterSubscriptionService
@@ -1456,6 +1455,11 @@ public partial class CustomerController : BasePublicController
             subscription.Active = true;
             await _newsLetterSubscriptionService.UpdateNewsLetterSubscriptionAsync(subscription);
         }
+
+        //authenticate customer after activation
+        var signInResult = await _customerRegistrationService.SignInCustomerAsync(customer, null, true);
+        if (signInResult is RedirectToRouteResult { RouteName: NopRouteNames.General.CART })
+            return signInResult;
 
         model.Result = await _localizationService.GetResourceAsync("Account.AccountActivation.Activated");
         return View(model);
@@ -1764,7 +1768,9 @@ public partial class CustomerController : BasePublicController
         await _genericAttributeService.SaveAttributeAsync(customer, NopCustomerDefaults.EmailRevalidationTokenAttribute, "");
 
         //authenticate customer after changing email
-        await _customerRegistrationService.SignInCustomerAsync(customer, null, true);
+        var signInResult = await _customerRegistrationService.SignInCustomerAsync(customer, null, true);
+        if (signInResult is RedirectToRouteResult { RouteName: NopRouteNames.General.CART })
+            return signInResult;
 
         model.Result = await _localizationService.GetResourceAsync("Account.EmailRevalidation.Changed");
         return View(model);
@@ -2005,7 +2011,9 @@ public partial class CustomerController : BasePublicController
                         _localizationService.GetResourceAsync("ActivityLog.PublicStore.PasswordChanged"));
 
                     //authenticate customer after changing password
-                    await _customerRegistrationService.SignInCustomerAsync(customer, null, true);
+                    var signInResult = await _customerRegistrationService.SignInCustomerAsync(customer, null, true);
+                    if (signInResult is RedirectToRouteResult { RouteName: NopRouteNames.General.CART })
+                        return signInResult;
 
                     if (string.IsNullOrEmpty(returnUrl))
                         return View(model);
