@@ -175,7 +175,8 @@ export function executeReadonlySql(sql: string, wide = false): Promise<string> {
   return new Promise((resolve, reject) => {
     const child = spawn('docker.exe', [
       'exec', '-i', runtimeConfig.databaseContainer,
-      '/opt/mssql-tools18/bin/sqlcmd',
+      // mssql-tools18 on newer images, mssql-tools on older ones (e.g. 2019-CU18).
+      'sh', '-c', 'S=/opt/mssql-tools18/bin/sqlcmd; [ -x "$S" ] || S=/opt/mssql-tools/bin/sqlcmd; exec "$S" "$@"', 'sh',
       '-C', '-S', 'localhost', '-U', 'sa', '-P', runtimeConfig.sqlPassword,
       '-d', runtimeConfig.databaseName, '-b',
       ...(wide ? ['-w', '65535', '-y', '0'] : ['-h', '-1', '-W']), '-s', '|',

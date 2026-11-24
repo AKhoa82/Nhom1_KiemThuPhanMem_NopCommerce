@@ -115,3 +115,11 @@ created, or if the two POSTs are farther apart than
 `QA_N03_MAX_DISPATCH_GAP_MS` (default 250 ms). A failed test can therefore be
 valid evidence of a product defect. Keep the generated `reports/` and
 `artifacts/` local: HTML, traces, and screenshots can contain session data.
+
+## SCRUM-91: N03 fixture, SQL and repeated runs
+
+- `scripts/reset-n03-fixture.ps1 -AccountEmail qa.n03.<name>@example.test [-ValidateOnly]` restores the N03 fixture (one `PW-SHIRT` Red/S cart line of 4, Red/S stock 5) for that single account. It leaves historical orders and other customers' data alone and stops if the account holds any other cart row, coupon or gift card.
+- `scripts/run-n03-series.ps1 -Runs 10 -AccountEmail ... -Label BEFORE-FIX` repeats reset, SQL snapshot, `n03-race.spec.ts` and SQL snapshot. Output goes to `n03-local-evidence/` (git-ignored).
+- `scripts/summarize-n03-runs.cjs <seriesDir> [--md file]` builds the before/after table and the frequency with a 95% interval. See `docs/evidence/SCRUM-91/N03-FIXTURE-SQL-RESULTS.md`.
+- `scripts/seed-n03-pw-shirt.sql` is a one-time seed for a **fresh** install with no sample data: it creates only `PW-SHIRT` (Red/Blue x S/M, stock 5/4/6/3) and the Ground fixed rate. Run it with `docker exec -i nopcommerce_mssql_server <sqlcmd> -S localhost -U sa -P <password> -d nopcommerce -b < scripts/seed-n03-pw-shirt.sql`. N03 also needs One-page checkout disabled (`ordersettings.onepagecheckoutenabled = False`).
+- The SQL helpers pick `/opt/mssql-tools18/bin/sqlcmd` or fall back to `/opt/mssql-tools/bin/sqlcmd`, so they work with older SQL Server images such as `2019-CU18`.
