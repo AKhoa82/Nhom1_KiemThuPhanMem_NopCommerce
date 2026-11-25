@@ -1,0 +1,186 @@
+{
+  "issue": "SCRUM-100",
+  "applicationCommit": "0d0c9fcd751801b3762f99cfffdf196960289cc3",
+  "attempts": [
+    {
+      "run": 1,
+      "tabA": {
+        "startedAtUtc": "2026-11-25T15:56:17.079Z",
+        "responseStatus": 200
+      },
+      "tabB": {
+        "startedAtUtc": "2026-11-25T15:56:17.096Z",
+        "responseStatus": 302
+      },
+      "dispatchGapMs": 17.666799999999057,
+      "orderCountBefore": 4,
+      "orderCountAfter": 5,
+      "orderDelta": 1,
+      "sqlErrorExposed": false,
+      "safeMessageShown": true,
+      "testExit": 0
+    },
+    {
+      "run": 2,
+      "tabA": {
+        "startedAtUtc": "2026-11-25T15:58:02.614Z",
+        "responseStatus": 200
+      },
+      "tabB": {
+        "startedAtUtc": "2026-11-25T15:58:02.614Z",
+        "responseStatus": 302
+      },
+      "dispatchGapMs": 0.33290000000124564,
+      "orderCountBefore": 5,
+      "orderCountAfter": 6,
+      "orderDelta": 1,
+      "sqlErrorExposed": false,
+      "safeMessageShown": true,
+      "testExit": 0
+    },
+    {
+      "run": 3,
+      "tabA": {
+        "startedAtUtc": "2026-11-25T15:59:48.512Z",
+        "responseStatus": 200
+      },
+      "tabB": {
+        "startedAtUtc": "2026-11-25T15:59:48.527Z",
+        "responseStatus": 302
+      },
+      "dispatchGapMs": 14.478900000000067,
+      "orderCountBefore": 6,
+      "orderCountAfter": 7,
+      "orderDelta": 1,
+      "sqlErrorExposed": false,
+      "safeMessageShown": true,
+      "testExit": 0
+    },
+    {
+      "run": 4,
+      "tabA": {
+        "startedAtUtc": "2026-11-25T16:01:32.499Z",
+        "responseStatus": 200
+      },
+      "tabB": {
+        "startedAtUtc": "2026-11-25T16:01:32.520Z",
+        "responseStatus": 302
+      },
+      "dispatchGapMs": 21.4320000000007,
+      "orderCountBefore": 7,
+      "orderCountAfter": 8,
+      "orderDelta": 1,
+      "sqlErrorExposed": false,
+      "safeMessageShown": true,
+      "testExit": 0
+    },
+    {
+      "run": 5,
+      "tabA": {
+        "startedAtUtc": "2026-11-25T16:03:16.935Z",
+        "responseStatus": 302
+      },
+      "tabB": {
+        "startedAtUtc": "2026-11-25T16:03:16.935Z",
+        "responseStatus": 200
+      },
+      "dispatchGapMs": 0.2875000000003638,
+      "orderCountBefore": 8,
+      "orderCountAfter": 9,
+      "orderDelta": 1,
+      "sqlErrorExposed": false,
+      "safeMessageShown": true,
+      "testExit": 0
+    },
+    {
+      "run": 6,
+      "tabA": {
+        "startedAtUtc": "2026-11-25T16:05:01.994Z",
+        "responseStatus": 302
+      },
+      "tabB": {
+        "startedAtUtc": "2026-11-25T16:05:01.995Z",
+        "responseStatus": 200
+      },
+      "dispatchGapMs": 1.1276999999990949,
+      "orderCountBefore": 9,
+      "orderCountAfter": 10,
+      "orderDelta": 1,
+      "sqlErrorExposed": false,
+      "safeMessageShown": true,
+      "testExit": 0
+    },
+    {
+      "run": 7,
+      "tabA": {
+        "startedAtUtc": "2026-11-25T16:06:46.630Z",
+        "responseStatus": 200
+      },
+      "tabB": {
+        "startedAtUtc": "2026-11-25T16:06:46.630Z",
+        "responseStatus": 302
+      },
+      "dispatchGapMs": 0.31450000000040745,
+      "orderCountBefore": 10,
+      "orderCountAfter": 11,
+      "orderDelta": 1,
+      "sqlErrorExposed": false,
+      "safeMessageShown": true,
+      "testExit": 0
+    },
+    {
+      "run": 8,
+      "tabA": {
+        "startedAtUtc": "2026-11-25T16:08:33.397Z",
+        "responseStatus": 200
+      },
+      "tabB": {
+        "startedAtUtc": "2026-11-25T16:08:33.411Z",
+        "responseStatus": 302
+      },
+      "dispatchGapMs": 14.483000000000175,
+      "orderCountBefore": 11,
+      "orderCountAfter": 12,
+      "orderDelta": 1,
+      "sqlErrorExposed": false,
+      "safeMessageShown": true,
+      "testExit": 0
+    },
+    {
+      "run": 9,
+      "tabA": {
+        "startedAtUtc": "2026-11-25T16:10:18.820Z",
+        "responseStatus": 200
+      },
+      "tabB": {
+        "startedAtUtc": "2026-11-25T16:10:18.822Z",
+        "responseStatus": 302
+      },
+      "dispatchGapMs": 2.130299999998897,
+      "orderCountBefore": 12,
+      "orderCountAfter": 13,
+      "orderDelta": 1,
+      "sqlErrorExposed": false,
+      "safeMessageShown": true,
+      "testExit": 0
+    },
+    {
+      "run": 10,
+      "tabA": {
+        "startedAtUtc": "2026-11-25T16:12:02.343Z",
+        "responseStatus": 302
+      },
+      "tabB": {
+        "startedAtUtc": "2026-11-25T16:12:02.343Z",
+        "responseStatus": 200
+      },
+      "dispatchGapMs": 0.32779999999911524,
+      "orderCountBefore": 13,
+      "orderCountAfter": 14,
+      "orderDelta": 1,
+      "sqlErrorExposed": false,
+      "safeMessageShown": true,
+      "testExit": 0
+    }
+  ]
+}

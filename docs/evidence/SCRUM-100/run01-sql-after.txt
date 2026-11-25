@@ -1,0 +1,21 @@
+N03_SNAPSHOT_UTC|2026-11-25T15:56:22.2373085
+N03_CUSTOMER|id=4144|store=1
+N03_ORDER_COUNT|5
+N03_ORDER|id=1021|guid=187A66A5-BF8B-4F1D-988B-07F0D52B0397|orderStatus=10|payStatus=10|method=Payments.CheckMoneyOrder|ship=Shipping.FixedByWeightByTotal|total=800.0000|createdUtc=2026-11-25T15:25:50.395000
+N03_ORDER|id=1022|guid=6FE79FE3-E031-478B-9DF3-E65FC4BFA2D8|orderStatus=10|payStatus=10|method=Payments.CheckMoneyOrder|ship=Shipping.FixedByWeightByTotal|total=800.0000|createdUtc=2026-11-25T15:39:25.805000
+N03_ORDER|id=1024|guid=3F7B2108-0B74-4405-AC1E-A1B1DC16AA7B|orderStatus=10|payStatus=10|method=Payments.CheckMoneyOrder|ship=Shipping.FixedByWeightByTotal|total=800.0000|createdUtc=2026-11-25T15:41:00.144000
+N03_ORDER|id=1027|guid=737597CF-5A09-41BF-A541-A2794D659E7E|orderStatus=10|payStatus=10|method=Payments.CheckMoneyOrder|ship=Shipping.FixedByWeightByTotal|total=800.0000|createdUtc=2026-11-25T15:42:25.345000
+N03_ORDER|id=1028|guid=51936CAB-C490-47E5-8669-EC4D2B6BBC63|orderStatus=10|payStatus=10|method=Payments.CheckMoneyOrder|ship=Shipping.FixedByWeightByTotal|total=800.0000|createdUtc=2026-11-25T15:56:17.402000
+N03_ORDER_ITEM|order=1021|item=18|sku=PW-SHIRT|qty=4|attrs=<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></ProductAttri
+N03_ORDER_ITEM|order=1022|item=19|sku=PW-SHIRT|qty=4|attrs=<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></ProductAttri
+N03_ORDER_ITEM|order=1024|item=20|sku=PW-SHIRT|qty=4|attrs=<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></ProductAttri
+N03_ORDER_ITEM|order=1027|item=21|sku=PW-SHIRT|qty=4|attrs=<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></ProductAttri
+N03_ORDER_ITEM|order=1028|item=22|sku=PW-SHIRT|qty=4|attrs=<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></ProductAttri
+N03_DUP_ORDERGUID|groups=0
+N03_STOCK_RED_S|1
+N03_CART|rows=0|qty=0
+N03_PAYMENT_REQUEST|present=0
+N03_SETTING|ordersettings.minimumorderplacementinterval|1|store=0
+N03_SETTING|ordersettings.onepagecheckoutenabled|False|store=0
+N03_SETTING|ordersettings.placeorderwithlock|False|store=0
+N03_SETTING|paymentsettings.regenerateorderguidinterval|180|store=0
