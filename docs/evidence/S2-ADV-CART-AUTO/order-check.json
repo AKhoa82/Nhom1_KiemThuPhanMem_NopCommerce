@@ -1,6 +1,7 @@
 {
+  "runGroup": "RUN-20261125172620615",
   "seed": 10387,
-  "sourceCommit": "e21ff4471fbe5a612e8dcda91868ec88cf08457e",
+  "sourceCommit": "6f07016e7ad516b6f84dcac50c2b7405ed2b1892",
   "fixtureVersion": "S2-ADV-CART-AUTO-v1",
   "status": "NOT_PROVEN",
   "reverseOrder": [
@@ -1416,5 +1417,9 @@
       ]
     }
   ],
-  "environment": "QA credentials absent in this order-check attempt. A separate live store attempt is exported in pairwise/adv summaries."
+  "sourceCommitsObserved": [
+    "6f07016e7ad516b6f84dcac50c2b7405ed2b1892",
+    "e21ff4471fbe5a612e8dcda91868ec88cf08457e"
+  ],
+  "environment": "QA credentials intentionally absent in this harness-order verification. Separate live attempt is exported in PW/ADV summaries; all live cases were blocked by unavailable /cart."
 }

@@ -9,7 +9,7 @@ Branch: `feat/S2-ADV-CART-AUTO`. Runs used the modified working tree; source fin
 - Offline checks: 6 passed (USD cents/grouping/sign parsing; malformed catalog IDs; failure classification; line/total arithmetic; missing total; partial UI/SQL diagnostics).
 - Discovery: exactly 14 PW + 11 ADV (8 N02 model rows and 3 existing regressions).
 - Live attempt: **14 PW + 11 ADV BLOCKED_ENVIRONMENT**, no business assertions reached. `/cart` returned `ERR_EMPTY_RESPONSE`, socket reset or navigation timeout. A skipped Playwright run is not a business pass.
-- Order-check: see `order-check.md/json`. Blocked observations cannot prove independence, even when their classifications agree.
+- Final order-check: 76 invocations / 150 blocked observations, zero status/classification differences and zero failed Playwright invocations. See `order-check.md/json`. Exit 1 (`NOT_PROVEN`) is intentional; blocked observations cannot prove business independence.
 - Original PICT model/generated CSV/coverage remain unchanged: 253/253 pairs. N02 regenerated using Microsoft PICT 3.7.4: 8 rows, 30/30 feasible pairs. Generated pair coverage is not execution coverage.
 
 ## Evidence
@@ -25,6 +25,8 @@ HTML reports, traces and full per-invocation outputs stay in ignored local
 `qa/automation/artifacts` and `qa/automation/reports` directories. Failure-log
 collection is verified offline with unavailable totals/SQL and a real browser
 screenshot; no live failure artifact is claimed for skipped cases.
+
+The final order-check receipt records source commits observed during the working-tree run and the implementation commit. The original plan file remains unchanged.
 
 ## What changed
 
