@@ -18,6 +18,8 @@
 x64/
 [Bb]in/
 [Oo]bj/
+**/[Bb]in/
+**/[Oo]bj/
 
 # Build scripts folder
 [Aa]pp[Bb]uild/
@@ -33,6 +35,11 @@ qa/automation/node_modules/
 qa/automation/reports/
 qa/automation/artifacts/
 qa/automation/test-results/
+qa/automation/n03-local-evidence/
+qa/local-backups/
+qa/
+docs/
+image/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/

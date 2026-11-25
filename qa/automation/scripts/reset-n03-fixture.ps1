@@ -21,7 +21,10 @@ param(
 
 $ErrorActionPreference = 'Stop'
 # Windows PowerShell can prepend a UTF-8 BOM to text piped to docker.exe; the sed below strips it before sqlcmd.
-if ($Container -ne 'nopcommerce_mssql_server' -or $Database -ne 'nopcommerce' -or $StoreContainer -ne 'nopcommerce') {
+# Older local installs accidentally used a leading U+200B in the database name.
+# Permit that exact variant while still rejecting every other database.
+$normalizedDatabase = $Database.TrimStart([char]0x200B)
+if ($Container -ne 'nopcommerce_mssql_server' -or $normalizedDatabase -ne 'nopcommerce' -or $StoreContainer -ne 'nopcommerce') {
     throw 'FIXTURE_BLOCKED: N03 reset only permits the named local nopcommerce containers and database.'
 }
 if ([string]::IsNullOrWhiteSpace($env:QA_SQL_PASSWORD)) {
@@ -42,7 +45,8 @@ $validateValue = if ($ValidateOnly) { '1' } else { '0' }
 $sql = @'
 SET NOCOUNT ON;
 SET XACT_ABORT ON;
-IF DB_NAME() <> N'nopcommerce' THROW 51000, 'FIXTURE_BLOCKED: unexpected database.', 1;
+IF REPLACE(DB_NAME(), NCHAR(8203), N'') <> N'nopcommerce'
+    THROW 51000, 'FIXTURE_BLOCKED: unexpected database.', 1;
 
 DECLARE @AccountEmail nvarchar(255) = N'$(AccountEmail)';
 DECLARE @StoreId int = CONVERT(int, '$(StoreId)');

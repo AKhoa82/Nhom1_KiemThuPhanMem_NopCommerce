@@ -1663,7 +1663,7 @@ public partial class OrderProcessingService : IOrderProcessingService
             catch (Exception exc)
             {
                 await _logger.ErrorAsync(exc.Message, exc);
-                result.AddError(exc.Message);
+                result.AddError(await CheckoutErrorMessage.GetAsync(_localizationService));
             }
 
             if (result.Success)
