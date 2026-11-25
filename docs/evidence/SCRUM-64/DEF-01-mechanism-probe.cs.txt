@@ -1,0 +1,99 @@
+using Nop.Core;
+using Nop.Core.Domain.Catalog;
+using Nop.Core.Domain.Customers;
+using Nop.Core.Domain.Orders;
+using Nop.Services.Catalog;
+using Nop.Services.Customers;
+using Nop.Services.Orders;
+using NUnit.Framework;
+
+namespace Nop.Tests.Nop.Services.Tests.Orders;
+
+// TEMPORARY probe for SCRUM-64 (DEF-01). Not to be committed.
+[TestFixture]
+public class Scrum64CartMergeProbeTests : ServiceTest
+{
+    private static async Task<Customer> NewCustomerAsync(ICustomerService customerService, string role, string email)
+    {
+        var now = DateTime.UtcNow;
+        var customer = new Customer
+        {
+            CustomerGuid = Guid.NewGuid(),
+            Email = email,
+            Username = email,
+            Active = true,
+            CreatedOnUtc = now,
+            LastActivityDateUtc = now
+        };
+        await customerService.InsertCustomerAsync(customer);
+        var customerRole = await customerService.GetCustomerRoleBySystemNameAsync(role);
+        await customerService.AddCustomerRoleMappingAsync(new CustomerCustomerRoleMapping
+        {
+            CustomerId = customer.Id,
+            CustomerRoleId = customerRole.Id
+        });
+        return customer;
+    }
+
+    private static string Describe(IEnumerable<ShoppingCartItem> cart)
+        => string.Join(", ", cart.Select(x => $"product={x.ProductId} qty={x.Quantity}"));
+
+    [Test]
+    public async Task Probe_MigrateShoppingCart_WhenMergedQuantityExceedsStock()
+    {
+        var customerService = GetService<ICustomerService>();
+        var productService = GetService<IProductService>();
+        var cartService = GetService<IShoppingCartService>();
+        var storeContext = GetService<IStoreContext>();
+        var store = await storeContext.GetCurrentStoreAsync();
+
+        var tag = Guid.NewGuid().ToString("N")[..8];
+        var registered = await NewCustomerAsync(customerService, NopCustomerDefaults.RegisteredRoleName, $"probe.reg.{tag}@example.test");
+        var guest = await NewCustomerAsync(customerService, NopCustomerDefaults.GuestsRoleName, $"probe.guest.{tag}@example.test");
+
+        var now = DateTime.UtcNow;
+        var product = new Product
+        {
+            Name = $"Probe {tag}",
+            Sku = $"PROBE-{tag}",
+            ProductType = ProductType.SimpleProduct,
+            Published = true,
+            VisibleIndividually = true,
+            Price = 100,
+            ManageInventoryMethod = ManageInventoryMethod.ManageStock,
+            StockQuantity = 5,
+            BackorderMode = BackorderMode.NoBackorders,
+            OrderMinimumQuantity = 1,
+            OrderMaximumQuantity = 10000,
+            CreatedOnUtc = now,
+            UpdatedOnUtc = now
+        };
+        await productService.InsertProductAsync(product);
+
+        var warnAccount = await cartService.AddToCartAsync(registered, product, ShoppingCartType.ShoppingCart, store.Id, quantity: 4, addRequiredProducts: false);
+        var warnGuest = await cartService.AddToCartAsync(guest, product, ShoppingCartType.ShoppingCart, store.Id, quantity: 2, addRequiredProducts: false);
+        TestContext.Out.WriteLine($"PROBE setup: stock=5 | add 4 to account -> warnings=[{string.Join(" | ", warnAccount)}] | add 2 to guest -> warnings=[{string.Join(" | ", warnGuest)}]");
+
+        var accountBefore = await cartService.GetShoppingCartAsync(registered);
+        var guestBefore = await cartService.GetShoppingCartAsync(guest);
+        TestContext.Out.WriteLine($"PROBE before: account=[{Describe(accountBefore)}] guest=[{Describe(guestBefore)}]");
+
+        // Exactly what MigrateShoppingCartAsync does for each guest line (same arguments).
+        var sci = guestBefore[0];
+        var directWarnings = await cartService.AddToCartAsync(registered, product, sci.ShoppingCartType, sci.StoreId,
+            sci.AttributesXml, sci.CustomerEnteredPrice, sci.RentalStartDateUtc, sci.RentalEndDateUtc, sci.Quantity, false);
+        TestContext.Out.WriteLine($"PROBE direct AddToCartAsync(account, qty={sci.Quantity}) warnings=[{string.Join(" | ", directWarnings)}] (count={directWarnings.Count})");
+
+        var accountMid = await cartService.GetShoppingCartAsync(registered);
+        TestContext.Out.WriteLine($"PROBE after direct add: account=[{Describe(accountMid)}]");
+
+        await cartService.MigrateShoppingCartAsync(guest, registered, true);
+
+        var accountAfter = await cartService.GetShoppingCartAsync(registered);
+        var guestAfter = await cartService.GetShoppingCartAsync(guest);
+        TestContext.Out.WriteLine($"PROBE after Migrate: account=[{Describe(accountAfter)}] guest=[{Describe(guestAfter)}]");
+        TestContext.Out.WriteLine($"PROBE RESULT: total before={accountBefore.Sum(x => x.Quantity) + guestBefore.Sum(x => x.Quantity)}, total after={accountAfter.Sum(x => x.Quantity) + guestAfter.Sum(x => x.Quantity)}");
+
+        Assert.Pass("probe only");
+    }
+}
