@@ -60,10 +60,11 @@ try {
         New-Item -ItemType Directory -Force -Path $runDir | Out-Null
         Write-Host "=== $Label $runName ($i/$Runs) ==="
 
-        # MinimumOrderPlacementInterval would otherwise block the next order for reasons unrelated to B02.
+        # CheckoutController compares this setting against TotalMinutes, so wait
+        # before every attempt, including the first after an earlier series.
         $prior = Get-N03Snapshot
         $interval = [int](([regex]::Match($prior, 'ordersettings\.minimumorderplacementinterval\|(\d+)')).Groups[1].Value)
-        if ($interval -gt 0 -and $i -gt 1) { Start-Sleep -Seconds ($interval + 2) }
+        if ($interval -gt 0) { Start-Sleep -Seconds ($interval * 60 + 2) }
 
         $reset = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'reset-n03-fixture.ps1') -AccountEmail $AccountEmail -StoreId $StoreId -StoreUrl $StoreUrl -Database $Database
         if ($LASTEXITCODE -ne 0) { throw "Reset failed on $runName." }
