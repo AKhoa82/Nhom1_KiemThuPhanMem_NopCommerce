@@ -17614,6 +17614,9 @@
   <LocaleResource Name="Checkout.OrderNumber">
     <Value>Order number</Value>
   </LocaleResource>
+  <LocaleResource Name="Checkout.OrderProcessingError">
+    <Value>We couldn't complete your order. Check your order history before trying again.</Value>
+  </LocaleResource>
   <LocaleResource Name="Checkout.OrderSummary">
     <Value>Order summary</Value>
   </LocaleResource>

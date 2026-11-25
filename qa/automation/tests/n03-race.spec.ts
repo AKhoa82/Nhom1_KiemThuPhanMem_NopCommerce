@@ -203,6 +203,8 @@ test.describe('SCRUM-90 N03 two-tab Confirm race', () => {
       B: sqlError.test(`${textB}\n${responseBodies[1]}`),
     };
     const leakedSql = sqlErrorByTab.A || sqlErrorByTab.B;
+    const customerFacingMessage = /check your order history before trying again|please wait several seconds before placing a new order/i;
+    const loserHasSafeMessage = [textA, textB].some(text => customerFacingMessage.test(text));
     const timingValid = dispatchGapMs !== null && dispatchGapMs <= maxDispatchGapMs;
     const classification = !timingValid || clicks.some(click => click.status === 'rejected')
       ? 'TIMING_OR_AUTOMATION_INCONCLUSIVE'
@@ -221,7 +223,8 @@ test.describe('SCRUM-90 N03 two-tab Confirm race', () => {
         B: { ...requests.B, finalUrl: secondTab.url(), click: clicks[1].status, sqlErrorShown: sqlErrorByTab.B },
       },
       dispatchGapMs, maxDispatchGapMs, orderCountBefore: orderCount(before),
-      orderCountAfter: orderCount(after), orderDelta: countDelta, leakedSql, classification,
+      orderCountAfter: orderCount(after), orderDelta: countDelta, leakedSql,
+      loserHasSafeMessage, classification,
     };
     await testInfo.attach('n03-attempt.json', {
       body: JSON.stringify(summary, null, 2), contentType: 'application/json',
@@ -231,5 +234,6 @@ test.describe('SCRUM-90 N03 two-tab Confirm race', () => {
     expect(timingValid, `Confirm POSTs must be within ${maxDispatchGapMs} ms.`).toBe(true);
     expect(countDelta, 'The two Confirm requests should create exactly one order.').toBe(1);
     expect(leakedSql, 'The storefront must not expose SQL errors.').toBe(false);
+    expect(loserHasSafeMessage, 'The second tab needs a useful message about the order outcome.').toBe(true);
   });
 });

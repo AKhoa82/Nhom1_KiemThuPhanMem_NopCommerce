@@ -22,7 +22,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 # Windows PowerShell can prepend a UTF-8 BOM to text piped to docker.exe; the sed below strips it before sqlcmd.
-if ($Container -ne 'nopcommerce_mssql_server' -or $Database -ne 'nopcommerce') {
+# Match the reset script's narrowly allowed legacy database name.
+$normalizedDatabase = $Database.TrimStart([char]0x200B)
+if ($Container -ne 'nopcommerce_mssql_server' -or $normalizedDatabase -ne 'nopcommerce') {
     throw 'FIXTURE_BLOCKED: N03 series only permits the named local container and database.'
 }
 foreach ($name in 'QA_SQL_PASSWORD', 'QA_REGISTERED_EMAIL', 'QA_REGISTERED_PASSWORD') {
@@ -63,7 +65,7 @@ try {
         $interval = [int](([regex]::Match($prior, 'ordersettings\.minimumorderplacementinterval\|(\d+)')).Groups[1].Value)
         if ($interval -gt 0 -and $i -gt 1) { Start-Sleep -Seconds ($interval + 2) }
 
-        $reset = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'reset-n03-fixture.ps1') -AccountEmail $AccountEmail -StoreId $StoreId -StoreUrl $StoreUrl
+        $reset = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'reset-n03-fixture.ps1') -AccountEmail $AccountEmail -StoreId $StoreId -StoreUrl $StoreUrl -Database $Database
         if ($LASTEXITCODE -ne 0) { throw "Reset failed on $runName." }
         Set-Content -Encoding utf8 -Path (Join-Path $runDir 'reset.txt') -Value $reset
 

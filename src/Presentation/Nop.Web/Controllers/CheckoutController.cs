@@ -1355,7 +1355,7 @@ public partial class CheckoutController : BasePublicController
         catch (Exception exc)
         {
             await _logger.WarningAsync(exc.Message, exc);
-            model.Warnings.Add(exc.Message);
+            model.Warnings.Add(await CheckoutErrorMessage.GetAsync(_localizationService));
         }
 
         //If we got this far, something failed, redisplay form
@@ -2122,7 +2122,7 @@ public partial class CheckoutController : BasePublicController
         catch (Exception exc)
         {
             await _logger.WarningAsync(exc.Message, exc, await _workContext.GetCurrentCustomerAsync());
-            return Json(new { error = 1, message = exc.Message });
+            return Json(new { error = 1, message = await CheckoutErrorMessage.GetAsync(_localizationService) });
         }
     }
 
