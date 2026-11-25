@@ -12,10 +12,19 @@ public static class CheckoutErrorMessage
 
     private const string Fallback = "We couldn't complete your order. Check your order history before trying again.";
 
-    public static async Task<string> GetAsync(ILocalizationService localizationService)
+    public static async Task<string> GetAsync(ILocalizationService localizationService, string exceptionMessage = null)
     {
         try
         {
+            if (exceptionMessage != null)
+            {
+                var intervalMessage = await localizationService.GetResourceAsync("Checkout.MinOrderPlacementInterval");
+                if (!string.IsNullOrWhiteSpace(intervalMessage) &&
+                    !string.Equals(intervalMessage, "Checkout.MinOrderPlacementInterval", StringComparison.OrdinalIgnoreCase) &&
+                    exceptionMessage == intervalMessage)
+                    return intervalMessage;
+            }
+
             var message = await localizationService.GetResourceAsync(ResourceKey);
             return string.IsNullOrWhiteSpace(message) ||
                 string.Equals(message, ResourceKey, StringComparison.OrdinalIgnoreCase) ? Fallback : message;
