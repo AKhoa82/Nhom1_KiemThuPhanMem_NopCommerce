@@ -1,9 +1,9 @@
 CaseId,Action,VariantRelation,QuantityRelation,CustomerContext,ConcreteFixture,QuantityA,QuantityB,BlueMExtra,RedSStock,BlueMStock,ExistingUiTest,ConfirmedFixtureRun
-N02-PW-001,LoginMerge,Same,BelowStock,GuestToRegistered,RedS_account2_guest2_stock5,2,2,0,5,3,MERGE-VALID,passed
-N02-PW-002,RepeatAdd,Same,BelowStock,SameSession,RedS_add1_then2_stock5,1,2,0,5,3,NotCoded,NotRun
-N02-PW-003,LoginMerge,Same,AtStock,GuestToRegistered,RedS_account2_guest3_stock5,2,3,0,5,3,MERGE-EXACT,passed
-N02-PW-004,RepeatAdd,Same,AboveStock,SameSession,RedS_add4_then2_stock5,4,2,0,5,3,NotCoded,NotRun
-N02-PW-005,RepeatAdd,Same,AtStock,SameSession,RedS_add2_then3_stock5,2,3,0,5,3,REPEAT-SAME,passed
-N02-PW-006,LoginMerge,Same,AboveStock,GuestToRegistered,RedS_account4_guest2_stock5,4,2,0,5,3,MERGE-OVER,failed
-N02-PW-007,LoginMerge,Different,PerVariant,GuestToRegistered,RedS_account1_BlueM_guest1,1,1,0,5,3,MERGE-VARIANT,passed
-N02-PW-008,RepeatAdd,Different,PerVariant,SameSession,RedS_add2_then3_BlueM_add1,2,3,1,5,3,REPEAT-DIFFERENT,passed
+N02-PW-001,LoginMerge,Same,BelowStock,GuestToRegistered,RedS_account2_guest2_stock5,2,2,0,5,3,MERGE-VALID,skipped
+N02-PW-002,RepeatAdd,Same,BelowStock,SameSession,RedS_add1_then2_stock5,1,2,0,5,3,REPEAT-BELOW,skipped
+N02-PW-003,LoginMerge,Same,AtStock,GuestToRegistered,RedS_account2_guest3_stock5,2,3,0,5,3,MERGE-EXACT,skipped
+N02-PW-004,RepeatAdd,Same,AboveStock,SameSession,RedS_add4_then2_stock5,4,2,0,5,3,REPEAT-OVER,skipped
+N02-PW-005,RepeatAdd,Same,AtStock,SameSession,RedS_add2_then3_stock5,2,3,0,5,3,REPEAT-SAME,skipped
+N02-PW-006,LoginMerge,Same,AboveStock,GuestToRegistered,RedS_account4_guest2_stock5,4,2,0,5,3,MERGE-OVER,skipped
+N02-PW-007,LoginMerge,Different,PerVariant,GuestToRegistered,RedS_account1_BlueM_guest1,1,1,0,5,3,MERGE-VARIANT,skipped
+N02-PW-008,RepeatAdd,Different,PerVariant,SameSession,RedS_add2_then3_BlueM_add1,2,3,1,5,3,REPEAT-DIFFERENT,skipped

@@ -55,7 +55,7 @@ DELETE FROM Store WHERE Id = @id;
 COMMIT TRANSACTION;
 SELECT CONCAT('B01_SECOND_STORE_REMOVED|', @id);`;
 const result = spawnSync('docker.exe', [
-  'exec', '-i', 'nopcommerce_mssql_server', '/opt/mssql-tools18/bin/sqlcmd',
+  'exec', '-i', 'nopcommerce_mssql_server', 'sh', '-c', 'S=/opt/mssql-tools18/bin/sqlcmd; [ -x "$S" ] || S=/opt/mssql-tools/bin/sqlcmd; exec "$S" "$@"', 'sh',
   '-C', '-S', 'localhost', '-U', 'sa', '-P', process.env.QA_SQL_PASSWORD,
   '-d', 'nopcommerce', '-b', '-h', '-1', '-W',
 ], { input: mode === 'setup' ? setup : cleanup, encoding: 'utf8', windowsHide: true });

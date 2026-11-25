@@ -1,0 +1,645 @@
+<testsuites id="" name="" tests="25" failures="0" skipped="25" errors="0" time="156.18812300000002">
+<testsuite name="n02-cart.spec.ts" timestamp="2026-11-25T17:17:00.184Z" hostname="" tests="11" failures="0" skipped="11" time="137.586" errors="0">
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-OVER: guest items are not silently lost above stock" classname="n02-cart.spec.ts">
+<properties>
+<property name="caseId" value="MERGE-OVER">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account 4 + guest 2; login rejected; retain guest2/account4; reduce guest1; retry login">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:0,&quot;total&quot;:1000,&quot;outcome&quot;:&quot;CartUpdated&quot;,&quot;feedback&quot;:{&quot;pattern&quot;:&quot;5&quot;,&quot;meaning&quot;:&quot;Stock limit 5 must be stated before notification disappears&quot;,&quot;location&quot;:&quot;login/activation warning&quot;},&quot;rejectedMerge&quot;:{&quot;guestRedS&quot;:2,&quot;accountRedS&quot;:4,&quot;guestSubtotal&quot;:400,&quot;accountSubtotal&quot;:800,&quot;discount&quot;:0,&quot;loginCompleted&quot;:false,&quot;blueM&quot;:&quot;NA&quot;}}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: store did not restart after N02 reset: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-MIXED: accepted line moves while rejected line remains usable" classname="n02-cart.spec.ts">
+<properties>
+<property name="caseId" value="MERGE-MIXED">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account Red/S4; guest Red/S2 + Blue/M1; partial merge; reduce Red/S1; retry">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Blue&quot;,&quot;M&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1200,&quot;discount&quot;:0,&quot;total&quot;:1200,&quot;outcome&quot;:&quot;CartUpdated&quot;,&quot;feedback&quot;:{&quot;pattern&quot;:&quot;5&quot;,&quot;meaning&quot;:&quot;Stock limit 5 must be stated before notification disappears&quot;,&quot;location&quot;:&quot;login/activation warning&quot;},&quot;rejectedMerge&quot;:{&quot;guestRedS&quot;:2,&quot;accountRedS&quot;:4,&quot;guestSubtotal&quot;:400,&quot;accountSubtotal&quot;:1000,&quot;discount&quot;:0,&quot;loginCompleted&quot;:false,&quot;blueM&quot;:&quot;moves to account&quot;}}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: N02 storefront is unavailable: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-VALID: same variant merges within stock" classname="n02-cart.spec.ts">
+<properties>
+<property name="caseId" value="MERGE-VALID">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account Red/S 2 + guest 2; login">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:4,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:800,&quot;discount&quot;:0,&quot;total&quot;:800,&quot;outcome&quot;:&quot;CartUpdated&quot;}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Positive">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: N02 storefront is unavailable: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-EXACT: same variant merges within stock" classname="n02-cart.spec.ts">
+<properties>
+<property name="caseId" value="MERGE-EXACT">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account Red/S 2 + guest 3; login">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:0,&quot;total&quot;:1000,&quot;outcome&quot;:&quot;CartUpdated&quot;}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: N02 storefront is unavailable: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-VARIANT: different variants remain separate" classname="n02-cart.spec.ts">
+<properties>
+<property name="caseId" value="MERGE-VARIANT">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account Red/S 1 + guest Blue/M 1; login">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Blue&quot;,&quot;M&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:400,&quot;discount&quot;:0,&quot;total&quot;:400,&quot;outcome&quot;:&quot;CartUpdated&quot;}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Positive">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: N02 storefront is unavailable: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-MULTISTORE: each store retains its own cart state across retry" classname="n02-cart.spec.ts">
+<properties>
+<property name="caseId" value="MERGE-MULTISTORE">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0; store2 fixture required">
+</property>
+<property name="input" value="Store1 account4 guest2; store2 guest Blue/M1; login rejected; recover store1; reduce1; retry">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:0,&quot;total&quot;:1000,&quot;outcome&quot;:&quot;CartUpdated&quot;,&quot;feedback&quot;:{&quot;pattern&quot;:&quot;5&quot;,&quot;meaning&quot;:&quot;Stock limit 5 must be stated before notification disappears&quot;,&quot;location&quot;:&quot;login/activation warning&quot;},&quot;rejectedMerge&quot;:{&quot;guestRedS&quot;:2,&quot;accountRedS&quot;:4,&quot;guestSubtotal&quot;:400,&quot;accountSubtotal&quot;:800,&quot;discount&quot;:0,&quot;loginCompleted&quot;:false,&quot;blueM&quot;:&quot;moves to account&quot;}}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: N02 storefront is unavailable: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-ACTIVATION: activation preserves rejected guest cart and returns to recovery" classname="n02-cart.spec.ts">
+<properties>
+<property name="caseId" value="MERGE-ACTIVATION">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account4 guest2; activate account; reject merge and retain guest2">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:2,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:400,&quot;discount&quot;:0,&quot;total&quot;:400,&quot;outcome&quot;:&quot;RejectedMerge&quot;,&quot;feedback&quot;:{&quot;pattern&quot;:&quot;5&quot;,&quot;meaning&quot;:&quot;Stock limit 5 must be stated before notification disappears&quot;,&quot;location&quot;:&quot;login/activation warning&quot;},&quot;rejectedMerge&quot;:{&quot;guestRedS&quot;:2,&quot;accountRedS&quot;:4,&quot;guestSubtotal&quot;:400,&quot;accountSubtotal&quot;:800,&quot;discount&quot;:0,&quot;loginCompleted&quot;:false,&quot;blueM&quot;:&quot;NA&quot;}}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: N02 storefront is unavailable: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-REPEAT-01 REPEAT-SAME: adding 2 then 3 makes one line with correct total" classname="n02-cart.spec.ts">
+<properties>
+<property name="caseId" value="REPEAT-SAME">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Red/S add2 then3">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:0,&quot;total&quot;:1000,&quot;outcome&quot;:&quot;CartUpdated&quot;}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: N02 storefront is unavailable: TimeoutError: page.goto: Timeout 10000ms exceeded.
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-REPEAT-01 REPEAT-DIFFERENT: another variant remains a separate line" classname="n02-cart.spec.ts">
+<properties>
+<property name="caseId" value="REPEAT-DIFFERENT">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Red/S add2 then3; Blue/M add1">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Blue&quot;,&quot;M&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1200,&quot;discount&quot;:0,&quot;total&quot;:1200,&quot;outcome&quot;:&quot;CartUpdated&quot;}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Positive">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: store did not restart after N02 reset: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-REPEAT-01 REPEAT-BELOW: repeat add respects variant stock" classname="n02-cart.spec.ts">
+<properties>
+<property name="caseId" value="REPEAT-BELOW">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Red/S add1 then2">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:3,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:600,&quot;discount&quot;:0,&quot;total&quot;:600,&quot;outcome&quot;:&quot;CartUpdated&quot;}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Positive">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: N02 storefront is unavailable: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-REPEAT-01 REPEAT-OVER: repeat add respects variant stock" classname="n02-cart.spec.ts">
+<properties>
+<property name="caseId" value="REPEAT-OVER">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Red/S add4 then2; second add rejected; maximum5">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:4,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:800,&quot;discount&quot;:0,&quot;total&quot;:800,&quot;outcome&quot;:&quot;CartUpdated&quot;,&quot;feedback&quot;:{&quot;pattern&quot;:&quot;5&quot;,&quot;meaning&quot;:&quot;Stock limit 5 must be stated before notification disappears&quot;,&quot;location&quot;:&quot;product notification&quot;}}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: N02 storefront is unavailable: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="pairwise.spec.ts" timestamp="2026-11-25T17:17:00.184Z" hostname="" tests="14" failures="0" skipped="14" time="0" errors="0">
+<testcase name="PW-001 Negative: Update quantity; invalid coupon remains independent; missing required address blocks checkout." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-001">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Simple 1; update 2; invalid coupon; submit missing billing field">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:2,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:200,&quot;discount&quot;:0,&quot;total&quot;:200,&quot;outcome&quot;:&quot;AddressBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-07">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-002 Positive: Guest adds a configurable product to a multi-line cart, rejects an invalid coupon, then follows the verified local checkout path." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-002">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 1 + Simple 1; invalid coupon; checkout">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:300,&quot;discount&quot;:0,&quot;total&quot;:300,&quot;outcome&quot;:&quot;OrderCreated&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-07">
+</property>
+<property name="expected-path" value="Positive">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-003 Boundary: A guest removes the final configurable-product line from a one-line cart after the valid-coupon state has been exercised." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-003">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 2; valid coupon; remove last line">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:2,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:400,&quot;discount&quot;:40,&quot;total&quot;:360,&quot;outcome&quot;:&quot;CartEmpty&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-004 Negative: Registered customer updates quantity beyond available stock; checkout stops before address, shipping, and payment." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-004">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 1 + Simple 1; update Simple 11 (stock 10)">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100}],&quot;warning&quot;:{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;pattern&quot;:&quot;10&quot;},&quot;subtotal&quot;:300,&quot;discount&quot;:0,&quot;total&quot;:300,&quot;outcome&quot;:&quot;StockBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-12">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-005 Boundary: Registered customer removes the final simple-product line and leaves an empty cart." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-005">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Simple 1; remove last line">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:100,&quot;discount&quot;:0,&quot;total&quot;:100,&quot;outcome&quot;:&quot;CartEmpty&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-006 Boundary: Registered customer adds a simple product at the exact stock limit, applies a valid coupon, and completes the local checkout path." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-006">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Simple 10; valid coupon; checkout">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:10,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:100,&quot;total&quot;:900,&quot;outcome&quot;:&quot;OrderCreated&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-007 Positive: Guest adds a configurable product within stock to a multi-line cart and completes checkout locally." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-007">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 2 + Simple 1; checkout">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:2,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:500,&quot;discount&quot;:0,&quot;total&quot;:500,&quot;outcome&quot;:&quot;OrderCreated&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Positive">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-008 Boundary: Guest removes the final configurable-product line from a one-line cart; the invalid-coupon state is independently checked." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-008">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Blue/M 3; invalid coupon; remove last line">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Blue&quot;,&quot;M&quot;],&quot;quantity&quot;:3,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:600,&quot;discount&quot;:0,&quot;total&quot;:600,&quot;outcome&quot;:&quot;CartEmpty&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-07">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-009 Boundary: Guest updates a configurable product to the exact available-stock limit and continues through local checkout." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-009">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Blue/M 1 + Simple 1; update Blue/M 3; checkout">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Blue&quot;,&quot;M&quot;],&quot;quantity&quot;:3,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:700,&quot;discount&quot;:0,&quot;total&quot;:700,&quot;outcome&quot;:&quot;OrderCreated&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-010 Negative: Guest attempts to add an out-of-stock configurable product and checkout does not start." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-010">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Attempt add out-of-stock product; inspect empty cart">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[],&quot;warning&quot;:null,&quot;subtotal&quot;:0,&quot;discount&quot;:0,&quot;total&quot;:0,&quot;outcome&quot;:&quot;OutOfStock&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-011 Negative: Guest updates a simple product in a multi-line cart, exercises a valid coupon, then submits an address missing a required field." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-011">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Simple 1 + Red/S 1; update Simple 1; valid coupon; submit missing billing">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100},{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:300,&quot;discount&quot;:30,&quot;total&quot;:270,&quot;outcome&quot;:&quot;AddressBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-012 Boundary: Registered customer adds a configurable product at the exact stock limit, then submits an address missing a required field." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-012">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Blue/M 3; submit missing billing">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Blue&quot;,&quot;M&quot;],&quot;quantity&quot;:3,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:600,&quot;discount&quot;:0,&quot;total&quot;:600,&quot;outcome&quot;:&quot;AddressBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-013 Negative: Registered customer updates a configurable product beyond stock; invalid coupon remains an independent operation." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-013">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 1; invalid coupon; update 6 (stock 5)">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200}],&quot;warning&quot;:{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;pattern&quot;:&quot;5&quot;},&quot;subtotal&quot;:200,&quot;discount&quot;:0,&quot;total&quot;:200,&quot;outcome&quot;:&quot;StockBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-07, INV-CART-12">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-014 Negative: Registered customer updates a simple product beyond available stock while the product is otherwise in stock." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-014">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 1 + Simple 1; valid coupon; update Simple 11 (stock 10)">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100}],&quot;warning&quot;:{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;pattern&quot;:&quot;10&quot;},&quot;subtotal&quot;:300,&quot;discount&quot;:30,&quot;total&quot;:270,&quot;outcome&quot;:&quot;StockBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-12">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: storefront /cart is unavailable: Error: apiRequestContext.get: socket hang up (ECONNRESET)
+Call log:
+[2m  - → GET http://localhost/cart[22m
+[2m    - user-agent: Playwright/1.64.0 (x64; windows 10.0) node/22.19[22m
+[2m    - accept: */*[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+</testsuites>

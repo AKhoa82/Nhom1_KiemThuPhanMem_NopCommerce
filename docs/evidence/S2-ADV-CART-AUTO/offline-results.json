@@ -1,0 +1,48 @@
+{
+  "stats": {
+    "startTime": "2026-11-25T17:29:17.593Z",
+    "duration": 19201.327999999998,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "USD parser preserves cents, grouping and discount signs",
+      "status": [
+        "passed"
+      ]
+    },
+    {
+      "title": "catalog rejects missing, extra and duplicate case IDs",
+      "status": [
+        "passed"
+      ]
+    },
+    {
+      "title": "report classification distinguishes blocked, harness and business failure",
+      "status": [
+        "passed"
+      ]
+    },
+    {
+      "title": "cart helper reads actual cents and rejects wrong line arithmetic",
+      "status": [
+        "passed"
+      ]
+    },
+    {
+      "title": "missing cart total never becomes a fabricated zero",
+      "status": [
+        "passed"
+      ]
+    },
+    {
+      "title": "failure log keeps partial UI evidence when totals and SQL are unavailable",
+      "status": [
+        "passed"
+      ]
+    }
+  ]
+}

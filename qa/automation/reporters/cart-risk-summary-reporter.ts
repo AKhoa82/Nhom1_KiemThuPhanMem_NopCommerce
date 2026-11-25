@@ -15,7 +15,7 @@ export default class CartRiskSummaryReporter implements Reporter {
   private readonly summaries: RiskSummary[] = [];
 
   onTestEnd(test: TestCase, result: TestResult): void {
-    const caseId = test.title.match(/\bCART-(?:0[1-9]|1[0-4])\b|\bCART-REPEAT-01\b/)?.[0];
+    const caseId = test.title.match(/\bCART-(?:0[1-9]|1[0-4])\b/)?.[0];
     if (!caseId) return;
 
     const annotation = (type: string) => test.annotations.find((item) => item.type === type)?.description ?? '';
@@ -32,7 +32,7 @@ export default class CartRiskSummaryReporter implements Reporter {
   onEnd(_result: FullResult): void {
     if (this.summaries.length === 0) return;
 
-    const outputDirectory = resolve(process.cwd(), 'reports');
+    const outputDirectory = resolve(process.env.QA_REPORT_DIR ?? 'reports');
     mkdirSync(outputDirectory, { recursive: true });
     const summaries = this.summaries.sort((left, right) => left.caseId.localeCompare(right.caseId));
     writeFileSync(resolve(outputDirectory, 'cart-risk-summary.json'), `${JSON.stringify(summaries, null, 2)}\n`, 'utf8');

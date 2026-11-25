@@ -1,0 +1,970 @@
+[
+  {
+    "caseId": "PW-001",
+    "group": "PW",
+    "path": "Negative",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Simple 1; update 2; invalid coupon; submit missing billing field",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 2,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 200,
+      "discount": 0,
+      "total": 200,
+      "outcome": "AddressBlocked"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-07"
+    ]
+  },
+  {
+    "caseId": "PW-002",
+    "group": "PW",
+    "path": "Positive",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Red/S 1 + Simple 1; invalid coupon; checkout",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 300,
+      "discount": 0,
+      "total": 300,
+      "outcome": "OrderCreated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-07"
+    ]
+  },
+  {
+    "caseId": "PW-003",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Red/S 2; valid coupon; remove last line",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 2,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 400,
+      "discount": 40.0,
+      "total": 360.0,
+      "outcome": "CartEmpty"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ]
+  },
+  {
+    "caseId": "PW-004",
+    "group": "PW",
+    "path": "Negative",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Red/S 1 + Simple 1; update Simple 11 (stock 10)",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        }
+      ],
+      "warning": {
+        "product": "PW-Simple-Stock",
+        "pattern": "10"
+      },
+      "subtotal": 300,
+      "discount": 0,
+      "total": 300,
+      "outcome": "StockBlocked"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ]
+  },
+  {
+    "caseId": "PW-005",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Simple 1; remove last line",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 100,
+      "discount": 0,
+      "total": 100,
+      "outcome": "CartEmpty"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ]
+  },
+  {
+    "caseId": "PW-006",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Simple 10; valid coupon; checkout",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 10,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 100.0,
+      "total": 900.0,
+      "outcome": "OrderCreated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ]
+  },
+  {
+    "caseId": "PW-007",
+    "group": "PW",
+    "path": "Positive",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Red/S 2 + Simple 1; checkout",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 2,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 500,
+      "discount": 0,
+      "total": 500,
+      "outcome": "OrderCreated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ]
+  },
+  {
+    "caseId": "PW-008",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Blue/M 3; invalid coupon; remove last line",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Blue",
+            "M"
+          ],
+          "quantity": 3,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 600,
+      "discount": 0,
+      "total": 600,
+      "outcome": "CartEmpty"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-07"
+    ]
+  },
+  {
+    "caseId": "PW-009",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Blue/M 1 + Simple 1; update Blue/M 3; checkout",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Blue",
+            "M"
+          ],
+          "quantity": 3,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 700,
+      "discount": 0,
+      "total": 700,
+      "outcome": "OrderCreated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ]
+  },
+  {
+    "caseId": "PW-010",
+    "group": "PW",
+    "path": "Negative",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Attempt add out-of-stock product; inspect empty cart",
+    "expected": {
+      "lines": [],
+      "warning": null,
+      "subtotal": 0,
+      "discount": 0.0,
+      "total": 0.0,
+      "outcome": "OutOfStock"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ]
+  },
+  {
+    "caseId": "PW-011",
+    "group": "PW",
+    "path": "Negative",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Simple 1 + Red/S 1; update Simple 1; valid coupon; submit missing billing",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        },
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 300,
+      "discount": 30.0,
+      "total": 270.0,
+      "outcome": "AddressBlocked"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ]
+  },
+  {
+    "caseId": "PW-012",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Blue/M 3; submit missing billing",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Blue",
+            "M"
+          ],
+          "quantity": 3,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 600,
+      "discount": 0,
+      "total": 600,
+      "outcome": "AddressBlocked"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ]
+  },
+  {
+    "caseId": "PW-013",
+    "group": "PW",
+    "path": "Negative",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Red/S 1; invalid coupon; update 6 (stock 5)",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        }
+      ],
+      "warning": {
+        "product": "PW-Shirt-Variants",
+        "pattern": "5"
+      },
+      "subtotal": 200,
+      "discount": 0,
+      "total": 200,
+      "outcome": "StockBlocked"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-07",
+      "INV-CART-12"
+    ]
+  },
+  {
+    "caseId": "PW-014",
+    "group": "PW",
+    "path": "Negative",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Red/S 1 + Simple 1; valid coupon; update Simple 11 (stock 10)",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        }
+      ],
+      "warning": {
+        "product": "PW-Simple-Stock",
+        "pattern": "10"
+      },
+      "subtotal": 300,
+      "discount": 30.0,
+      "total": 270.0,
+      "outcome": "StockBlocked"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ]
+  },
+  {
+    "caseId": "MERGE-VALID",
+    "group": "ADV",
+    "path": "Positive",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account Red/S 2 + guest 2; login",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 4,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 800,
+      "discount": 0,
+      "total": 800,
+      "outcome": "CartUpdated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ]
+  },
+  {
+    "caseId": "MERGE-EXACT",
+    "group": "ADV",
+    "path": "Boundary",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account Red/S 2 + guest 3; login",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 0,
+      "total": 1000,
+      "outcome": "CartUpdated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ]
+  },
+  {
+    "caseId": "MERGE-OVER",
+    "group": "ADV",
+    "path": "Negative",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account 4 + guest 2; login rejected; retain guest2/account4; reduce guest1; retry login",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 0,
+      "total": 1000,
+      "outcome": "CartUpdated",
+      "feedback": {
+        "pattern": "5",
+        "meaning": "Stock limit 5 must be stated before notification disappears",
+        "location": "login/activation warning"
+      },
+      "rejectedMerge": {
+        "guestRedS": 2,
+        "accountRedS": 4,
+        "guestSubtotal": 400,
+        "accountSubtotal": 800,
+        "discount": 0,
+        "loginCompleted": false,
+        "blueM": "NA"
+      }
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ]
+  },
+  {
+    "caseId": "MERGE-VARIANT",
+    "group": "ADV",
+    "path": "Positive",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account Red/S 1 + guest Blue/M 1; login",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Blue",
+            "M"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 400,
+      "discount": 0,
+      "total": 400,
+      "outcome": "CartUpdated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ]
+  },
+  {
+    "caseId": "REPEAT-SAME",
+    "group": "ADV",
+    "path": "Boundary",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Red/S add2 then3",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 0,
+      "total": 1000,
+      "outcome": "CartUpdated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ]
+  },
+  {
+    "caseId": "REPEAT-DIFFERENT",
+    "group": "ADV",
+    "path": "Positive",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Red/S add2 then3; Blue/M add1",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Blue",
+            "M"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1200,
+      "discount": 0,
+      "total": 1200,
+      "outcome": "CartUpdated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ]
+  },
+  {
+    "caseId": "REPEAT-BELOW",
+    "group": "ADV",
+    "path": "Positive",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Red/S add1 then2",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 3,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 600,
+      "discount": 0,
+      "total": 600,
+      "outcome": "CartUpdated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ]
+  },
+  {
+    "caseId": "REPEAT-OVER",
+    "group": "ADV",
+    "path": "Negative",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Red/S add4 then2; second add rejected; maximum5",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 4,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 800,
+      "discount": 0,
+      "total": 800,
+      "outcome": "CartUpdated",
+      "feedback": {
+        "pattern": "5",
+        "meaning": "Stock limit 5 must be stated before notification disappears",
+        "location": "product notification"
+      }
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ]
+  },
+  {
+    "caseId": "MERGE-MIXED",
+    "group": "ADV",
+    "path": "Negative",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account Red/S4; guest Red/S2 + Blue/M1; partial merge; reduce Red/S1; retry",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Blue",
+            "M"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1200,
+      "discount": 0,
+      "total": 1200,
+      "outcome": "CartUpdated",
+      "feedback": {
+        "pattern": "5",
+        "meaning": "Stock limit 5 must be stated before notification disappears",
+        "location": "login/activation warning"
+      },
+      "rejectedMerge": {
+        "guestRedS": 2,
+        "accountRedS": 4,
+        "guestSubtotal": 400,
+        "accountSubtotal": 1000,
+        "discount": 0,
+        "loginCompleted": false,
+        "blueM": "moves to account"
+      }
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ]
+  },
+  {
+    "caseId": "MERGE-MULTISTORE",
+    "group": "ADV",
+    "path": "Negative",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0; store2 fixture required",
+    "input": "Store1 account4 guest2; store2 guest Blue/M1; login rejected; recover store1; reduce1; retry",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 0,
+      "total": 1000,
+      "outcome": "CartUpdated",
+      "feedback": {
+        "pattern": "5",
+        "meaning": "Stock limit 5 must be stated before notification disappears",
+        "location": "login/activation warning"
+      },
+      "rejectedMerge": {
+        "guestRedS": 2,
+        "accountRedS": 4,
+        "guestSubtotal": 400,
+        "accountSubtotal": 800,
+        "discount": 0,
+        "loginCompleted": false,
+        "blueM": "moves to account"
+      }
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ]
+  },
+  {
+    "caseId": "MERGE-ACTIVATION",
+    "group": "ADV",
+    "path": "Negative",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account4 guest2; activate account; reject merge and retain guest2",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 2,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 400,
+      "discount": 0,
+      "total": 400,
+      "outcome": "RejectedMerge",
+      "feedback": {
+        "pattern": "5",
+        "meaning": "Stock limit 5 must be stated before notification disappears",
+        "location": "login/activation warning"
+      },
+      "rejectedMerge": {
+        "guestRedS": 2,
+        "accountRedS": 4,
+        "guestSubtotal": 400,
+        "accountSubtotal": 800,
+        "discount": 0,
+        "loginCompleted": false,
+        "blueM": "NA"
+      }
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ]
+  }
+]

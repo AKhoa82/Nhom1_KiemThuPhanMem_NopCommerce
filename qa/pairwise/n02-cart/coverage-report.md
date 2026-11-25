@@ -1,15 +1,15 @@
 # SCRUM-87 — N02 Cart PICT coverage
 
-- Model SHA-256: `9c8330ea736992bb48425c48baa14e5c7c16ca926948f94e94256bc30e770a7c`
+- Model SHA-256: `ab88b481ec4d6e6cf4c206fa633dcae91c6f86c6e22a586f5ac545b87461ff18`
 - PICT command: `pict.exe model.pict /o:2 /r:10387`
 - Feasible full assignments: 8
 - Generated rows: 8
 - Feasible pairs: 30
 - Pairs in generated rows: 30
 - Generated pair coverage: 30/30 (100%)
-- Confirmed-fixture execution: AUTO-20261119171317839 at a4759a48ff82f19ec36c3e98b17b252d94b6857d; 5 passed, 1 failed. Two additional rows remain NotRun. Generated coverage is not a UI test result.
-- Existing UI cases: MERGE-VALID, MERGE-EXACT, MERGE-OVER, MERGE-VARIANT, REPEAT-SAME, REPEAT-DIFFERENT.
-- Additional PICT rows without UI automation: RepeatAdd/BelowStock and RepeatAdd/AboveStock.
+- Latest automation attempt: AUTO-20261125171700184 at e21ff4471fbe5a612e8dcda91868ec88cf08457e; 0 passed, 0 failed, 8 skipped/blocked. Status is taken from execution.json; skipped means blocked, not passed. Generated coverage is not a UI test result.
+- Existing UI cases: MERGE-VALID, MERGE-EXACT, MERGE-OVER, MERGE-VARIANT, REPEAT-SAME, REPEAT-DIFFERENT, REPEAT-BELOW, REPEAT-OVER.
+- All eight PICT rows have UI automation; generated coverage is independent of runtime status.
 - Values are relation labels. Concrete quantities in generated-cases.csv must be checked against stock before execution.
 - This model is independent of the original 14 PW rows and 253 pairs.
 

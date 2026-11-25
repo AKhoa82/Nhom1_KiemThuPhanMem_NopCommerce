@@ -1,0 +1,1420 @@
+{
+  "seed": 10387,
+  "sourceCommit": "e21ff4471fbe5a612e8dcda91868ec88cf08457e",
+  "fixtureVersion": "S2-ADV-CART-AUTO-v1",
+  "status": "NOT_PROVEN",
+  "reverseOrder": [
+    "MERGE-ACTIVATION",
+    "MERGE-MULTISTORE",
+    "MERGE-MIXED",
+    "REPEAT-OVER",
+    "REPEAT-BELOW",
+    "REPEAT-DIFFERENT",
+    "REPEAT-SAME",
+    "MERGE-VARIANT",
+    "MERGE-OVER",
+    "MERGE-EXACT",
+    "MERGE-VALID",
+    "PW-014",
+    "PW-013",
+    "PW-012",
+    "PW-011",
+    "PW-010",
+    "PW-009",
+    "PW-008",
+    "PW-007",
+    "PW-006",
+    "PW-005",
+    "PW-004",
+    "PW-003",
+    "PW-002",
+    "PW-001"
+  ],
+  "seededOrder": [
+    "MERGE-MIXED",
+    "REPEAT-OVER",
+    "PW-006",
+    "REPEAT-SAME",
+    "PW-012",
+    "PW-009",
+    "MERGE-MULTISTORE",
+    "MERGE-EXACT",
+    "PW-002",
+    "PW-010",
+    "PW-007",
+    "PW-005",
+    "PW-003",
+    "REPEAT-DIFFERENT",
+    "PW-011",
+    "MERGE-VARIANT",
+    "PW-001",
+    "PW-008",
+    "REPEAT-BELOW",
+    "MERGE-VALID",
+    "MERGE-OVER",
+    "PW-013",
+    "MERGE-ACTIVATION",
+    "PW-014",
+    "PW-004"
+  ],
+  "differences": [],
+  "runs": [
+    {
+      "label": "default",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-001",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-002",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-003",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-004",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-005",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-006",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-007",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-008",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-009",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-010",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-011",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-012",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-013",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-014",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-ACTIVATION",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-EXACT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-MIXED",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-MULTISTORE",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-OVER",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-VALID",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-VARIANT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "REPEAT-BELOW",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "REPEAT-DIFFERENT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "REPEAT-OVER",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "REPEAT-SAME",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-001",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-001",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-002",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-002",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-003",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-003",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-004",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-004",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-005",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-005",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-006",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-006",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-007",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-007",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-008",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-008",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-009",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-009",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-010",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-010",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-011",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-011",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-012",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-012",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-013",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-013",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-PW-014",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-014",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-MERGE-VALID",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-VALID",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-MERGE-EXACT",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-EXACT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-MERGE-OVER",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-OVER",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-MERGE-VARIANT",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-VARIANT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-REPEAT-SAME",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "REPEAT-SAME",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-REPEAT-DIFFERENT",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "REPEAT-DIFFERENT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-REPEAT-BELOW",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "REPEAT-BELOW",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-REPEAT-OVER",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "REPEAT-OVER",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-MERGE-MIXED",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-MIXED",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-MERGE-MULTISTORE",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-MULTISTORE",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "isolated-MERGE-ACTIVATION",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-ACTIVATION",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        }
+      ]
+    },
+    {
+      "label": "reverse-MERGE-ACTIVATION",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-ACTIVATION",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-ACTIVATION",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-MERGE-MULTISTORE",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-MULTISTORE",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-MULTISTORE",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-MERGE-MIXED",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-MIXED",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-MIXED",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-REPEAT-OVER",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "REPEAT-OVER",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "REPEAT-OVER",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-REPEAT-BELOW",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "REPEAT-BELOW",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "REPEAT-BELOW",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-REPEAT-DIFFERENT",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "REPEAT-DIFFERENT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "REPEAT-DIFFERENT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-REPEAT-SAME",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "REPEAT-SAME",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "REPEAT-SAME",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-MERGE-VARIANT",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-VARIANT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-VARIANT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-MERGE-OVER",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-OVER",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-OVER",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-MERGE-EXACT",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-EXACT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-EXACT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-MERGE-VALID",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-VALID",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-VALID",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-014",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-014",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-014",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-013",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-013",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-013",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-012",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-012",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-012",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-011",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-011",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-011",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-010",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-010",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-010",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-009",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-009",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-009",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-008",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-008",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-008",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-007",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-007",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-007",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-006",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-006",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-006",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-005",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-005",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-005",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-004",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-004",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-004",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-003",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-003",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-003",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-002",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-002",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-002",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "reverse-PW-001",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-001",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-001",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-MERGE-MIXED",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-MIXED",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-MIXED",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-REPEAT-OVER",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "REPEAT-OVER",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "REPEAT-OVER",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-006",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-006",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-006",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-REPEAT-SAME",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "REPEAT-SAME",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "REPEAT-SAME",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-012",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-012",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-012",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-009",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-009",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-009",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-MERGE-MULTISTORE",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-MULTISTORE",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-MULTISTORE",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-MERGE-EXACT",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-EXACT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-EXACT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-002",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-002",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-002",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-010",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-010",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-010",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-007",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-007",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-007",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-005",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-005",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-005",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-003",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-003",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-003",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-REPEAT-DIFFERENT",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "REPEAT-DIFFERENT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "REPEAT-DIFFERENT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-011",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-011",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-011",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-MERGE-VARIANT",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-VARIANT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-VARIANT",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-001",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-001",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-001",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-008",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-008",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-008",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-REPEAT-BELOW",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "REPEAT-BELOW",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "REPEAT-BELOW",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-MERGE-VALID",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-VALID",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-VALID",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-MERGE-OVER",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-OVER",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-OVER",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-013",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-013",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-013",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-MERGE-ACTIVATION",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "MERGE-ACTIVATION",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "MERGE-ACTIVATION",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-014",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-014",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-014",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    },
+    {
+      "label": "seeded-PW-004",
+      "exitCode": 0,
+      "results": [
+        {
+          "caseId": "PW-004",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 0
+        },
+        {
+          "caseId": "PW-004",
+          "status": "skipped",
+          "classification": "BLOCKED_ENVIRONMENT",
+          "repeatEachIndex": 1
+        }
+      ]
+    }
+  ],
+  "environment": "QA credentials absent in this order-check attempt. A separate live store attempt is exported in pairwise/adv summaries."
+}

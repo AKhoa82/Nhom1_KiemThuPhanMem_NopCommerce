@@ -131,3 +131,61 @@ valid evidence of a product defect. Keep the generated `reports/` and
 - `scripts/summarize-n03-runs.cjs <seriesDir> [--md file]` builds the before/after table and the frequency with a 95% interval. See `docs/evidence/SCRUM-91/N03-FIXTURE-SQL-RESULTS.md`.
 - `scripts/seed-n03-pw-shirt.sql` is a one-time seed for a **fresh** install with no sample data: it creates only `PW-SHIRT` (Red/Blue x S/M, stock 5/4/6/3) and the Ground fixed rate. Run it with `docker exec -i nopcommerce_mssql_server <sqlcmd> -S localhost -U sa -P <password> -d nopcommerce -b < scripts/seed-n03-pw-shirt.sql`. N03 also needs One-page checkout disabled (`ordersettings.onepagecheckoutenabled = False`).
 - The SQL helpers pick `/opt/mssql-tools18/bin/sqlcmd` or fall back to `/opt/mssql-tools/bin/sqlcmd`, so they work with older SQL Server images such as `2019-CU18`.
+
+
+## S2-ADV-CART-AUTO - cart monetary oracle and ADV report
+
+Run from `qa/automation`:
+
+```powershell
+npm run test:offline      # parser, catalog guards, cart arithmetic, diagnostic collection; no store/SQL
+npm run test:pw           # original 14 PW cases
+npm run test:adv-cart     # 11 merge/repeat cases, including REPEAT-BELOW and REPEAT-OVER
+npm run test:order-check  # default, each isolated, reverse x2, seeded shuffle x2
+```
+
+`test-data/cart-fixture-manifest.json` defines expected USD prices, stock,
+subtotal coupon (`DiscountTypeId=20`, 10%, unlimited), tax/fees and Ground rate.
+SQL preflight runs after reset and rejects mismatches with `FIXTURE_BLOCKED`.
+It never changes the expected values to match the storefront. The selectors
+are verified against the checked-in Razor views; live verification remains
+pending until the local nopCommerce/SQL fixture is available. A missing Total
+or an unparseable amount is an explicit automation failure, never an inferred
+subtotal-minus-discount amount. The zero Ground rate is also defined by the
+existing `seed-n03-pw-shirt.sql` fixture.
+
+`cart-case-catalog.json` supplies Case ID, path, precondition, input, expected
+checkpoint state and invariants. PW discovery validates the exact 14 IDs against
+CSV. ADV validates all eight N02 generated mappings plus the three existing
+regressions (mixed, multi-store, activation). PW-004/PW-014 now add Red/S 1 and
+Simple 1 before rejecting Simple 11, faithfully implementing `MultipleLines`.
+The PICT model and the original 253/253 pair coverage are unchanged.
+
+Reports are separate: `reports/pairwise-summary.md/json` contains PW only;
+`reports/adv-cart-summary.md/json` contains CART-MERGE-01/CART-REPEAT-01 only.
+ADV lies outside the original 14 PW cases. Removing one line from a multi-line
+cart is covered by `cart-risk.spec.ts` outside the original pair coverage.
+Each summary includes metadata, classification and a failure-log link. A
+skipped fixture is `BLOCKED_ENVIRONMENT`, not a pass. HTML/JSON/JUnit remain
+available. Failed cases attach `failure-log.json` with expected/actual, failed
+step, URL without query parameters, visible warnings, SQL evidence and totals
+HTML; screenshot/trace remain local runtime artifacts.
+
+Order-check saves each execution under `reports/order-check`, including all
+repeat results, reverse order and shuffle seed (default 10387). It invokes
+one case at a time to enforce the chosen order: a grep alternation alone does
+not reorder Playwright tests. It returns nonzero for inconsistent outcomes or
+when independence is `NOT_PROVEN` because one or more cases were blocked or
+failed. Windows PowerShell 5.1 is supported. Never run two fixture suites
+concurrently: each reset owns the same local inventory.
+
+To refresh N02 execution metadata, take the eight mapped outcomes from the
+latest ADV summary and run `node ../pairwise/n02-cart/generate.mjs`. Install
+PICT first with `../pairwise/install-pict.ps1` if needed. Do not edit generated
+CSV by hand. Keep historical evidence in its existing directory.
+
+Committed evidence goes in `docs/evidence/S2-ADV-CART-AUTO/`. Export only
+sanitized summaries, JUnit, order-check receipt and run metadata; cookies,
+passwords and traces with sessions must stay out of Git. The current local
+run is blocked; restoring reliable `/cart` responses and supplying QA credentials is required before
+marking live oracle verification or order independence complete.

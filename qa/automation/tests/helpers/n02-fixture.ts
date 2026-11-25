@@ -19,8 +19,8 @@ export async function currentCustomerGuid(page: Page): Promise<string> {
   return cookie.value;
 }
 
-export async function resetN02Fixture(page: Page, guestGuid: string, withAccount: boolean): Promise<string> {
-  if (!Number.isSafeInteger(n02StoreId) || n02StoreId < 1) {
+export async function resetN02Fixture(page: Page, guestGuid: string, withAccount: boolean, storeId = n02StoreId): Promise<string> {
+  if (!Number.isSafeInteger(storeId) || storeId < 1) {
     throw new FixtureBlockedError('FIXTURE_BLOCKED: QA_N02_STORE_ID must be a positive integer.');
   }
   if (!guidPattern.test(guestGuid)) {
@@ -36,7 +36,7 @@ export async function resetN02Fixture(page: Page, guestGuid: string, withAccount
       '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', resetScript,
       '-GuestGuid', guestGuid,
       '-AccountEmail', withAccount ? runtimeConfig.registeredEmail : '',
-      '-StoreId', String(n02StoreId),
+      '-StoreId', String(storeId),
       '-Container', runtimeConfig.databaseContainer,
       '-Database', runtimeConfig.databaseName,
       '-StoreContainer', runtimeConfig.storeContainer,
@@ -49,7 +49,7 @@ export async function resetN02Fixture(page: Page, guestGuid: string, withAccount
   }
 
   let lastError: unknown;
-  for (let attempt = 0; attempt < 60; attempt += 1) {
+  for (let attempt = 0; attempt < 20; attempt += 1) {
     try {
       await page.goto('/cart', { waitUntil: 'domcontentloaded', timeout: 5_000 });
       return output.trim();

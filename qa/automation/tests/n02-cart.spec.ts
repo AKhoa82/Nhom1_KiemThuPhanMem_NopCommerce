@@ -2,12 +2,22 @@ import { expect, test, type Browser, type Page, type TestInfo } from '@playwrigh
 import { execFileSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
-import { assertCartLine, assertCartLineCount } from './helpers/assertions';
+import { assertCartLine, assertCartLineCount, assertCartState, readCartTotals, cartWarnings } from './helpers/assertions';
 import { addVariantProduct, loginRegisteredCustomer, updateCartLine } from './helpers/cart-checkout';
 import { FixtureBlockedError } from './helpers/fixtures';
 import { currentCustomerGuid, n02StoreId, resetN02Fixture } from './helpers/n02-fixture';
 import { runtimeConfig } from './helpers/runtime-config';
 import { executeReadonlySql, queryN02CartState } from './helpers/sql-fixture';
+
+import { cartCase, validateCatalogIds } from './helpers/cart-catalog';
+import { annotateCase, attachFailureLog, step } from './helpers/case-log';
+import { verifyCartManifest } from './helpers/cart-preflight';
+import { readFileSync } from 'node:fs';
+import { parseCsv } from './helpers/pairwise-data';
+
+const n02Rows = parseCsv(readFileSync(resolve(__dirname, '../../pairwise/n02-cart/generated-cases.csv'), 'utf8'), 'N02 generated CSV');
+if (n02Rows.length !== 8 || n02Rows.some((row, i) => row.CaseId !== `N02-PW-${String(i + 1).padStart(3, '0')}`)) throw new Error('FAILED_AUTOMATION: N02 generated case IDs differ');
+validateCatalogIds('ADV', [...n02Rows.map(row => row.ExistingUiTest), 'MERGE-MIXED', 'MERGE-MULTISTORE', 'MERGE-ACTIVATION']);
 
 const product = 'PW-Shirt-Variants';
 const unitPrice = 200; // Existing PW-SHIRT local fixture; check the fixture version before a run.
@@ -37,11 +47,9 @@ async function cartSnapshot(testInfo: TestInfo, name: string): Promise<void> {
 }
 
 async function expectAmount(page: Page, rowClass: string, amount: number): Promise<void> {
-  const text = await page.locator(`.cart-total .${rowClass} .value-summary`).innerText();
-  const displayed = text.match(/\d[\d.,]*/)?.[0];
-  expect(displayed, `Missing ${rowClass} amount in '${text}'.`).toBeDefined();
-  const integerAmount = Number(displayed!.replace(/[.,]00$/, '').replace(/[.,]/g, ''));
-  expect(integerAmount, `Incorrect ${rowClass} amount in '${text}'.`).toBe(amount);
+  const totals = await readCartTotals(page);
+  expect(totals[rowClass === 'order-subtotal' ? 'subtotal' : 'total'], `[${test.info().title}] ${rowClass}: expected ${amount}`).toBe(amount);
+  expect(totals.discount, `[${test.info().title}] discount: expected 0, actual ${totals.discount}`).toBe(0);
 }
 
 async function cartLine(page: Page, variant: Variant) {
@@ -49,6 +57,14 @@ async function cartLine(page: Page, variant: Variant) {
   let line = page.locator('table.cart tbody tr').filter({ hasText: product });
   for (const attribute of attributes) line = line.filter({ hasText: attribute });
   return line;
+}
+
+async function assertN02State(page: Page, quantities: [Variant, number][], caseId: string): Promise<void> {
+  const lines = quantities.map(([variant, quantity]) => ({
+    product, quantity, unitPrice, attributes: variant === 'RedS' ? ['Red', 'S'] : ['Blue', 'M'],
+  }));
+  const subtotal = lines.reduce((sum, line) => sum + line.quantity * unitPrice, 0);
+  await assertCartState(page, { lines, subtotal, discount: 0, total: subtotal }, caseId);
 }
 
 async function prepareMerge(
@@ -63,6 +79,7 @@ async function prepareMerge(
   await addVariantProduct(page, accountQuantity, 'RedS');
   await page.goto('/cart');
   await assertCartLine(page, product, accountQuantity, ['Red', 'S']);
+  await assertN02State(page, [['RedS', accountQuantity]], 'MERGE/account-before');
   await screenshot(page, testInfo, 'account-before-login');
   await cartSnapshot(testInfo, 'account-before-login');
 
@@ -73,6 +90,7 @@ async function prepareMerge(
   if (!guestCookie) throw new FixtureBlockedError('FIXTURE_BLOCKED: guest customer cookie is unavailable.');
   guestGuidByTest.set(testInfo.testId, guestCookie.value);
   await assertCartLine(page, product, guestQuantity, guestVariant === 'RedS' ? ['Red', 'S'] : ['Blue', 'M']);
+  await assertN02State(page, [[guestVariant, guestQuantity]], 'MERGE/guest-before');
   await screenshot(page, testInfo, 'guest-before-login');
   await cartSnapshot(testInfo, 'guest-before-login');
 
@@ -104,6 +122,7 @@ async function prepareMerge(
     await screenshot(page, testInfo, 'after-login-mobile');
     if (originalViewport) await page.setViewportSize(originalViewport);
   }
+  if (expectRejectedLogin) expect(feedback, '[MERGE-OVER] stock warning must name limit 5').toMatch(/\b5\b/);
   await page.goto('/cart');
   await screenshot(page, testInfo, expectRejectedLogin ? 'guest-after-rejected-login' : 'account-after-login');
   await cartSnapshot(testInfo, expectRejectedLogin ? 'guest-after-rejected-login' : 'account-after-login');
@@ -132,6 +151,7 @@ async function inspectOriginalGuestCart(
 
 test.describe('SCRUM-86 N02 Cart UI and automation', () => {
   test.beforeEach(async ({ page }, testInfo) => {
+    annotateCase(testInfo, testInfo.title.match(/(?:MERGE|REPEAT)-[A-Z]+/)![0]);
     testInfo.annotations.push({ type: 'jira', description: 'SCRUM-86' });
     const needsRegisteredCustomer = testInfo.title.startsWith('CART-MERGE-01');
     const missing = [
@@ -151,7 +171,9 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     try {
       const guestGuid = await currentCustomerGuid(page);
       guestGuidByTest.set(testInfo.testId, guestGuid);
-      const resetReceipt = await resetN02Fixture(page, guestGuid, needsRegisteredCustomer);
+      const resetReceipt = await step('N02 reset isolated fixture', () => resetN02Fixture(page, guestGuid, needsRegisteredCustomer));
+      const manifestReceipt = await step('N02 manifest preflight', () => verifyCartManifest(false, true));
+      await testInfo.attach('manifest-preflight.txt', { body: manifestReceipt, contentType: 'text/plain' });
       await testInfo.attach('n02-reset.txt', { body: resetReceipt, contentType: 'text/plain' });
     } catch (error) {
       if (error instanceof FixtureBlockedError) {
@@ -163,13 +185,28 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     await cartSnapshot(testInfo, 'reset-baseline');
   });
 
-  test.afterEach(({}, testInfo) => guestGuidByTest.delete(testInfo.testId));
+  test.afterEach(async ({ page }, info) => {
+    const sql = () => queryN02CartState(guestGuidByTest.get(info.testId)!, info.title.startsWith('CART-MERGE-01') ? runtimeConfig.registeredEmail : '', n02StoreId);
+    try {
+      if (info.status === 'passed') {
+        const id = info.annotations.find(a => a.type === 'caseId')!.description!;
+        await step(`${id} final cart oracle`, () => assertCartState(page, cartCase(id).expected, id));
+      }
+    } catch (error) {
+      await attachFailureLog(page, info, sql, true);
+      throw error;
+    } finally {
+      await attachFailureLog(page, info, sql);
+      guestGuidByTest.delete(info.testId);
+    }
+  });
 
   test('CART-MERGE-01 MERGE-OVER: guest items are not silently lost above stock', async ({ page, browser }, testInfo) => {
     testInfo.annotations.push({ type: 'defect', description: 'SCRUM-96' });
     const { guestCookie, feedback } = await prepareMerge(page, testInfo, 4, 2, 'RedS', true);
     const guestQuantity = await inspectOriginalGuestCart(browser, testInfo, guestCookie);
     await assertCartLine(page, product, 2, ['Red', 'S']);
+    await assertN02State(page, [['RedS', 2]], 'MERGE-OVER/rejected-guest');
     const accountContext = await browser.newContext({ baseURL });
     let accountQuantity: number;
     try {
@@ -179,6 +216,7 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
       const accountLine = await cartLine(accountPage, 'RedS');
       await expect(accountLine).toHaveCount(1);
       accountQuantity = Number(await accountLine.locator('input.qty-input').inputValue());
+      await assertN02State(accountPage, [['RedS', 4]], 'MERGE-OVER/rejected-account');
     } finally {
       await accountContext.close();
     }
@@ -227,8 +265,10 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     await page.locator('button.login-button').click();
     await expect(page).toHaveURL(/\/cart/i);
     await expect(page.locator('a.ico-login')).toBeVisible();
+    await expect(page.locator('.bar-notification.warning')).toContainText(/\b5\b/);
     await assertCartLineCount(page, 1);
     await assertCartLine(page, product, 2, ['Red', 'S']);
+    await assertN02State(page, [['RedS', 2]], 'MERGE-MIXED/rejected-guest');
     await cartSnapshot(testInfo, 'mixed-after-rejected-login');
     await screenshot(page, testInfo, 'mixed-after-rejected-login');
 
@@ -240,6 +280,7 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
       await assertCartLineCount(accountPage, 2);
       await assertCartLine(accountPage, product, 4, ['Red', 'S']);
       await assertCartLine(accountPage, product, 1, ['Blue', 'M']);
+      await assertN02State(accountPage, [['RedS', 4], ['BlueM', 1]], 'MERGE-MIXED/accepted-account');
     } finally {
       await accountContext.close();
     }
@@ -300,6 +341,7 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     const secondStoreId = 2;
     const storeProbe = await executeReadonlySql("SET NOCOUNT ON; SELECT COUNT(*) FROM Store WHERE Id = 2 AND Name = 'SCRUM-96 B01 local second store' AND Hosts = '127.0.0.1' AND Deleted = 0;");
     test.skip(!/^1$/m.test(storeProbe.trim()), 'FIXTURE_BLOCKED: run b01-second-store.cjs setup before the multi-store UI case.');
+    await resetN02Fixture(page, guestGuidByTest.get(testInfo.testId)!, true, secondStoreId);
     const secondBefore = await queryN02CartState(guestGuidByTest.get(testInfo.testId)!, runtimeConfig.registeredEmail, secondStoreId);
     expect(secondBefore).toMatch(/N02_CUSTOMER\|Account\|[^\r\n]*\|cartRows=0\|quantity=0/);
 
@@ -338,6 +380,7 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     await expect(secondPage.locator('.bar-notification.warning')).toHaveCSS('opacity', '1');
     const feedback = await secondPage.locator('.bar-notification.error, .bar-notification.warning, .message-error, .message-failure').allTextContents();
     expect(feedback.join('\n')).toMatch(/Chưa đăng nhập/);
+    expect(feedback.join('\n'), '[MERGE-MULTISTORE] stock limit 5').toMatch(/\b5\b/);
     expect(feedback.join('\n')).toContain(product);
     expect(feedback.join('\n')).toContain('Red');
     expect(feedback.join('\n')).toContain('S');
@@ -358,6 +401,7 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     expect(recoveredText).toContain('Red');
     expect(recoveredText).toContain('S');
     expect(await recoveredLine.locator('input.qty-input').inputValue()).toBe('2');
+    await assertN02State(secondPage, [['RedS', 2]], 'MERGE-MULTISTORE/rejected-store1-guest');
     await screenshot(secondPage, testInfo, 'multistore-store1-recovery-link');
     await secondPage.goto(`${secondStoreUrl}cart`);
     await assertCartLineCount(secondPage, 0);
@@ -390,6 +434,7 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
       await accountPage.goto(`${secondStoreUrl}cart`);
       await assertCartLineCount(accountPage, 1);
       await assertCartLine(accountPage, product, 1, ['Blue', 'M']);
+      await assertN02State(accountPage, [['BlueM', 1]], 'MERGE-MULTISTORE/store2-account');
       await screenshot(accountPage, testInfo, 'multistore-store2-after-retry');
     } finally {
       await accountContext.close();
@@ -418,7 +463,9 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
       await expect(page).toHaveURL(/\/cart/i);
       await expect(page.locator('a.ico-login')).toBeVisible();
       await expect(page.locator('.bar-notification.warning')).toContainText('Chưa đăng nhập');
+      await expect(page.locator('.bar-notification.warning')).toContainText(/\b5\b/);
       await assertCartLine(page, product, 2, ['Red', 'S']);
+      await assertN02State(page, [['RedS', 2]], 'MERGE-ACTIVATION/rejected-guest');
       await screenshot(page, testInfo, 'activation-rejected-login');
       await cartSnapshot(testInfo, 'activation-rejected-login');
     } finally {
@@ -472,4 +519,37 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
     await assertCartLine(page, product, 1, ['Blue', 'M']);
     await cartSnapshot(testInfo, 'after-refresh');
   });
+  for (const [id, first, second] of [
+    ['REPEAT-BELOW', 1, 2], ['REPEAT-OVER', 4, 2],
+  ] as const) {
+    test(`CART-REPEAT-01 ${id}: repeat add respects variant stock`, async ({ page }, info) => {
+      await step(`${id} first add`, () => addVariantProduct(page, first, 'RedS'));
+      await page.goto('/cart');
+      await assertCartState(page, { lines: [{ product, attributes: ['Red', 'S'], quantity: first, unitPrice }], subtotal: first * unitPrice, discount: 0, total: first * unitPrice }, id);
+      const before = await queryN02CartState(guestGuidByTest.get(info.testId)!, '', n02StoreId);
+      await step(`${id} second add`, async () => {
+        if (id === 'REPEAT-BELOW') {
+          await addVariantProduct(page, second, 'RedS');
+        } else {
+          await page.goto(runtimeConfig.configurableProductPath);
+          const attributes = page.locator('select[name^="product_attribute_"]');
+          await attributes.nth(0).selectOption({ label: 'Red' });
+          await attributes.nth(1).selectOption({ label: 'S' });
+          await page.locator('input.qty-input').fill(String(second));
+          await page.locator('button[id^="add-to-cart-button-"]').click();
+          const warning = page.locator(cartWarnings).filter({ hasText: /\b5\b/ }).first();
+          await expect(warning, `[${id}] stock warning: maximum 5`).toBeVisible();
+          await expect(warning).toContainText(/stock|tồn kho|tối đa|maximum/i);
+          await info.attach('repeat-over-warning.txt', { body: await warning.innerText(), contentType: 'text/plain' });
+          expect(await queryN02CartState(guestGuidByTest.get(info.testId)!, '', n02StoreId), `[${id}] rejected add leaves DB quantity/stock unchanged`).toBe(before);
+        }
+      });
+      await page.goto('/cart');
+      await assertCartState(page, cartCase(id).expected, id);
+      await page.reload();
+      await assertCartState(page, cartCase(id).expected, id);
+      await cartSnapshot(info, 'repeat-final');
+    });
+  }
+
 });

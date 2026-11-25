@@ -1,3 +1,4 @@
+import { verifyCartManifest } from './cart-preflight';
 import { execFile as execFileCallback } from 'node:child_process';
 import { promisify } from 'node:util';
 import { resolve } from 'node:path';
@@ -11,6 +12,7 @@ const resetScript = resolve(__dirname, '../../scripts/reset-fixture.ps1');
 
 export interface FixtureBaseline {
   checkoutEvidenceBefore?: string;
+  preflightReceipt?: string;
 }
 
 export class FixtureBlockedError extends Error {}
@@ -39,9 +41,10 @@ export async function resetFixture(page: Page, row: PairwiseCase): Promise<Fixtu
   }
 
   await openCartWhenStoreReady(page);
+  const preflightReceipt = await verifyCartManifest(row.address === 'Complete');
   await verifyRuntimeFixture(page, row);
 
-  if (row.address !== 'Complete') return {};
+  if (row.address === 'NA') return { preflightReceipt };
 
   const customerEmail = row.customerType === 'Registered'
     ? runtimeConfig.registeredEmail
@@ -50,12 +53,12 @@ export async function resetFixture(page: Page, row: PairwiseCase): Promise<Fixtu
     throw new FixtureBlockedError(`FIXTURE_BLOCKED: checkout evidence requires a synthetic email for ${row.caseId}.`);
   }
 
-  return { checkoutEvidenceBefore: await queryCheckoutEvidence(customerEmail) };
+  return { preflightReceipt, checkoutEvidenceBefore: await queryCheckoutEvidence(customerEmail) };
 }
 
 async function openCartWhenStoreReady(page: Page): Promise<void> {
   let lastError: unknown;
-  for (let attempt = 0; attempt < 60; attempt += 1) {
+  for (let attempt = 0; attempt < 20; attempt += 1) {
     try {
       await page.goto('/cart', { waitUntil: 'domcontentloaded', timeout: 5_000 });
       return;

@@ -1,12 +1,16 @@
 {
-  "runId": "AUTO-20261119171317839",
-  "sourceCommit": "a4759a48ff82f19ec36c3e98b17b252d94b6857d",
+  "runId": "AUTO-20261125171700184",
+  "sourceCommit": "e21ff4471fbe5a612e8dcda91868ec88cf08457e",
+  "workingTreeDirty": true,
+  "fixtureVersion": "SCRUM-87-N02-v1",
   "cases": {
-    "MERGE-OVER": "failed",
-    "MERGE-VALID": "passed",
-    "MERGE-EXACT": "passed",
-    "MERGE-VARIANT": "passed",
-    "REPEAT-SAME": "passed",
-    "REPEAT-DIFFERENT": "passed"
+    "MERGE-EXACT": "skipped",
+    "MERGE-OVER": "skipped",
+    "MERGE-VALID": "skipped",
+    "MERGE-VARIANT": "skipped",
+    "REPEAT-BELOW": "skipped",
+    "REPEAT-DIFFERENT": "skipped",
+    "REPEAT-OVER": "skipped",
+    "REPEAT-SAME": "skipped"
   }
 }

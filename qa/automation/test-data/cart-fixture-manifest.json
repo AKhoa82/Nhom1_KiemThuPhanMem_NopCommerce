@@ -1,0 +1,60 @@
+{
+  "version": "S2-ADV-CART-AUTO-v1",
+  "n02Version": "SCRUM-87-N02-v1",
+  "currency": "USD",
+  "locale": "en-US",
+  "verification": {
+    "status": "SQL_PARTIALLY_VERIFIED_UI_PENDING",
+    "selectors": "Verified against Views/Shared/Components/OrderTotals/Default.cshtml; live validation required",
+    "sqlConfirmed": [
+      "Simple price 100; Shirt price 200",
+      "Coupon DiscountTypeId=20, 10%, active",
+      "Current variant slug /pw-shirt-variants (runtime override)"
+    ]
+  },
+  "products": {
+    "simple": {
+      "sku": "PW-SIMPLE-001",
+      "name": "PW-Simple-Stock",
+      "price": 100,
+      "stock": 10
+    },
+    "variant": {
+      "sku": "PW-SHIRT",
+      "name": "PW-Shirt-Variants",
+      "price": 200,
+      "stock": {
+        "RedS": 5,
+        "RedM": 4,
+        "BlueS": 6,
+        "BlueM": 3
+      }
+    },
+    "outOfStock": {
+      "sku": "PW-OOS-001",
+      "stock": 0
+    }
+  },
+  "coupon": {
+    "code": "PW-CART-10PCT",
+    "invalidCode": "PW-NOT-EXIST",
+    "discountTypeId": 20,
+    "percentage": 10,
+    "limitationTypeId": 0,
+    "enumSource": "Nop.Core/Domain/Discounts/DiscountType.cs: AssignedToOrderSubTotal=20"
+  },
+  "cart": {
+    "tax": 0,
+    "shipping": 0,
+    "paymentFee": 0
+  },
+  "checkout": {
+    "groundShipping": 0,
+    "verification": "Zero Ground rate is defined in scripts/seed-n03-pw-shirt.sql; live preflight required"
+  },
+  "selectors": {
+    "subtotal": ".cart-total .order-subtotal .value-summary",
+    "discount": ".cart-total .order-subtotal-discount .value-summary, .cart-total .discount-total .value-summary",
+    "total": ".cart-total .order-total .value-summary"
+  }
+}
