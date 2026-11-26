@@ -1,0 +1,602 @@
+[
+  {
+    "caseId": "MERGE-ACTIVATION",
+    "group": "ADV",
+    "path": "Negative",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account4 guest2; activate account; reject merge and retain guest2",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 2,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 400,
+      "discount": 0,
+      "total": 400,
+      "outcome": "RejectedMerge",
+      "feedback": {
+        "pattern": "5",
+        "meaning": "Stock limit 5 must be stated before notification disappears",
+        "location": "login/activation warning"
+      },
+      "rejectedMerge": {
+        "guestRedS": 2,
+        "accountRedS": 4,
+        "guestSubtotal": 400,
+        "accountSubtotal": 800,
+        "discount": 0,
+        "loginCompleted": false,
+        "blueM": "NA"
+      }
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "failed",
+    "classification": "FAILED_PRODUCT",
+    "scenario": "",
+    "expectedPath": "Negative",
+    "durationMs": 175984,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "Error: expect(locator).toContainText(expected) failed Locator: locator('.bar-notification.warning') Expected pattern: /\\b5\\b/ Received string: \"Chưa đăng nhập: có món chưa gộp được. Món vẫn ở giỏ khách. Hãy kiểm tra và thử lại. Giỏ Your store name: PW-Shirt-Variants (PW-Color: Red, PW-Size: S) ×2. shoppingcart.quantityexceedsstock\" Timeout: 30000ms Call log: - Expect \"toContainText\" locator('.bar-notification.warning') with timeout 30000ms - waiting for locator('.bar-notification.warning') 62 × locator resolved to <div class=\"bar-notification warning\">…</div> - unexpected value \"Chưa đăng nhập: có món chưa gộp được. Món vẫn ở giỏ khách. Hãy kiểm tra và thử lại. Giỏ Your store name: PW-Shirt-Variants (PW-Color: Red, PW-Size: S) ×2. shoppingcart.quantityexceedsstock\"",
+    "failureLog": "",
+    "artifacts": [
+      "C:\\projects\\Kiemthu\\Nhom1_KiemThuPhanMem_NopCommerce\\qa\\automation\\artifacts\\final-adv-newbuild2\\n02-cart-SCRUM-86-N02-Cart-86ceb-art-and-returns-to-recovery\\test-failed-1.png",
+      "C:\\projects\\Kiemthu\\Nhom1_KiemThuPhanMem_NopCommerce\\qa\\automation\\artifacts\\final-adv-newbuild2\\n02-cart-SCRUM-86-N02-Cart-86ceb-art-and-returns-to-recovery\\error-context.md",
+      "C:\\projects\\Kiemthu\\Nhom1_KiemThuPhanMem_NopCommerce\\qa\\automation\\artifacts\\final-adv-newbuild2\\n02-cart-SCRUM-86-N02-Cart-86ceb-art-and-returns-to-recovery\\trace.zip"
+    ]
+  },
+  {
+    "caseId": "MERGE-EXACT",
+    "group": "ADV",
+    "path": "Boundary",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account Red/S 2 + guest 3; login",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 0,
+      "total": 1000,
+      "outcome": "CartUpdated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "",
+    "expectedPath": "Boundary",
+    "durationMs": 122906,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "MERGE-MIXED",
+    "group": "ADV",
+    "path": "Negative",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account Red/S4; guest Red/S2 + Blue/M1; partial merge; reduce Red/S1; retry",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Blue",
+            "M"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1200,
+      "discount": 0,
+      "total": 1200,
+      "outcome": "CartUpdated",
+      "feedback": {
+        "pattern": "5",
+        "meaning": "Stock limit 5 must be stated before notification disappears",
+        "location": "login/activation warning"
+      },
+      "rejectedMerge": {
+        "guestRedS": 2,
+        "accountRedS": 4,
+        "guestSubtotal": 400,
+        "accountSubtotal": 1000,
+        "discount": 0,
+        "loginCompleted": false,
+        "blueM": "moves to account"
+      }
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "",
+    "expectedPath": "Negative",
+    "durationMs": 177273,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "MERGE-MULTISTORE",
+    "group": "ADV",
+    "path": "Negative",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0; store2 fixture required",
+    "input": "Store1 account4 guest2; store2 guest Blue/M1; login rejected; recover store1; reduce1; retry",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 0,
+      "total": 1000,
+      "outcome": "CartUpdated",
+      "feedback": {
+        "pattern": "5",
+        "meaning": "Stock limit 5 must be stated before notification disappears",
+        "location": "login/activation warning"
+      },
+      "rejectedMerge": {
+        "guestRedS": 2,
+        "accountRedS": 4,
+        "guestSubtotal": 400,
+        "accountSubtotal": 800,
+        "discount": 0,
+        "loginCompleted": false,
+        "blueM": "moves to account"
+      }
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "failed",
+    "classification": "FAILED_PRODUCT",
+    "scenario": "",
+    "expectedPath": "Negative",
+    "durationMs": 249706,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "Error: [MERGE-MULTISTORE] stock limit 5 expect(received).toMatch(expected) Expected pattern: /\\b5\\b/ Received string: \"Chưa đăng nhập: có món chưa gộp được. Món vẫn ở giỏ khách. Hãy kiểm tra và thử lại. Giỏ Your store name: PW-Shirt-Variants (PW-Color: Red, PW-Size: S) ×2. shoppingcart.quantityexceedsstock\"",
+    "failureLog": "",
+    "artifacts": [
+      "C:\\projects\\Kiemthu\\Nhom1_KiemThuPhanMem_NopCommerce\\qa\\automation\\artifacts\\final-adv-newbuild2\\n02-cart-SCRUM-86-N02-Cart-775c4-own-cart-state-across-retry\\test-failed-2.png",
+      "C:\\projects\\Kiemthu\\Nhom1_KiemThuPhanMem_NopCommerce\\qa\\automation\\artifacts\\final-adv-newbuild2\\n02-cart-SCRUM-86-N02-Cart-775c4-own-cart-state-across-retry\\test-failed-1.png",
+      "C:\\projects\\Kiemthu\\Nhom1_KiemThuPhanMem_NopCommerce\\qa\\automation\\artifacts\\final-adv-newbuild2\\n02-cart-SCRUM-86-N02-Cart-775c4-own-cart-state-across-retry\\error-context.md",
+      "C:\\projects\\Kiemthu\\Nhom1_KiemThuPhanMem_NopCommerce\\qa\\automation\\artifacts\\final-adv-newbuild2\\n02-cart-SCRUM-86-N02-Cart-775c4-own-cart-state-across-retry\\trace.zip"
+    ]
+  },
+  {
+    "caseId": "MERGE-OVER",
+    "group": "ADV",
+    "path": "Negative",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account 4 + guest 2; login rejected; retain guest2/account4; reduce guest1; retry login",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 0,
+      "total": 1000,
+      "outcome": "CartUpdated",
+      "feedback": {
+        "pattern": "5",
+        "meaning": "Stock limit 5 must be stated before notification disappears",
+        "location": "login/activation warning"
+      },
+      "rejectedMerge": {
+        "guestRedS": 2,
+        "accountRedS": 4,
+        "guestSubtotal": 400,
+        "accountSubtotal": 800,
+        "discount": 0,
+        "loginCompleted": false,
+        "blueM": "NA"
+      }
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "failed",
+    "classification": "FAILED_PRODUCT",
+    "scenario": "",
+    "expectedPath": "Negative",
+    "durationMs": 167265,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "Error: [MERGE-OVER] stock warning must name limit 5 expect(received).toMatch(expected) Expected pattern: /\\b5\\b/ Received string: \"Chưa đăng nhập: có món chưa gộp được. Món vẫn ở giỏ khách. Hãy kiểm tra và thử lại. Giỏ Your store name: PW-Shirt-Variants (PW-Color: Red, PW-Size: S) ×2. shoppingcart.quantityexceedsstock\"",
+    "failureLog": "",
+    "artifacts": [
+      "C:\\projects\\Kiemthu\\Nhom1_KiemThuPhanMem_NopCommerce\\qa\\automation\\artifacts\\final-adv-newbuild2\\n02-cart-SCRUM-86-N02-Cart-a6b11-t-silently-lost-above-stock\\test-failed-1.png",
+      "C:\\projects\\Kiemthu\\Nhom1_KiemThuPhanMem_NopCommerce\\qa\\automation\\artifacts\\final-adv-newbuild2\\n02-cart-SCRUM-86-N02-Cart-a6b11-t-silently-lost-above-stock\\error-context.md",
+      "C:\\projects\\Kiemthu\\Nhom1_KiemThuPhanMem_NopCommerce\\qa\\automation\\artifacts\\final-adv-newbuild2\\n02-cart-SCRUM-86-N02-Cart-a6b11-t-silently-lost-above-stock\\trace.zip"
+    ]
+  },
+  {
+    "caseId": "MERGE-VALID",
+    "group": "ADV",
+    "path": "Positive",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account Red/S 2 + guest 2; login",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 4,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 800,
+      "discount": 0,
+      "total": 800,
+      "outcome": "CartUpdated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "",
+    "expectedPath": "Positive",
+    "durationMs": 134538,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "MERGE-VARIANT",
+    "group": "ADV",
+    "path": "Positive",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account Red/S 1 + guest Blue/M 1; login",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Blue",
+            "M"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 400,
+      "discount": 0,
+      "total": 400,
+      "outcome": "CartUpdated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "failed",
+    "classification": "FAILED_PRODUCT",
+    "scenario": "",
+    "expectedPath": "Positive",
+    "durationMs": 150869,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "Error: expect(locator).toBeVisible() failed Locator: locator('.bar-notification.success') Expected: visible Timeout: 30000ms Error: element(s) not found Call log: - Expect \"toBeVisible\" locator('.bar-notification.success') with timeout 30000ms - waiting for locator('.bar-notification.success')",
+    "failureLog": "",
+    "artifacts": [
+      "C:\\projects\\Kiemthu\\Nhom1_KiemThuPhanMem_NopCommerce\\qa\\automation\\artifacts\\final-adv-newbuild2\\n02-cart-SCRUM-86-N02-Cart-ed1f8-nt-variants-remain-separate\\test-failed-1.png",
+      "C:\\projects\\Kiemthu\\Nhom1_KiemThuPhanMem_NopCommerce\\qa\\automation\\artifacts\\final-adv-newbuild2\\n02-cart-SCRUM-86-N02-Cart-ed1f8-nt-variants-remain-separate\\error-context.md",
+      "C:\\projects\\Kiemthu\\Nhom1_KiemThuPhanMem_NopCommerce\\qa\\automation\\artifacts\\final-adv-newbuild2\\n02-cart-SCRUM-86-N02-Cart-ed1f8-nt-variants-remain-separate\\trace.zip"
+    ]
+  },
+  {
+    "caseId": "REPEAT-BELOW",
+    "group": "ADV",
+    "path": "Positive",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Red/S add1 then2",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 3,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 600,
+      "discount": 0,
+      "total": 600,
+      "outcome": "CartUpdated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "",
+    "expectedPath": "Positive",
+    "durationMs": 86949,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "REPEAT-DIFFERENT",
+    "group": "ADV",
+    "path": "Positive",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Red/S add2 then3; Blue/M add1",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Blue",
+            "M"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1200,
+      "discount": 0,
+      "total": 1200,
+      "outcome": "CartUpdated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "",
+    "expectedPath": "Positive",
+    "durationMs": 126868,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "REPEAT-OVER",
+    "group": "ADV",
+    "path": "Negative",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Red/S add4 then2; second add rejected; maximum5",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 4,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 800,
+      "discount": 0,
+      "total": 800,
+      "outcome": "CartUpdated",
+      "feedback": {
+        "pattern": "5",
+        "meaning": "Stock limit 5 must be stated before notification disappears",
+        "location": "product notification"
+      }
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "",
+    "expectedPath": "Negative",
+    "durationMs": 199962,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "REPEAT-SAME",
+    "group": "ADV",
+    "path": "Boundary",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Red/S add2 then3",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 0,
+      "total": 1000,
+      "outcome": "CartUpdated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "",
+    "expectedPath": "Boundary",
+    "durationMs": 156146,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  }
+]

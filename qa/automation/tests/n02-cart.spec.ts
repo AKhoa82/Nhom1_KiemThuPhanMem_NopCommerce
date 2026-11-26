@@ -3,8 +3,8 @@ import { execFileSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 import { assertCartLine, assertCartLineCount, assertCartState, readCartTotals, cartWarnings } from './helpers/assertions';
-import { addVariantProduct, loginRegisteredCustomer, updateCartLine } from './helpers/cart-checkout';
-import { FixtureBlockedError } from './helpers/fixtures';
+import { addVariantProduct, ensureUsdCurrency, ensureVietnameseLanguage, loginRegisteredCustomer, updateCartLine } from './helpers/cart-checkout';
+import { FixtureBlockedError, waitForStoreReady } from './helpers/fixtures';
 import { currentCustomerGuid, n02StoreId, resetN02Fixture } from './helpers/n02-fixture';
 import { runtimeConfig } from './helpers/runtime-config';
 import { executeReadonlySql, queryN02CartState } from './helpers/sql-fixture';
@@ -95,6 +95,9 @@ async function prepareMerge(
   await cartSnapshot(testInfo, 'guest-before-login');
 
   if (expectRejectedLogin) {
+    // The rejection message under test is the Vietnamese one (SCRUM-96).
+    await page.goto('/cart');
+    await ensureVietnameseLanguage(page);
     await page.goto('/login');
     await page.locator('#Email').fill(runtimeConfig.registeredEmail);
     await page.locator('#Password').fill(runtimeConfig.registeredPassword);
@@ -103,7 +106,8 @@ async function prepareMerge(
     await expect(page.locator('a.ico-login')).toBeVisible();
     await expect(page.locator('.bar-notification.warning')).toHaveCSS('opacity', '1');
   } else {
-    await loginRegisteredCustomer(page);
+    // Keep merge notifications on screen until captured; switch currency afterwards.
+    await loginRegisteredCustomer(page, { switchCurrency: false });
   }
   const notices = await page.locator(
     '.bar-notification.error, .bar-notification.warning, .message-error, .message-failure',
@@ -124,6 +128,7 @@ async function prepareMerge(
   }
   if (expectRejectedLogin) expect(feedback, '[MERGE-OVER] stock warning must name limit 5').toMatch(/\b5\b/);
   await page.goto('/cart');
+  await ensureUsdCurrency(page);
   await screenshot(page, testInfo, expectRejectedLogin ? 'guest-after-rejected-login' : 'account-after-login');
   await cartSnapshot(testInfo, expectRejectedLogin ? 'guest-after-rejected-login' : 'account-after-login');
   return { guestCookie: guestCookie.value, feedback };
@@ -160,14 +165,13 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
       needsRegisteredCustomer && !runtimeConfig.registeredPassword && 'QA_REGISTERED_PASSWORD',
     ].filter(Boolean);
     test.skip(missing.length > 0, `FIXTURE_BLOCKED: missing ${missing.join(', ')}.`);
-    let response;
     try {
-      response = await page.goto('/cart', { waitUntil: 'domcontentloaded', timeout: 10_000 });
+      // The previous test's reset may have restarted the store; wait for the cold start.
+      await waitForStoreReady(page, 'N02 storefront is unavailable');
     } catch (error) {
-      test.skip(true, `FIXTURE_BLOCKED: N02 storefront is unavailable: ${String(error)}`);
+      test.skip(true, String(error instanceof Error ? error.message : error));
       return;
     }
-    expect(response?.ok(), 'N02 storefront /cart must respond successfully.').toBeTruthy();
     try {
       const guestGuid = await currentCustomerGuid(page);
       guestGuidByTest.set(testInfo.testId, guestGuid);
@@ -372,6 +376,8 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
       contentType: 'text/plain',
     });
 
+    await secondPage.goto('/cart');
+    await ensureVietnameseLanguage(secondPage);
     await secondPage.goto('/login');
     await secondPage.locator('#Email').fill(runtimeConfig.registeredEmail);
     await secondPage.locator('#Password').fill(runtimeConfig.registeredPassword);
@@ -459,6 +465,8 @@ test.describe('SCRUM-86 N02 Cart UI and automation', () => {
       const activationUrl = new URL('/customer/activation', baseURL);
       activationUrl.searchParams.set('token', token);
       activationUrl.searchParams.set('email', runtimeConfig.registeredEmail);
+      await page.goto('/cart');
+      await ensureVietnameseLanguage(page);
       await page.goto(activationUrl.toString());
       await expect(page).toHaveURL(/\/cart/i);
       await expect(page.locator('a.ico-login')).toBeVisible();

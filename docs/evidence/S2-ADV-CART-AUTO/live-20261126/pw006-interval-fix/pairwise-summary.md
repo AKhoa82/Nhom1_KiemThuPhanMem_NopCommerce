@@ -1,0 +1,12 @@
+# Pairwise Shopping Cart
+
+Original model: 14 PW cases, 253/253 generated pairs. Runtime results below are separate from pair coverage.
+
+| Case ID | Path | Precondition | Input | Expected | Invariant | Result | Classification | Failure log | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| PW-006 | Boundary | Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0 | Add Simple 10; valid coupon; checkout | {"lines":[{"product":"PW-Simple-Stock","attributes":[],"quantity":10,"unitPrice":100}],"warning":null,"subtotal":1000,"discount":100,"total":900,"outcome":"OrderCreated"} | INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08 | passed | PASSED | - | - |
+| PW-006 | Boundary | Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0 | Add Simple 10; valid coupon; checkout | {"lines":[{"product":"PW-Simple-Stock","attributes":[],"quantity":10,"unitPrice":100}],"warning":null,"subtotal":1000,"discount":100,"total":900,"outcome":"OrderCreated"} | INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08 | passed | PASSED | - | - |
+| PW-006 | Boundary | Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0 | Add Simple 10; valid coupon; checkout | {"lines":[{"product":"PW-Simple-Stock","attributes":[],"quantity":10,"unitPrice":100}],"warning":null,"subtotal":1000,"discount":100,"total":900,"outcome":"OrderCreated"} | INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08 | passed | PASSED | - | - |
+| PW-006 | Boundary | Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0 | Add Simple 10; valid coupon; checkout | {"lines":[{"product":"PW-Simple-Stock","attributes":[],"quantity":10,"unitPrice":100}],"warning":null,"subtotal":1000,"discount":100,"total":900,"outcome":"OrderCreated"} | INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08 | passed | PASSED | - | - |
+
+FAILED_PRODUCT indicates a business assertion; FAILED_AUTOMATION indicates harness/selector failure; FAILED_ENVIRONMENT means the store/DB/Docker broke during the run; BLOCKED_ENVIRONMENT (skipped) is not a pass.

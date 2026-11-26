@@ -11,6 +11,15 @@ export async function readCartTotals(page: Page): Promise<{ subtotal: number; di
       await page.locator('.cart-total').count() === 0) {
     return { subtotal: 0, discount: 0, total: 0 };
   }
+  const currency = page.locator('#customerCurrency option:checked');
+  if (await currency.count()) {
+    const name = (await currency.textContent())?.trim();
+    const value = (await currency.getAttribute('value')) ?? '';
+    // Match by currency Id from the manifest; the display name may be localized.
+    if (!new RegExp(`/changecurrency/${cartManifest.workingCurrencyId}(?:\\?|$)`, 'i').test(value)) {
+      throw new Error(`FAILED_AUTOMATION: working currency is '${name}', expected '${cartManifest.workingCurrencyName}'; call ensureUsdCurrency after each new guest/login/logout.`);
+    }
+  }
   const amount = async (selector: string) => {
     const element = page.locator(selector);
     if (await element.count() !== 1) throw new Error(`FAILED_AUTOMATION: expected one money selector '${selector}'`);

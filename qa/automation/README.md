@@ -52,6 +52,18 @@ node scripts/register-local-qa.cjs
 npm run test:n02-cart
 ```
 
+When PW and N02 run in one command (`npm run test:order-check`), set the PW
+account separately with `QA_PW_REGISTERED_EMAIL` and `QA_PW_REGISTERED_PASSWORD`
+(falls back to `QA_REGISTERED_*`). PW-014 leaves a coupon on its account, which
+blocks the N02 reset if both suites share one account.
+
+The store shows VND to new visitors. Tests select USD per customer with
+`ensureUsdCurrency` (currency Id 1) and the money reader fails as
+`FAILED_AUTOMATION` for any other working currency. SCRUM-96 merge warnings are
+Vietnamese only for the vi-VN language; the merge cases call
+`ensureVietnameseLanguage` (language Id 2). The local vi-VN pack needs
+`scripts/seed-vi-stock-resource.sql` (see `test-data/cart-fixture-manifest.json`).
+
 `CART-REPEAT-01` needs `QA_SQL_PASSWORD`; `CART-MERGE-01` also needs the
 registered account email and password. `QA_N02_STORE_ID` defaults to `1` and
 must name the current test store.

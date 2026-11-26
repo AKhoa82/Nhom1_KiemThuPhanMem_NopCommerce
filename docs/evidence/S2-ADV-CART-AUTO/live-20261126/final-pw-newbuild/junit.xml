@@ -1,0 +1,277 @@
+<testsuites id="" name="" tests="14" failures="0" skipped="3" errors="0" time="1297.126467">
+<testsuite name="pairwise.spec.ts" timestamp="2026-11-26T04:29:40.837Z" hostname="" tests="14" failures="0" skipped="3" time="1272.116" errors="0">
+<testcase name="PW-001 Negative: Update quantity; invalid coupon remains independent; missing required address blocks checkout." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-001">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Simple 1; update 2; invalid coupon; submit missing billing field">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:2,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:200,&quot;discount&quot;:0,&quot;total&quot;:200,&quot;outcome&quot;:&quot;AddressBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-07">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="scenario" value="CART-05;CART-12;ADDR-02">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: Store did not become ready after fixture reset: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-002 Positive: Guest adds a configurable product to a multi-line cart, rejects an invalid coupon, then follows the verified local checkout path." classname="pairwise.spec.ts" time="180.775">
+<properties>
+<property name="caseId" value="PW-002">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 1 + Simple 1; invalid coupon; checkout">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:300,&quot;discount&quot;:0,&quot;total&quot;:300,&quot;outcome&quot;:&quot;OrderCreated&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-07">
+</property>
+<property name="expected-path" value="Positive">
+</property>
+<property name="scenario" value="CART-02;CART-04;CART-12;CHK-02;ADDR-01;SHP-01;PAY-LOCAL-01">
+</property>
+</properties>
+</testcase>
+<testcase name="PW-003 Boundary: A guest removes the final configurable-product line from a one-line cart after the valid-coupon state has been exercised." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-003">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 2; valid coupon; remove last line">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:2,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:400,&quot;discount&quot;:40,&quot;total&quot;:360,&quot;outcome&quot;:&quot;CartEmpty&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="scenario" value="CART-08;CART-11">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: Store did not become ready after fixture reset: TimeoutError: page.goto: Timeout 5000ms exceeded.
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-004 Negative: Registered customer updates quantity beyond available stock; checkout stops before address, shipping, and payment." classname="pairwise.spec.ts">
+<properties>
+<property name="caseId" value="PW-004">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 1 + Simple 1; update Simple 11 (stock 10)">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100}],&quot;warning&quot;:{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;pattern&quot;:&quot;10&quot;},&quot;subtotal&quot;:300,&quot;discount&quot;:0,&quot;total&quot;:300,&quot;outcome&quot;:&quot;StockBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-12">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="scenario" value="CART-07">
+</property>
+<property name="skip" value="FIXTURE_BLOCKED: Store did not become ready after fixture reset: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart
+Call log:
+[2m  - navigating to &quot;http://localhost/cart&quot;, waiting until &quot;domcontentloaded&quot;[22m
+">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="PW-005 Boundary: Registered customer removes the final simple-product line and leaves an empty cart." classname="pairwise.spec.ts" time="91.005">
+<properties>
+<property name="caseId" value="PW-005">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Simple 1; remove last line">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:100,&quot;discount&quot;:0,&quot;total&quot;:100,&quot;outcome&quot;:&quot;CartEmpty&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="scenario" value="CART-08">
+</property>
+</properties>
+</testcase>
+<testcase name="PW-006 Boundary: Registered customer adds a simple product at the exact stock limit, applies a valid coupon, and completes the local checkout path." classname="pairwise.spec.ts" time="114.121">
+<properties>
+<property name="caseId" value="PW-006">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Simple 10; valid coupon; checkout">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:10,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:100,&quot;total&quot;:900,&quot;outcome&quot;:&quot;OrderCreated&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="scenario" value="CART-14;CART-11;CHK-01;ADDR-01;SHP-01;PAY-LOCAL-01">
+</property>
+</properties>
+</testcase>
+<testcase name="PW-007 Positive: Guest adds a configurable product within stock to a multi-line cart and completes checkout locally." classname="pairwise.spec.ts" time="108.68">
+<properties>
+<property name="caseId" value="PW-007">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 2 + Simple 1; checkout">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:2,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:500,&quot;discount&quot;:0,&quot;total&quot;:500,&quot;outcome&quot;:&quot;OrderCreated&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Positive">
+</property>
+<property name="scenario" value="CART-02;CART-04;CHK-02;ADDR-01;SHP-01;PAY-LOCAL-01">
+</property>
+</properties>
+</testcase>
+<testcase name="PW-008 Boundary: Guest removes the final configurable-product line from a one-line cart; the invalid-coupon state is independently checked." classname="pairwise.spec.ts" time="65.27">
+<properties>
+<property name="caseId" value="PW-008">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Blue/M 3; invalid coupon; remove last line">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Blue&quot;,&quot;M&quot;],&quot;quantity&quot;:3,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:600,&quot;discount&quot;:0,&quot;total&quot;:600,&quot;outcome&quot;:&quot;CartEmpty&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-07">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="scenario" value="CART-08;CART-12">
+</property>
+</properties>
+</testcase>
+<testcase name="PW-009 Boundary: Guest updates a configurable product to the exact available-stock limit and continues through local checkout." classname="pairwise.spec.ts" time="101.749">
+<properties>
+<property name="caseId" value="PW-009">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Blue/M 1 + Simple 1; update Blue/M 3; checkout">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Blue&quot;,&quot;M&quot;],&quot;quantity&quot;:3,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:700,&quot;discount&quot;:0,&quot;total&quot;:700,&quot;outcome&quot;:&quot;OrderCreated&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="scenario" value="CART-14;CHK-02;ADDR-01;SHP-01;PAY-LOCAL-01">
+</property>
+</properties>
+</testcase>
+<testcase name="PW-010 Negative: Guest attempts to add an out-of-stock configurable product and checkout does not start." classname="pairwise.spec.ts" time="61.788">
+<properties>
+<property name="caseId" value="PW-010">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Attempt add out-of-stock product; inspect empty cart">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[],&quot;warning&quot;:null,&quot;subtotal&quot;:0,&quot;discount&quot;:0,&quot;total&quot;:0,&quot;outcome&quot;:&quot;OutOfStock&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="scenario" value="CART-10">
+</property>
+</properties>
+</testcase>
+<testcase name="PW-011 Negative: Guest updates a simple product in a multi-line cart, exercises a valid coupon, then submits an address missing a required field." classname="pairwise.spec.ts" time="86.839">
+<properties>
+<property name="caseId" value="PW-011">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Simple 1 + Red/S 1; update Simple 1; valid coupon; submit missing billing">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100},{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:300,&quot;discount&quot;:30,&quot;total&quot;:270,&quot;outcome&quot;:&quot;AddressBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="scenario" value="CART-05;CART-11;ADDR-02">
+</property>
+</properties>
+</testcase>
+<testcase name="PW-012 Boundary: Registered customer adds a configurable product at the exact stock limit, then submits an address missing a required field." classname="pairwise.spec.ts" time="94.811">
+<properties>
+<property name="caseId" value="PW-012">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Blue/M 3; submit missing billing">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Blue&quot;,&quot;M&quot;],&quot;quantity&quot;:3,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:600,&quot;discount&quot;:0,&quot;total&quot;:600,&quot;outcome&quot;:&quot;AddressBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="scenario" value="CART-14;ADDR-02">
+</property>
+</properties>
+</testcase>
+<testcase name="PW-013 Negative: Registered customer updates a configurable product beyond stock; invalid coupon remains an independent operation." classname="pairwise.spec.ts" time="85.004">
+<properties>
+<property name="caseId" value="PW-013">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 1; invalid coupon; update 6 (stock 5)">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200}],&quot;warning&quot;:{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;pattern&quot;:&quot;5&quot;},&quot;subtotal&quot;:200,&quot;discount&quot;:0,&quot;total&quot;:200,&quot;outcome&quot;:&quot;StockBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-07, INV-CART-12">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="scenario" value="CART-07;CART-12">
+</property>
+</properties>
+</testcase>
+<testcase name="PW-014 Negative: Registered customer updates a simple product beyond available stock while the product is otherwise in stock." classname="pairwise.spec.ts" time="80.811">
+<properties>
+<property name="caseId" value="PW-014">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 1 + Simple 1; valid coupon; update Simple 11 (stock 10)">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100}],&quot;warning&quot;:{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;pattern&quot;:&quot;10&quot;},&quot;subtotal&quot;:300,&quot;discount&quot;:30,&quot;total&quot;:270,&quot;outcome&quot;:&quot;StockBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-12">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="scenario" value="CART-07;CART-11">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>

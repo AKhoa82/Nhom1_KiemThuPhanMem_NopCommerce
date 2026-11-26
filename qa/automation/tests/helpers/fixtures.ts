@@ -47,7 +47,7 @@ export async function resetFixture(page: Page, row: PairwiseCase): Promise<Fixtu
   if (row.address === 'NA') return { preflightReceipt };
 
   const customerEmail = row.customerType === 'Registered'
-    ? runtimeConfig.registeredEmail
+    ? runtimeConfig.pwRegisteredEmail
     : runtimeConfig.billing.email;
   if (!customerEmail) {
     throw new FixtureBlockedError(`FIXTURE_BLOCKED: checkout evidence requires a synthetic email for ${row.caseId}.`);
@@ -57,17 +57,30 @@ export async function resetFixture(page: Page, row: PairwiseCase): Promise<Fixtu
 }
 
 async function openCartWhenStoreReady(page: Page): Promise<void> {
+  await waitForStoreReady(page, 'Store did not become ready after fixture reset');
+}
+
+/**
+ * Resets restart the store; the first request after a cold start can take
+ * 15-25 s (longer on a freshly built image). Give each attempt enough time to
+ * finish warming instead of aborting it, but keep the total budget below the
+ * 300 s test timeout so an unavailable store is reported as blocked.
+ */
+export async function waitForStoreReady(page: Page, blockedMessage: string, budgetMs = 150_000): Promise<void> {
+  const deadline = Date.now() + budgetMs;
   let lastError: unknown;
-  for (let attempt = 0; attempt < 20; attempt += 1) {
+  while (Date.now() < deadline) {
     try {
-      await page.goto('/cart', { waitUntil: 'domcontentloaded', timeout: 5_000 });
-      return;
+      const timeout = Math.max(5_000, Math.min(30_000, deadline - Date.now()));
+      const response = await page.goto('/cart', { waitUntil: 'domcontentloaded', timeout });
+      if (response?.ok()) return;
+      lastError = new Error(`/cart returned HTTP ${response?.status()}`);
     } catch (error) {
       lastError = error;
-      await page.waitForTimeout(1_000);
     }
+    await page.waitForTimeout(2_000);
   }
-  throw new FixtureBlockedError(`FIXTURE_BLOCKED: Store did not become ready after fixture reset: ${String(lastError)}`);
+  throw new FixtureBlockedError(`FIXTURE_BLOCKED: ${blockedMessage}: ${String(lastError)}`);
 }
 
 async function verifyRuntimeFixture(page: Page, row: PairwiseCase): Promise<void> {

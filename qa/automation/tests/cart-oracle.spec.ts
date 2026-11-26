@@ -25,6 +25,8 @@ test('catalog rejects missing, extra and duplicate case IDs', () => {
 
 test('report classification distinguishes blocked, harness and business failure', () => {
   expect(classify('skipped', 'FIXTURE_BLOCKED')).toBe('BLOCKED_ENVIRONMENT');
+  expect(classify('skipped', '')).toBe('BLOCKED_ENVIRONMENT');
+  expect(classify('failed', 'page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart')).toBe('FAILED_ENVIRONMENT');
   expect(classify('failed', 'FAILED_AUTOMATION: missing total selector')).toBe('FAILED_AUTOMATION');
   expect(classify('failed', 'subtotal expected 300 actual 200')).toBe('FAILED_PRODUCT');
 });
@@ -36,6 +38,12 @@ test('cart helper reads actual cents and rejects wrong line arithmetic', async (
   await assertCartState(page, state, 'OFFLINE');
   await page.locator('.product-subtotal').evaluate(node => { node.textContent = '$200.00'; });
   await expect(assertCartState(page, state, 'OFFLINE')).rejects.toThrow(/line total/);
+});
+
+test('non-USD working currency is reported as an automation failure', async ({ page }) => {
+  await page.setContent(`<select id="customerCurrency"><option selected>Vietnamese Dong</option><option>US Dollar</option></select>
+    <table class="cart-total"><tr class="order-subtotal"><td class="value-summary">200 ₫</td></tr><tr class="order-total"><td class="value-summary">200 ₫</td></tr></table>`);
+  await expect(readCartTotals(page)).rejects.toThrow(/FAILED_AUTOMATION: working currency is 'Vietnamese Dong'/);
 });
 
 test('missing cart total never becomes a fabricated zero', async ({ page }) => {

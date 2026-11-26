@@ -7,7 +7,7 @@
 - Feasible pairs: 30
 - Pairs in generated rows: 30
 - Generated pair coverage: 30/30 (100%)
-- Latest automation attempt: AUTO-20261125171700184 at e21ff4471fbe5a612e8dcda91868ec88cf08457e; 0 passed, 0 failed, 8 skipped/blocked. Status is taken from execution.json; skipped means blocked, not passed. Generated coverage is not a UI test result.
+- Latest automation attempt: AUTO-202611261326 at 5756d2bac2b77682ad3e86335625446e0d30ac18; 8 passed, 0 failed, 0 skipped/blocked. Status is taken from execution.json; skipped means blocked, not passed. Generated coverage is not a UI test result.
 - Existing UI cases: MERGE-VALID, MERGE-EXACT, MERGE-OVER, MERGE-VARIANT, REPEAT-SAME, REPEAT-DIFFERENT, REPEAT-BELOW, REPEAT-OVER.
 - All eight PICT rows have UI automation; generated coverage is independent of runtime status.
 - Values are relation labels. Concrete quantities in generated-cases.csv must be checked against stock before execution.

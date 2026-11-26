@@ -12,18 +12,59 @@ export function requestedQuantity(row: PairwiseCase): number {
   return row.productType === 'ConfigurablePhysical' ? 6 : 11;
 }
 
-export async function loginRegisteredCustomer(page: Page): Promise<void> {
+/**
+ * The local store shows VND (rate 1, DisplayOrder 0) to new visitors while the
+ * oracle is USD. The working currency is stored per customer, so every new
+ * guest, every login and every logout needs USD selected. Navigates only when
+ * the current page shows another currency, so an already-USD page (and its
+ * transient notifications) is left untouched.
+ */
+export async function ensureUsdCurrency(page: Page): Promise<void> {
+  await ensureSelectorOption(page, '#customerCurrency', usdCurrencyValue, 'USD working currency');
+}
+/** Matched by currency Id (not display name, which may be localized). */
+export const usdCurrencyValue = /\/changecurrency\/1(?:\?|$)/i;
+
+/**
+ * The SCRUM-96 merge warning is Vietnamese only when the guest's working
+ * language is vi-VN; new visitors default to English. Select it explicitly for
+ * cases that assert the Vietnamese text. Matched by language Id 2 (vi-VN).
+ */
+export async function ensureVietnameseLanguage(page: Page): Promise<void> {
+  await ensureSelectorOption(page, '#customerlanguage', vietnameseLanguageValue, 'Vietnamese working language');
+}
+export const vietnameseLanguageValue = /\/changelanguage\/2(?:\?|$)/i;
+
+async function ensureSelectorOption(page: Page, selectId: string, valuePattern: RegExp, label: string): Promise<void> {
+  const selector = page.locator(selectId);
+  if (await selector.count() === 0) return;
+  const selectedValue = await selector.locator('option:checked').getAttribute('value');
+  if (selectedValue && valuePattern.test(selectedValue)) return;
+  const values = await selector.locator('option').evaluateAll(options => options.map(o => (o as HTMLOptionElement).value));
+  const target = values.find(value => valuePattern.test(value));
+  if (!target) throw new Error(`FAILED_AUTOMATION: ${selectId} has no option for ${label}.`);
+  await page.goto(target, { waitUntil: 'domcontentloaded' });
+  const now = await page.locator(`${selectId} option:checked`).getAttribute('value');
+  if (!now || !valuePattern.test(now)) throw new Error(`FAILED_AUTOMATION: could not select ${label}.`);
+}
+
+export async function loginRegisteredCustomer(
+  page: Page,
+  options: { switchCurrency?: boolean; email?: string; password?: string } = {},
+): Promise<void> {
   await page.goto('/login');
-  await page.locator('#Email').fill(runtimeConfig.registeredEmail);
-  await page.locator('#Password').fill(runtimeConfig.registeredPassword);
+  await page.locator('#Email').fill(options.email ?? runtimeConfig.registeredEmail);
+  await page.locator('#Password').fill(options.password ?? runtimeConfig.registeredPassword);
   await page.locator('button.login-button').click();
   await expect(page.locator('a.ico-account')).toBeVisible();
   await expect(page.locator('a.ico-logout')).toBeVisible();
+  if (options.switchCurrency !== false) await ensureUsdCurrency(page);
 }
 
 async function addProduct(page: Page, path: string, quantity: number, variant = false): Promise<void> {
   await page.goto(path);
   await expect(page.locator('.product-details-page')).toBeVisible();
+  await ensureUsdCurrency(page);
   if (variant) {
     const attributes = page.locator('select[name^="product_attribute_"]');
     await expect(attributes).toHaveCount(2);
@@ -108,6 +149,7 @@ export async function submitMissingRequiredBillingAddress(page: Page): Promise<v
 async function addConfiguredProduct(page: Page, path: string, quantity: number, color: 'Red' | 'Blue', size: 'S' | 'M'): Promise<void> {
   await page.goto(path);
   await expect(page.locator('.product-details-page')).toBeVisible();
+  await ensureUsdCurrency(page);
   const attributes = page.locator('select[name^="product_attribute_"]');
   await expect(attributes).toHaveCount(2);
   const colorOptions = await attributes.nth(0).locator('option').allTextContents();
@@ -137,6 +179,7 @@ export async function addVariantProduct(page: Page, quantity: number, variant: '
 export async function addOutOfStockProduct(page: Page): Promise<void> {
   await page.goto(runtimeConfig.outOfStockProductPath);
   await expect(page.locator('.product-details-page')).toBeVisible();
+  await ensureUsdCurrency(page);
   await page.locator('input.qty-input').fill('1');
   await page.locator('button[id^="add-to-cart-button-"]').click();
   await expect(page.locator('.bar-notification.error, .bar-notification.warning, .message-error, .message-failure').filter({ hasText: /\S/ }).first()).toBeVisible();

@@ -5,7 +5,9 @@ import { cartCatalog, type CartCase } from '../tests/helpers/cart-catalog';
 
 export function classify(status: string, evidence: string): string {
   if (status === 'passed') return 'PASSED';
-  if (/FIXTURE_BLOCKED|Blocked:|ECONNREFUSED|ERR_EMPTY_RESPONSE|net::ERR|Docker container|SQLCMD|Store did not become ready|fixture reset failed/i.test(evidence) || status === 'skipped') return 'BLOCKED_ENVIRONMENT';
+  // Skipped = never reached business assertions; failed + environment signal = the run broke mid-test.
+  if (status === 'skipped') return 'BLOCKED_ENVIRONMENT';
+  if (/FIXTURE_BLOCKED|Blocked:|ECONNREFUSED|ERR_EMPTY_RESPONSE|net::ERR|Docker container|SQLCMD|Store did not become ready|fixture reset failed/i.test(evidence)) return 'FAILED_ENVIRONMENT';
   if (/FAILED_AUTOMATION|No implementation|strict mode violation|TypeScript|Cannot find module|locator\.(check|click|fill)|page\.(goto|waitForURL)|browserContext/i.test(evidence)) return 'FAILED_AUTOMATION';
   return 'FAILED_PRODUCT';
 }
@@ -47,7 +49,7 @@ export default class PairwiseSummaryReporter implements Reporter {
       '| Case ID | Path | Precondition | Input | Expected | Invariant | Result | Classification | Failure log | Evidence |',
       '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
       ...rows.map(row => `| ${row.join(' | ')} |`), '',
-      'FAILED_PRODUCT indicates a business assertion; FAILED_AUTOMATION indicates harness/selector failure; BLOCKED_ENVIRONMENT is not a pass.', '',
+      'FAILED_PRODUCT indicates a business assertion; FAILED_AUTOMATION indicates harness/selector failure; FAILED_ENVIRONMENT means the store/DB/Docker broke during the run; BLOCKED_ENVIRONMENT (skipped) is not a pass.', '',
     ].join('\n'));
   }
 }

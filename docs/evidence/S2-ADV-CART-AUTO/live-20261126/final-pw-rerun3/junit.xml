@@ -1,0 +1,58 @@
+<testsuites id="" name="" tests="3" failures="0" skipped="0" errors="0" time="311.53298500000005">
+<testsuite name="pairwise.spec.ts" timestamp="2026-11-26T05:37:29.770Z" hostname="" tests="3" failures="0" skipped="0" time="299.432" errors="0">
+<testcase name="PW-001 Negative: Update quantity; invalid coupon remains independent; missing required address blocks checkout." classname="pairwise.spec.ts" time="132.098">
+<properties>
+<property name="caseId" value="PW-001">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Simple 1; update 2; invalid coupon; submit missing billing field">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:2,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:200,&quot;discount&quot;:0,&quot;total&quot;:200,&quot;outcome&quot;:&quot;AddressBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-07">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="scenario" value="CART-05;CART-12;ADDR-02">
+</property>
+</properties>
+</testcase>
+<testcase name="PW-003 Boundary: A guest removes the final configurable-product line from a one-line cart after the valid-coupon state has been exercised." classname="pairwise.spec.ts" time="76.317">
+<properties>
+<property name="caseId" value="PW-003">
+</property>
+<property name="precondition" value="Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 2; valid coupon; remove last line">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:2,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:400,&quot;discount&quot;:40,&quot;total&quot;:360,&quot;outcome&quot;:&quot;CartEmpty&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="scenario" value="CART-08;CART-11">
+</property>
+</properties>
+</testcase>
+<testcase name="PW-004 Negative: Registered customer updates quantity beyond available stock; checkout stops before address, shipping, and payment." classname="pairwise.spec.ts" time="91.017">
+<properties>
+<property name="caseId" value="PW-004">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Red/S 1 + Simple 1; update Simple 11 (stock 10)">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:1,&quot;unitPrice&quot;:100}],&quot;warning&quot;:{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;pattern&quot;:&quot;10&quot;},&quot;subtotal&quot;:300,&quot;discount&quot;:0,&quot;total&quot;:300,&quot;outcome&quot;:&quot;StockBlocked&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08, INV-CART-12">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="scenario" value="CART-07">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>

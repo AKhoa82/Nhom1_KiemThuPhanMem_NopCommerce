@@ -1,13 +1,13 @@
 import { expect, test, type Page } from '@playwright/test';
 import { assertCartState, assertCheckoutOrderCountUnchanged, assertAddressValidationBlocked, assertCartEmpty, assertCartLine, assertCartLineCount, assertCheckoutCompleted, assertCheckoutOrderEvidence, assertCouponResult, assertStockBlocked } from './helpers/assertions';
-import { addOutOfStockProduct, addSimpleProduct, addVariantProduct, applyCouponCode, beginCheckout, completeLocalCheckout, invalidCoupon, loginRegisteredCustomer, removeCartLine, submitMissingRequiredBillingAddress, updateCartLine, validCoupon } from './helpers/cart-checkout';
+import { addOutOfStockProduct, addSimpleProduct, addVariantProduct, applyCouponCode, beginCheckout, completeLocalCheckout as completeCheckoutSteps, invalidCoupon, loginRegisteredCustomer, removeCartLine, submitMissingRequiredBillingAddress, updateCartLine, validCoupon } from './helpers/cart-checkout';
 import { FixtureBlockedError, resetFixture } from './helpers/fixtures';
 import { loadPairwiseCases, type PairwiseCase } from './helpers/pairwise-data';
 import { blockedReason, runtimeConfig } from './helpers/runtime-config';
-import { queryCartFixtureState, queryCheckoutEvidence } from './helpers/sql-fixture';
+import { queryCartFixtureState, queryCheckoutEvidence, queryOrderPlacementWait } from './helpers/sql-fixture';
 
 import { cartCase, cartManifest } from './helpers/cart-catalog';
-import { annotateCase, attachFailureLog, step } from './helpers/case-log';
+import { attachFailureLog, step } from './helpers/case-log';
 
 test.beforeAll(async ({ request }) => {
   test.skip(!runtimeConfig.sqlPassword, 'FIXTURE_BLOCKED: QA_SQL_PASSWORD is required.');
@@ -26,7 +26,22 @@ const simple = 'PW-Simple-Stock';
 const variant = 'PW-Shirt-Variants';
 
 async function runCase(page: Page, row: PairwiseCase): Promise<void> {
-  if (row.customerType === 'Registered') await loginRegisteredCustomer(page);
+  if (row.customerType === 'Registered') {
+    await loginRegisteredCustomer(page, { email: runtimeConfig.pwRegisteredEmail, password: runtimeConfig.pwRegisteredPassword });
+  }
+
+  // Registered checkout cases reuse one account; respect the store's
+  // per-customer order placement interval so repeats do not depend on timing.
+  const completeLocalCheckout = async (checkoutPage: Page) => {
+    if (row.customerType === 'Registered') {
+      await step(`${row.caseId} wait for order placement interval`, async () => {
+        const wait = await queryOrderPlacementWait(runtimeConfig.pwRegisteredEmail);
+        test.info().annotations.push({ type: 'order-interval', description: JSON.stringify(wait) });
+        if (wait.waitMs > 0) await checkoutPage.waitForTimeout(wait.waitMs);
+      });
+    }
+    await completeCheckoutSteps(checkoutPage);
+  };
 
   const expected = cartCase(row.caseId).expected;
   const checkpoint = () => step(`${row.caseId} cart oracle before terminal action`, async () => {
@@ -178,9 +193,7 @@ for (const row of pairwiseCases) {
     if (blocked) test.skip(true, blocked);
 
     test(title, { annotation: Object.entries({ caseId: row.caseId, precondition: cartCase(row.caseId).precondition, input: cartCase(row.caseId).input, expected: JSON.stringify(cartCase(row.caseId).expected), invariant: cartCase(row.caseId).invariants.join(', '), 'expected-path': row.expectedPath }).map(([type, description]) => ({ type, description })) }, async ({ page }, testInfo) => {
-      annotateCase(testInfo, row.caseId);
       testInfo.annotations.push({ type: 'scenario', description: row.scenarioId });
-      testInfo.annotations.push({ type: 'expected-path', description: row.expectedPath });
       try {
         const baseline = await step(`${row.caseId} reset and preflight`, () => resetFixture(page, row));
         await testInfo.attach('manifest-preflight.txt', { body: baseline.preflightReceipt ?? '', contentType: 'text/plain' });
@@ -194,7 +207,7 @@ for (const row of pairwiseCases) {
 
         if (baseline.checkoutEvidenceBefore) {
           const customerEmail = row.customerType === 'Registered'
-            ? process.env.QA_REGISTERED_EMAIL?.trim()
+            ? runtimeConfig.pwRegisteredEmail
             : process.env.QA_BILLING_EMAIL?.trim();
           if (!customerEmail) throw new Error(`Checkout evidence email is missing for ${row.caseId}.`);
           const after = await queryCheckoutEvidence(customerEmail);

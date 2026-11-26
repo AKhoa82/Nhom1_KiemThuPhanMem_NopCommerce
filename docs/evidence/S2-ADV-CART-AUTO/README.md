@@ -1,72 +1,81 @@
 # S2-ADV-CART-AUTO - implementation and verification
 
 Local date: 26/11/2026 (Asia/Bangkok). Source base: `e21ff4471fbe5a612e8dcda91868ec88cf08457e`.
-Branch: `feat/S2-ADV-CART-AUTO`. Runs used the modified working tree; source fingerprints are in `source-files.sha256.json`.
+Branch: `feat/S2-ADV-CART-AUTO`. Live evidence: [`live-20261126/`](live-20261126/).
 
 ## Result
 
-- TypeScript: `npx tsc --noEmit` passed.
-- Offline checks: 6 passed (USD cents/grouping/sign parsing; malformed catalog IDs; failure classification; line/total arithmetic; missing total; partial UI/SQL diagnostics).
-- Discovery: exactly 14 PW + 11 ADV (8 N02 model rows and 3 existing regressions).
-- Live attempt: **14 PW + 11 ADV BLOCKED_ENVIRONMENT**, no business assertions reached. `/cart` returned `ERR_EMPTY_RESPONSE`, socket reset or navigation timeout. A skipped Playwright run is not a business pass.
-- Final order-check: 76 invocations / 150 blocked observations, zero status/classification differences and zero failed Playwright invocations. See `order-check.md/json`. Exit 1 (`NOT_PROVEN`) is intentional; blocked observations cannot prove business independence.
-- Original PICT model/generated CSV/coverage remain unchanged: 253/253 pairs. N02 regenerated using Microsoft PICT 3.7.4: 8 rows, 30/30 feasible pairs. Generated pair coverage is not execution coverage.
+| Check | Result | Evidence |
+| --- | --- | --- |
+| TypeScript `npx tsc --noEmit` | passed | - |
+| Offline oracle checks (`tests/cart-oracle.spec.ts`) | 7/7 passed | [offline-results.json](offline-results.json) (earlier 6-test run) |
+| Discovery | 14 PW + 11 ADV (8 N02 model rows + 3 regressions) | - |
+| UI oracle check (USD) | 6/6 checks match manifest | [screenshots/usd-4-*.png](screenshots/), [step4-results-usd.json](screenshots/step4-results-usd.json) |
+| PW live, 14 original pairwise cases | **14/14 PASSED** | [final-pw-newbuild](live-20261126/final-pw-newbuild/) (11) + [final-pw-rerun3](live-20261126/final-pw-rerun3/) (PW-001/003/004) |
+| ADV live, CART-MERGE-01 + CART-REPEAT-01 | **11/11 PASSED** | [final-adv-newbuild2](live-20261126/final-adv-newbuild2/) (7) + [final-adv-rerun4](live-20261126/final-adv-rerun4/) (4) |
+| Order independence | 130/132 passed; dependency found in PW-006, fixed, PW-006 4/4 back-to-back | [order-check-final3](live-20261126/order-check-final3/order-check.md), [pw006-interval-fix](live-20261126/pw006-interval-fix/) |
+| Pair coverage | original model 253/253; N02 model 30/30 (PICT 3.7.4) | `qa/pairwise/` |
 
-## Evidence
+ADV results are reported separately from the 14 PW cases (`adv-cart-summary.*`
+vs `pairwise-summary.*`) and do not change the 253-pair coverage.
 
-- [PW summary](pairwise-summary.md), [PW JSON](pairwise-summary.json)
-- [ADV summary](adv-cart-summary.md), [ADV JSON](adv-cart-summary.json)
-- [JUnit](junit.xml), [run metadata](run-manifest.json)
-- [Order-check receipt](order-check.json), [order-check status](order-check.md)
-- [Source fingerprints](source-files.sha256.json)
+Reruns in the PW/ADV rows were needed for environment reasons (cold start after
+store restart, add-to-cart spinner timeout), not for changed expectations. No
+expected result was changed to match a product failure.
 
-Exports contain no passwords, cookies or session traces. Runtime screenshots,
-HTML reports, traces and full per-invocation outputs stay in ignored local
-`qa/automation/artifacts` and `qa/automation/reports` directories. Failure-log
-collection is verified offline with unavailable totals/SQL and a real browser
-screenshot; no live failure artifact is claimed for skipped cases.
+### Order-check status
 
-The final order-check receipt records source commits observed during the working-tree run and the implementation commit. The original plan file remains unchanged.
+The full order-check on the final code was **not** completed. The live run
+(default, isolated, reverse ×2, 16/25 seeded ×2) found that PW-006 failed on its
+second back-to-back repeat: the store rejects a second order by the same customer
+within `MinimumOrderPlacementInterval` (1 minute). The test now waits for that
+interval before a registered checkout (read-only SQL; setting unchanged), and
+PW-006 then passed 4/4 back-to-back. By decision, only PW-006 was rerun after
+the fix, so the overall order-check is recorded as
+`STOPPED_AFTER_ORDER_DEPENDENCE_FOUND`, not `PASSED`. A full rerun takes about
+1h45: `scripts/run-order-check.ps1 -OutputDirectory reports/order-check`.
 
-## What changed
+The top-level `order-check.*`, `pairwise-summary.*`, `adv-cart-summary.*`,
+`junit.xml` and `run-manifest.json` are from the earlier attempt on 26/11 when the
+store was unavailable (all BLOCKED_ENVIRONMENT); they are kept for history.
 
-- Added versioned monetary manifest and 25-case catalog with preconditions,
-  input, expected state, outcomes and invariants; discovery validates exact IDs.
-- Added strict USD reader, shared state/line/quantity/variant/price/total assertions,
-  unchanged SQL/cart checks after rejected stock updates, annotations and diagnostic attachments.
-- Fixed PW-004/PW-014 to contain Red/S 1 plus Simple 1 before attempting Simple 11.
-  Expected subtotal is 300; PW-014 discount is 30 and total is 270. This repairs
-  fidelity to `MultipleLines`; it does not change the PICT model.
-- Added REPEAT-BELOW (1+2 => qty3/600) and REPEAT-OVER (4+2 rejected => qty4/800).
-  ADV reports are separate from the original 14 PW and from CART-01..14 risk results.
-- Order runner uses actual per-case invocation order, a recorded seed, isolated
-  cases and repeat-each=2. Each invocation has a fresh report directory.
-- Multi-store reset now clears the dedicated account/guest fixture in store 2
-  before its baseline check. N02/activation/store setup support SQL tools 17/18.
-- Store readiness is bounded below the overall test timeout so unavailable
-  storefronts are reported as blocked instead of exhausting a business test.
+## Environment changes made for the live runs
 
-## Oracle verification and remaining acceptance work
+- **Store image rebuilt** from the current source (the running image dated 23/11
+  lacked the SCRUM-96 merge fix). Old image tagged `backup-20261123`; `App_Data`
+  backed up and restored.
+- **Working currency:** new visitors default to VND (rate 1). Tests select USD
+  per customer (`ensureUsdCurrency`, currency Id 1); the money reader fails as
+  `FAILED_AUTOMATION` for any other currency. Store configuration unchanged.
+- **Language:** SCRUM-96 merge warnings are Vietnamese only for vi-VN. MERGE-OVER,
+  MERGE-MULTISTORE and MERGE-ACTIVATION select Tiếng Việt (Id 2) first.
+- **vi-VN resource:** the local pack lacked `ShoppingCart.QuantityExceedsStock`,
+  so the warning showed the raw key. Added with
+  `qa/automation/scripts/seed-vi-stock-resource.sql` (test data). See
+  [DEFECT-NOTE-vi-missing-stock-resource.md](DEFECT-NOTE-vi-missing-stock-resource.md).
+- **Accounts:** PW uses `QA_PW_REGISTERED_*` (`qa.pairwise.*`), ADV uses
+  `qa.n02.*`. A shared account fails because PW-014 leaves a coupon, which blocks
+  the N02 reset. Passwords were held only in the local runner environment.
+- **Second store** (Id 2, `127.0.0.1`) was created for MERGE-MULTISTORE and
+  removed afterwards (`b01-second-store.cjs cleanup`).
 
-SQL confirmed existing prices Simple=100, Shirt=200, active subtotal coupon
-`DiscountTypeId=20`, percentage=10. Zero Ground rate is defined by the existing
-seed script. The current store uses `/pw-shirt-variants`, supplied via
-`QA_CONFIGURABLE_PRODUCT_PATH`. Selectors were checked against Razor views,
-including per-line `.message-error` and `.product-unit-price/.product-subtotal`.
-Live coupon totals, rejected-update behavior and checkout order total remain
-unverified because `/cart` could not be used reliably. No expected result was
-changed to match a product failure. No product defect is inferred from these
-blocked attempts.
+## What changed in automation
 
-Containers were initially stopped and were started for this task. A dedicated
-synthetic `qa.n02.s2.*@example.test` account was registered for the live attempt;
-its password was held in the local runner process and was not exported.
-The SQL password was read from the existing local container configuration and
-was not copied to files. Store 2 was not created because the suite was blocked
-before that scenario. Restoring reliable storefront responses is required
-before running the full live order-check.
+- Versioned monetary manifest and 25-case catalog (precondition, input,
+  expected, invariants INV-CART-01..13); discovery validates exact IDs.
+- Shared assertions for product, variant, quantity, unit price, line total,
+  subtotal, discount and total; stock-warning checks; SQL before/after for checkout.
+- Failure log: SQL snapshot, partial UI state, screenshot and trace; classification
+  `PASSED / FAILED_PRODUCT / FAILED_AUTOMATION / FAILED_ENVIRONMENT / BLOCKED_ENVIRONMENT`.
+- Deterministic SQL ordering in fixture snapshots; bounded store-readiness wait
+  (150 s) after resets; per-session USD and vi-VN selection; order-placement-interval
+  wait for registered checkout.
 
-Implementation is ready for review, but acceptance is incomplete: restore the
-store, verify the manifest on UI, rerun PW/ADV and order-check until passed,
-then record review. Jira publication requires the target issue and a connected
-Atlassian account. PR should remain draft until live verification is complete.
+Exports contain no passwords, cookies or session traces (scanned). Runtime
+screenshots, HTML reports and traces stay in ignored `qa/automation/artifacts`
+and `qa/automation/reports`.
+
+## Remaining
+
+- Optional: full order-check on the final code for a `PASSED` receipt.
+- Jira update and team notice (rebuilt image, vi-VN resource) are done outside this repo.

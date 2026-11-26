@@ -67,28 +67,34 @@ export async function queryCartFixtureState(): Promise<string> {
 SET NOCOUNT ON;
 SELECT CONCAT('PRODUCT|', p.Sku, '|', p.StockQuantity)
 FROM Product p
-WHERE p.Sku IN ('PW-SIMPLE-001', 'PW-SHIRT', 'PW-OOS-001') AND p.Deleted = 0;
+WHERE p.Sku IN ('PW-SIMPLE-001', 'PW-SHIRT', 'PW-OOS-001') AND p.Deleted = 0
+ORDER BY p.Sku;
 
 SELECT CONCAT('VARIANT|', p.Sku, '|', pac.StockQuantity, '|', pac.AttributesXml)
 FROM ProductAttributeCombination pac
 INNER JOIN Product p ON p.Id = pac.ProductId
-WHERE p.Sku = 'PW-SHIRT';
+WHERE p.Sku = 'PW-SHIRT'
+ORDER BY pac.Id;
 
 SELECT CONCAT('DISCOUNT|', d.CouponCode, '|', CONVERT(varchar(32), d.DiscountPercentage), '|', CONVERT(varchar(8), d.IsActive))
 FROM Discount d
-WHERE d.CouponCode = 'PW-CART-10PCT';
+WHERE d.CouponCode = 'PW-CART-10PCT'
+ORDER BY d.Id;
 
+-- Deterministic order: callers compare snapshots as exact strings.
 SELECT CONCAT('CART|', p.Sku, '|', sci.Quantity, '|', sci.AttributesXml)
 FROM ShoppingCartItem sci
 INNER JOIN Product p ON p.Id = sci.ProductId
 WHERE sci.ShoppingCartTypeId = 1
-  AND p.Sku IN ('PW-SIMPLE-001', 'PW-SHIRT', 'PW-OOS-001');
+  AND p.Sku IN ('PW-SIMPLE-001', 'PW-SHIRT', 'PW-OOS-001')
+ORDER BY sci.Id;
 
 SELECT CONCAT('COUPON|', ga.Value)
 FROM GenericAttribute ga
 WHERE ga.KeyGroup = 'Customer'
   AND ga.[Key] = 'DiscountCouponCode'
-  AND ga.Value LIKE '%PW-CART-10PCT%';
+  AND ga.Value LIKE '%PW-CART-10PCT%'
+ORDER BY ga.Id;
 `;
 
   return executeReadonlySql(sql);
@@ -169,6 +175,34 @@ WHERE ga.KeyGroup = 'Customer'
 `;
 
   return executeReadonlySql(sql);
+}
+
+/**
+ * nopCommerce rejects a second order by the same customer within
+ * OrderSettings.MinimumOrderPlacementInterval minutes ("Please wait several
+ * seconds before placing a new order"). Returns how long the registered
+ * account must wait so a repeated checkout case does not depend on the
+ * previous invocation. The store setting is read, never changed.
+ */
+export async function queryOrderPlacementWait(customerEmail: string): Promise<{ intervalMinutes: number; secondsSinceLastOrder: number | null; waitMs: number }> {
+  const escapedEmail = customerEmail.replaceAll("'", "''");
+  const output = await executeReadonlySql(`
+SET NOCOUNT ON;
+DECLARE @CustomerId int = (SELECT TOP 1 Id FROM Customer WHERE Email = N'${escapedEmail}' AND Deleted = 0 ORDER BY Id DESC);
+SELECT CONCAT('INTERVAL|', COALESCE((SELECT TOP 1 Value FROM Setting WHERE Name = 'ordersettings.minimumorderplacementinterval' ORDER BY StoreId DESC), '0'));
+SELECT CONCAT('SINCE|', COALESCE(CONVERT(varchar(32), DATEDIFF(second, MAX(o.CreatedOnUtc), SYSUTCDATETIME())), '-'))
+FROM [Order] o WHERE @CustomerId IS NOT NULL AND o.CustomerId = @CustomerId;
+`);
+  const field = (marker: string) => output.split('\n').map(line => line.trim()).find(line => line.startsWith(`${marker}|`))?.slice(marker.length + 1);
+  const intervalMinutes = Number(field('INTERVAL') ?? '0');
+  const since = field('SINCE');
+  const secondsSinceLastOrder = since && since !== '-' ? Number(since) : null;
+  if (!Number.isFinite(intervalMinutes) || (secondsSinceLastOrder !== null && !Number.isFinite(secondsSinceLastOrder))) {
+    throw new Error(`Order placement interval query returned '${output}'.`);
+  }
+  const requiredSeconds = intervalMinutes > 0 ? intervalMinutes * 60 + 5 : 0;
+  const waitMs = secondsSinceLastOrder === null ? 0 : Math.max(0, requiredSeconds - secondsSinceLastOrder) * 1000;
+  return { intervalMinutes, secondsSinceLastOrder, waitMs };
 }
 
 export function executeReadonlySql(sql: string, wide = false): Promise<string> {
