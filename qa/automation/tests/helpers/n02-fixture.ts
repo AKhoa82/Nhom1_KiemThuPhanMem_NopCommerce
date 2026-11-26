@@ -2,7 +2,7 @@ import { execFile as execFileCallback } from 'node:child_process';
 import { promisify } from 'node:util';
 import { resolve } from 'node:path';
 import type { Page } from '@playwright/test';
-import { FixtureBlockedError } from './fixtures';
+import { FixtureBlockedError, waitForStoreReady } from './fixtures';
 import { runtimeConfig } from './runtime-config';
 
 const execFile = promisify(execFileCallback);
@@ -19,8 +19,8 @@ export async function currentCustomerGuid(page: Page): Promise<string> {
   return cookie.value;
 }
 
-export async function resetN02Fixture(page: Page, guestGuid: string, withAccount: boolean): Promise<string> {
-  if (!Number.isSafeInteger(n02StoreId) || n02StoreId < 1) {
+export async function resetN02Fixture(page: Page, guestGuid: string, withAccount: boolean, storeId = n02StoreId): Promise<string> {
+  if (!Number.isSafeInteger(storeId) || storeId < 1) {
     throw new FixtureBlockedError('FIXTURE_BLOCKED: QA_N02_STORE_ID must be a positive integer.');
   }
   if (!guidPattern.test(guestGuid)) {
@@ -36,7 +36,7 @@ export async function resetN02Fixture(page: Page, guestGuid: string, withAccount
       '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', resetScript,
       '-GuestGuid', guestGuid,
       '-AccountEmail', withAccount ? runtimeConfig.registeredEmail : '',
-      '-StoreId', String(n02StoreId),
+      '-StoreId', String(storeId),
       '-Container', runtimeConfig.databaseContainer,
       '-Database', runtimeConfig.databaseName,
       '-StoreContainer', runtimeConfig.storeContainer,
@@ -48,15 +48,6 @@ export async function resetN02Fixture(page: Page, guestGuid: string, withAccount
     throw new FixtureBlockedError(`FIXTURE_BLOCKED: N02 fixture reset failed: ${detail.trim()}`);
   }
 
-  let lastError: unknown;
-  for (let attempt = 0; attempt < 60; attempt += 1) {
-    try {
-      await page.goto('/cart', { waitUntil: 'domcontentloaded', timeout: 5_000 });
-      return output.trim();
-    } catch (error) {
-      lastError = error;
-      await page.waitForTimeout(1_000);
-    }
-  }
-  throw new FixtureBlockedError(`FIXTURE_BLOCKED: store did not restart after N02 reset: ${String(lastError)}`);
+  await waitForStoreReady(page, 'store did not restart after N02 reset');
+  return output.trim();
 }

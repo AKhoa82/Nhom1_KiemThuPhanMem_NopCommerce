@@ -54,9 +54,9 @@ function fixture(row) {
     if (quantity === 'AtStock') return { name: 'RedS_account2_guest3_stock5', q1: 2, q2: 3, blueM: 0, ui: 'MERGE-EXACT' };
     return { name: 'RedS_account4_guest2_stock5', q1: 4, q2: 2, blueM: 0, ui: 'MERGE-OVER' };
   }
-  if (quantity === 'BelowStock') return { name: 'RedS_add1_then2_stock5', q1: 1, q2: 2, blueM: 0, ui: '' };
+  if (quantity === 'BelowStock') return { name: 'RedS_add1_then2_stock5', q1: 1, q2: 2, blueM: 0, ui: 'REPEAT-BELOW' };
   if (quantity === 'AtStock') return { name: 'RedS_add2_then3_stock5', q1: 2, q2: 3, blueM: 0, ui: 'REPEAT-SAME' };
-  return { name: 'RedS_add4_then2_stock5', q1: 4, q2: 2, blueM: 0, ui: '' };
+  return { name: 'RedS_add4_then2_stock5', q1: 4, q2: 2, blueM: 0, ui: 'REPEAT-OVER' };
 }
 
 function validateFixture(row, data) {
@@ -161,10 +161,10 @@ const report = [
   `- Pairs in generated rows: ${generatedSet.size}`,
   `- Generated pair coverage: ${generatedSet.size}/${feasibleSet.size} (100%)`,
   execution
-    ? `- Confirmed-fixture execution: ${execution.runId} at ${execution.sourceCommit}; ${Object.values(execution.cases).filter(x => x === 'passed').length} passed, ${Object.values(execution.cases).filter(x => x === 'failed').length} failed. Two additional rows remain NotRun. Generated coverage is not a UI test result.`
+    ? `- Latest automation attempt: ${execution.runId} at ${execution.sourceCommit}; ${Object.values(execution.cases).filter(x => x === 'passed').length} passed, ${Object.values(execution.cases).filter(x => x === 'failed').length} failed, ${Object.values(execution.cases).filter(x => x === 'skipped').length} skipped/blocked. Status is taken from execution.json; skipped means blocked, not passed. Generated coverage is not a UI test result.`
     : '- Confirmed-fixture execution: Not Run. Generated coverage is not a UI test result.',
-  '- Existing UI cases: MERGE-VALID, MERGE-EXACT, MERGE-OVER, MERGE-VARIANT, REPEAT-SAME, REPEAT-DIFFERENT.',
-  '- Additional PICT rows without UI automation: RepeatAdd/BelowStock and RepeatAdd/AboveStock.',
+  '- Existing UI cases: MERGE-VALID, MERGE-EXACT, MERGE-OVER, MERGE-VARIANT, REPEAT-SAME, REPEAT-DIFFERENT, REPEAT-BELOW, REPEAT-OVER.',
+  '- All eight PICT rows have UI automation; generated coverage is independent of runtime status.',
   '- Values are relation labels. Concrete quantities in generated-cases.csv must be checked against stock before execution.',
   '- This model is independent of the original 14 PW rows and 253 pairs.',
   '',

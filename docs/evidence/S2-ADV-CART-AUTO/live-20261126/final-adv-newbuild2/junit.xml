@@ -1,0 +1,492 @@
+<testsuites id="" name="" tests="11" failures="4" skipped="0" errors="0" time="1809.577846">
+<testsuite name="n02-cart.spec.ts" timestamp="2026-11-26T05:07:09.040Z" hostname="" tests="11" failures="4" skipped="0" time="1748.466" errors="0">
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-OVER: guest items are not silently lost above stock" classname="n02-cart.spec.ts" time="167.265">
+<properties>
+<property name="caseId" value="MERGE-OVER">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account 4 + guest 2; login rejected; retain guest2/account4; reduce guest1; retry login">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:0,&quot;total&quot;:1000,&quot;outcome&quot;:&quot;CartUpdated&quot;,&quot;feedback&quot;:{&quot;pattern&quot;:&quot;5&quot;,&quot;meaning&quot;:&quot;Stock limit 5 must be stated before notification disappears&quot;,&quot;location&quot;:&quot;login/activation warning&quot;},&quot;rejectedMerge&quot;:{&quot;guestRedS&quot;:2,&quot;accountRedS&quot;:4,&quot;guestSubtotal&quot;:400,&quot;accountSubtotal&quot;:800,&quot;discount&quot;:0,&quot;loginCompleted&quot;:false,&quot;blueM&quot;:&quot;NA&quot;}}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-a6b11-t-silently-lost-above-stock\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-a6b11-t-silently-lost-above-stock\error-context.md]]
+
+[[ATTACHMENT|..\..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-a6b11-t-silently-lost-above-stock\trace.zip]]
+]]>
+</system-out>
+<failure message="[MERGE-OVER] stock warning must name limit 5" type="expect.toMatch">
+<![CDATA[  n02-cart.spec.ts:208:7 › SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-OVER: guest items are not silently lost above stock 
+
+    Error: [MERGE-OVER] stock warning must name limit 5
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /\b5\b/
+    Received string:  "Chưa đăng nhập: có món chưa gộp được. Món vẫn ở giỏ khách. Hãy kiểm tra và thử lại. Giỏ Your store name: PW-Shirt-Variants (PW-Color: Red, PW-Size: S) ×2. shoppingcart.quantityexceedsstock"
+
+      127 |     if (originalViewport) await page.setViewportSize(originalViewport);
+      128 |   }
+    > 129 |   if (expectRejectedLogin) expect(feedback, '[MERGE-OVER] stock warning must name limit 5').toMatch(/\b5\b/);
+          |                                                                                             ^
+      130 |   await page.goto('/cart');
+      131 |   await ensureUsdCurrency(page);
+      132 |   await screenshot(page, testInfo, expectRejectedLogin ? 'guest-after-rejected-login' : 'account-after-login');
+        at prepareMerge (C:\projects\Kiemthu\Nhom1_KiemThuPhanMem_NopCommerce\qa\automation\tests\n02-cart.spec.ts:129:93)
+        at C:\projects\Kiemthu\Nhom1_KiemThuPhanMem_NopCommerce\qa\automation\tests\n02-cart.spec.ts:210:39
+
+    attachment #1: manifest-preflight.txt (text/plain) ─────────────────────────────────────────────
+    MANIFEST_OK|S2-ADV-CART-AUTO-v1
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: n02-reset.txt (text/plain) ──────────────────────────────────────────────────────
+    N02_RESET|store=1|guest=2526|account=2418|deletedCartRows=0|otherCartRows=2|otherFixtureRows=0|redSStock=5|blueMStock=3
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: reset-baseline.sql.txt (text/plain) ─────────────────────────────────────────────
+    N02_PRODUCT|1|PW-SHIRT|price=200.0000|inventory=2|backorder=0|taxExempt=1
+    N02_VARIANT|1|stock=5|allowOutOfStock=0|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></P...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: account-before-login.sql.txt (text/plain) ───────────────────────────────────────
+    N02_PRODUCT|1|PW-SHIRT|price=200.0000|inventory=2|backorder=0|taxExempt=1
+    N02_VARIANT|1|stock=5|allowOutOfStock=0|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></P...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: guest-before-login.sql.txt (text/plain) ─────────────────────────────────────────
+    N02_PRODUCT|1|PW-SHIRT|price=200.0000|inventory=2|backorder=0|taxExempt=1
+    N02_VARIANT|1|stock=5|allowOutOfStock=0|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></P...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #8: login-feedback.txt (text/plain) ─────────────────────────────────────────────────
+    Chưa đăng nhập: có món chưa gộp được. Món vẫn ở giỏ khách. Hãy kiểm tra và thử lại. Giỏ Your store name: PW-Shirt-Variants (PW-Color: Red, PW-Size: S) ×2. shoppingcart.quantityexceedsstock
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #11: screenshot (image/png) ─────────────────────────────────────────────────────────
+    ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-a6b11-t-silently-lost-above-stock\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-a6b11-t-silently-lost-above-stock\error-context.md
+
+    attachment #15: trace (application/zip) ────────────────────────────────────────────────────────
+    ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-a6b11-t-silently-lost-above-stock\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-a6b11-t-silently-lost-above-stock\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-MIXED: accepted line moves while rejected line remains usable" classname="n02-cart.spec.ts" time="177.273">
+<properties>
+<property name="caseId" value="MERGE-MIXED">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account Red/S4; guest Red/S2 + Blue/M1; partial merge; reduce Red/S1; retry">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Blue&quot;,&quot;M&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1200,&quot;discount&quot;:0,&quot;total&quot;:1200,&quot;outcome&quot;:&quot;CartUpdated&quot;,&quot;feedback&quot;:{&quot;pattern&quot;:&quot;5&quot;,&quot;meaning&quot;:&quot;Stock limit 5 must be stated before notification disappears&quot;,&quot;location&quot;:&quot;login/activation warning&quot;},&quot;rejectedMerge&quot;:{&quot;guestRedS&quot;:2,&quot;accountRedS&quot;:4,&quot;guestSubtotal&quot;:400,&quot;accountSubtotal&quot;:1000,&quot;discount&quot;:0,&quot;loginCompleted&quot;:false,&quot;blueM&quot;:&quot;moves to account&quot;}}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-VALID: same variant merges within stock" classname="n02-cart.spec.ts" time="134.538">
+<properties>
+<property name="caseId" value="MERGE-VALID">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account Red/S 2 + guest 2; login">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:4,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:800,&quot;discount&quot;:0,&quot;total&quot;:800,&quot;outcome&quot;:&quot;CartUpdated&quot;}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Positive">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-EXACT: same variant merges within stock" classname="n02-cart.spec.ts" time="122.906">
+<properties>
+<property name="caseId" value="MERGE-EXACT">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account Red/S 2 + guest 3; login">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:0,&quot;total&quot;:1000,&quot;outcome&quot;:&quot;CartUpdated&quot;}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-VARIANT: different variants remain separate" classname="n02-cart.spec.ts" time="150.869">
+<properties>
+<property name="caseId" value="MERGE-VARIANT">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account Red/S 1 + guest Blue/M 1; login">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Blue&quot;,&quot;M&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:400,&quot;discount&quot;:0,&quot;total&quot;:400,&quot;outcome&quot;:&quot;CartUpdated&quot;}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Positive">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-ed1f8-nt-variants-remain-separate\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-ed1f8-nt-variants-remain-separate\error-context.md]]
+
+[[ATTACHMENT|..\..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-ed1f8-nt-variants-remain-separate\trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  n02-cart.spec.ts:323:7 › SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-VARIANT: different variants remain separate 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.bar-notification.success')
+    Expected: visible
+    Timeout: 30000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.bar-notification.success') with timeout 30000ms
+      - waiting for locator('.bar-notification.success')
+
+
+       at helpers\cart-checkout.ts:162
+
+      160 |   await page.locator('input.qty-input').fill(String(quantity));
+      161 |   await page.locator('button[id^="add-to-cart-button-"]').click();
+    > 162 |   await expect(page.locator('.bar-notification.success')).toBeVisible();
+          |                                                           ^
+      163 | }
+      164 |
+      165 | export async function addSimpleProduct(page: Page, quantity: number): Promise<void> {
+        at addConfiguredProduct (C:\projects\Kiemthu\Nhom1_KiemThuPhanMem_NopCommerce\qa\automation\tests\helpers\cart-checkout.ts:162:59)
+        at addVariantProduct (C:\projects\Kiemthu\Nhom1_KiemThuPhanMem_NopCommerce\qa\automation\tests\helpers\cart-checkout.ts:170:3)
+        at prepareMerge (C:\projects\Kiemthu\Nhom1_KiemThuPhanMem_NopCommerce\qa\automation\tests\n02-cart.spec.ts:79:3)
+        at C:\projects\Kiemthu\Nhom1_KiemThuPhanMem_NopCommerce\qa\automation\tests\n02-cart.spec.ts:324:39
+
+    attachment #1: manifest-preflight.txt (text/plain) ─────────────────────────────────────────────
+    MANIFEST_OK|S2-ADV-CART-AUTO-v1
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: n02-reset.txt (text/plain) ──────────────────────────────────────────────────────
+    N02_RESET|store=1|guest=2535|account=2418|deletedCartRows=1|otherCartRows=3|otherFixtureRows=0|redSStock=5|blueMStock=3
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: reset-baseline.sql.txt (text/plain) ─────────────────────────────────────────────
+    N02_PRODUCT|1|PW-SHIRT|price=200.0000|inventory=2|backorder=0|taxExempt=1
+    N02_VARIANT|1|stock=5|allowOutOfStock=0|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></P...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-ed1f8-nt-variants-remain-separate\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-ed1f8-nt-variants-remain-separate\error-context.md
+
+    attachment #8: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-ed1f8-nt-variants-remain-separate\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-ed1f8-nt-variants-remain-separate\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-MULTISTORE: each store retains its own cart state across retry" classname="n02-cart.spec.ts" time="249.706">
+<properties>
+<property name="caseId" value="MERGE-MULTISTORE">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0; store2 fixture required">
+</property>
+<property name="input" value="Store1 account4 guest2; store2 guest Blue/M1; login rejected; recover store1; reduce1; retry">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:0,&quot;total&quot;:1000,&quot;outcome&quot;:&quot;CartUpdated&quot;,&quot;feedback&quot;:{&quot;pattern&quot;:&quot;5&quot;,&quot;meaning&quot;:&quot;Stock limit 5 must be stated before notification disappears&quot;,&quot;location&quot;:&quot;login/activation warning&quot;},&quot;rejectedMerge&quot;:{&quot;guestRedS&quot;:2,&quot;accountRedS&quot;:4,&quot;guestSubtotal&quot;:400,&quot;accountSubtotal&quot;:800,&quot;discount&quot;:0,&quot;loginCompleted&quot;:false,&quot;blueM&quot;:&quot;moves to account&quot;}}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-775c4-own-cart-state-across-retry\test-failed-2.png]]
+
+[[ATTACHMENT|..\..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-775c4-own-cart-state-across-retry\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-775c4-own-cart-state-across-retry\error-context.md]]
+
+[[ATTACHMENT|..\..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-775c4-own-cart-state-across-retry\trace.zip]]
+]]>
+</system-out>
+<failure message="[MERGE-MULTISTORE] stock limit 5" type="expect.toMatch">
+<![CDATA[  n02-cart.spec.ts:341:7 › SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-MULTISTORE: each store retains its own cart state across retry 
+
+    Error: [MERGE-MULTISTORE] stock limit 5
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /\b5\b/
+    Received string:  "Chưa đăng nhập: có món chưa gộp được. Món vẫn ở giỏ khách. Hãy kiểm tra và thử lại. Giỏ Your store name: PW-Shirt-Variants (PW-Color: Red, PW-Size: S) ×2. shoppingcart.quantityexceedsstock"
+
+      387 |     const feedback = await secondPage.locator('.bar-notification.error, .bar-notification.warning, .message-error, .message-failure').allTextContents();
+      388 |     expect(feedback.join('\n')).toMatch(/Chưa đăng nhập/);
+    > 389 |     expect(feedback.join('\n'), '[MERGE-MULTISTORE] stock limit 5').toMatch(/\b5\b/);
+          |                                                                     ^
+      390 |     expect(feedback.join('\n')).toContain(product);
+      391 |     expect(feedback.join('\n')).toContain('Red');
+      392 |     expect(feedback.join('\n')).toContain('S');
+        at C:\projects\Kiemthu\Nhom1_KiemThuPhanMem_NopCommerce\qa\automation\tests\n02-cart.spec.ts:389:69
+
+    attachment #1: manifest-preflight.txt (text/plain) ─────────────────────────────────────────────
+    MANIFEST_OK|S2-ADV-CART-AUTO-v1
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: n02-reset.txt (text/plain) ──────────────────────────────────────────────────────
+    N02_RESET|store=1|guest=2536|account=2418|deletedCartRows=1|otherCartRows=3|otherFixtureRows=0|redSStock=5|blueMStock=3
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: reset-baseline.sql.txt (text/plain) ─────────────────────────────────────────────
+    N02_PRODUCT|1|PW-SHIRT|price=200.0000|inventory=2|backorder=0|taxExempt=1
+    N02_VARIANT|1|stock=5|allowOutOfStock=0|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></P...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: multistore-before-store2-store1.sql.txt (text/plain) ────────────────────────────
+    N02_PRODUCT|1|PW-SHIRT|price=200.0000|inventory=2|backorder=0|taxExempt=1
+    N02_VARIANT|1|stock=5|allowOutOfStock=0|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></P...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: multistore-store2-before-login.sql.txt (text/plain) ─────────────────────────────
+    N02_PRODUCT|1|PW-SHIRT|price=200.0000|inventory=2|backorder=0|taxExempt=1
+    N02_VARIANT|1|stock=5|allowOutOfStock=0|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></P...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-775c4-own-cart-state-across-retry\test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #8: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-775c4-own-cart-state-across-retry\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-775c4-own-cart-state-across-retry\error-context.md
+
+    attachment #12: trace (application/zip) ────────────────────────────────────────────────────────
+    ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-775c4-own-cart-state-across-retry\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-775c4-own-cart-state-across-retry\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-ACTIVATION: activation preserves rejected guest cart and returns to recovery" classname="n02-cart.spec.ts" time="175.984">
+<properties>
+<property name="caseId" value="MERGE-ACTIVATION">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account4 guest2; activate account; reject merge and retain guest2">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:2,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:400,&quot;discount&quot;:0,&quot;total&quot;:400,&quot;outcome&quot;:&quot;RejectedMerge&quot;,&quot;feedback&quot;:{&quot;pattern&quot;:&quot;5&quot;,&quot;meaning&quot;:&quot;Stock limit 5 must be stated before notification disappears&quot;,&quot;location&quot;:&quot;login/activation warning&quot;},&quot;rejectedMerge&quot;:{&quot;guestRedS&quot;:2,&quot;accountRedS&quot;:4,&quot;guestSubtotal&quot;:400,&quot;accountSubtotal&quot;:800,&quot;discount&quot;:0,&quot;loginCompleted&quot;:false,&quot;blueM&quot;:&quot;NA&quot;}}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-86ceb-art-and-returns-to-recovery\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-86ceb-art-and-returns-to-recovery\error-context.md]]
+
+[[ATTACHMENT|..\..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-86ceb-art-and-returns-to-recovery\trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toContainText(expected) failed" type="expect.toContainText">
+<![CDATA[  n02-cart.spec.ts:450:7 › SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-ACTIVATION: activation preserves rejected guest cart and returns to recovery 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.bar-notification.warning')
+    Expected pattern: /\b5\b/
+    Received string:  "Chưa đăng nhập: có món chưa gộp được. Món vẫn ở giỏ khách. Hãy kiểm tra và thử lại. Giỏ Your store name: PW-Shirt-Variants (PW-Color: Red, PW-Size: S) ×2. shoppingcart.quantityexceedsstock"
+    Timeout: 30000ms
+
+    Call log:
+      - Expect "toContainText" locator('.bar-notification.warning') with timeout 30000ms
+      - waiting for locator('.bar-notification.warning')
+        62 × locator resolved to <div class="bar-notification warning">…</div>
+           - unexpected value "Chưa đăng nhập: có món chưa gộp được. Món vẫn ở giỏ khách. Hãy kiểm tra và thử lại. Giỏ Your store name: PW-Shirt-Variants (PW-Color: Red, PW-Size: S) ×2. shoppingcart.quantityexceedsstock"
+
+
+      472 |       await expect(page.locator('a.ico-login')).toBeVisible();
+      473 |       await expect(page.locator('.bar-notification.warning')).toContainText('Chưa đăng nhập');
+    > 474 |       await expect(page.locator('.bar-notification.warning')).toContainText(/\b5\b/);
+          |                                                               ^
+      475 |       await assertCartLine(page, product, 2, ['Red', 'S']);
+      476 |       await assertN02State(page, [['RedS', 2]], 'MERGE-ACTIVATION/rejected-guest');
+      477 |       await screenshot(page, testInfo, 'activation-rejected-login');
+        at C:\projects\Kiemthu\Nhom1_KiemThuPhanMem_NopCommerce\qa\automation\tests\n02-cart.spec.ts:474:63
+
+    attachment #1: manifest-preflight.txt (text/plain) ─────────────────────────────────────────────
+    MANIFEST_OK|S2-ADV-CART-AUTO-v1
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: n02-reset.txt (text/plain) ──────────────────────────────────────────────────────
+    N02_RESET|store=1|guest=2538|account=2418|deletedCartRows=1|otherCartRows=4|otherFixtureRows=1|redSStock=5|blueMStock=3
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: reset-baseline.sql.txt (text/plain) ─────────────────────────────────────────────
+    N02_PRODUCT|1|PW-SHIRT|price=200.0000|inventory=2|backorder=0|taxExempt=1
+    N02_VARIANT|1|stock=5|allowOutOfStock=0|<Attributes><ProductAttribute ID="1"><ProductAttributeValue><Value>1</Value></ProductAttributeValue></ProductAttribute><ProductAttribute ID="2"><ProductAttributeValue><Value>3</Value></P...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: activation-fixture.txt (text/plain) ─────────────────────────────────────────────
+    B01_ACTIVATION_TOKEN_SETUP
+    
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: activation-cleanup.txt (text/plain) ─────────────────────────────────────────────
+    B01_ACTIVATION_TOKEN_CLEANUP
+    
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-86ceb-art-and-returns-to-recovery\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-86ceb-art-and-returns-to-recovery\error-context.md
+
+    attachment #10: trace (application/zip) ────────────────────────────────────────────────────────
+    ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-86ceb-art-and-returns-to-recovery\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\artifacts\final-adv-newbuild2\n02-cart-SCRUM-86-N02-Cart-86ceb-art-and-returns-to-recovery\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-REPEAT-01 REPEAT-SAME: adding 2 then 3 makes one line with correct total" classname="n02-cart.spec.ts" time="156.146">
+<properties>
+<property name="caseId" value="REPEAT-SAME">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Red/S add2 then3">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:0,&quot;total&quot;:1000,&quot;outcome&quot;:&quot;CartUpdated&quot;}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-REPEAT-01 REPEAT-DIFFERENT: another variant remains a separate line" classname="n02-cart.spec.ts" time="126.868">
+<properties>
+<property name="caseId" value="REPEAT-DIFFERENT">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Red/S add2 then3; Blue/M add1">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Blue&quot;,&quot;M&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1200,&quot;discount&quot;:0,&quot;total&quot;:1200,&quot;outcome&quot;:&quot;CartUpdated&quot;}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Positive">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-REPEAT-01 REPEAT-BELOW: repeat add respects variant stock" classname="n02-cart.spec.ts" time="86.949">
+<properties>
+<property name="caseId" value="REPEAT-BELOW">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Red/S add1 then2">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:3,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:600,&quot;discount&quot;:0,&quot;total&quot;:600,&quot;outcome&quot;:&quot;CartUpdated&quot;}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Positive">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-REPEAT-01 REPEAT-OVER: repeat add respects variant stock" classname="n02-cart.spec.ts" time="199.962">
+<properties>
+<property name="caseId" value="REPEAT-OVER">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Red/S add4 then2; second add rejected; maximum5">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:4,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:800,&quot;discount&quot;:0,&quot;total&quot;:800,&quot;outcome&quot;:&quot;CartUpdated&quot;,&quot;feedback&quot;:{&quot;pattern&quot;:&quot;5&quot;,&quot;meaning&quot;:&quot;Stock limit 5 must be stated before notification disappears&quot;,&quot;location&quot;:&quot;product notification&quot;}}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>

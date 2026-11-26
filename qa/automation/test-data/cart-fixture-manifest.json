@@ -1,0 +1,75 @@
+{
+  "version": "S2-ADV-CART-AUTO-v1",
+  "n02Version": "SCRUM-87-N02-v1",
+  "currency": "USD",
+  "locale": "en-US",
+  "workingCurrencyName": "US Dollar",
+  "workingCurrencyId": 1,
+  "vietnameseLanguageId": 2,
+  "localizationFixture": "vi-VN resource ShoppingCart.QuantityExceedsStock = 'Số lượng vượt tồn kho. Số lượng tối đa có thể thêm là {0}.' (scripts/seed-vi-stock-resource.sql, added 2026-11-26). The local vi-VN pack (1297 strings) lacked it, so merge warnings showed the raw key.",
+  "languageNote":"Guests default to English. SCRUM-96 merge warnings are Vietnamese only for vi-VN working language; MERGE-OVER, MERGE-MULTISTORE and MERGE-ACTIVATION select Tiếng Việt (Id 2) before the rejected login.",
+  "workingCurrencyNote": "Store primary currency is USD, but VND (rate 1, DisplayOrder 0) is the default working currency for new visitors. Tests select USD per customer via ensureUsdCurrency after each new guest/login/logout; store configuration is not changed.",
+  "verification": {
+    "status": "VERIFIED_LOCAL_UI_AND_SQL",
+    "verifiedOn": "2026-11-26",
+    "selectors": "Live: subtotal, order-subtotal-discount and order-total each resolve to exactly one element; discount-total absent for subtotal coupon",
+    "sqlConfirmed": [
+      "Simple price 100; Shirt price 200",
+      "Coupon DiscountTypeId=20, 10%, active",
+      "Current variant slug /pw-shirt-variants (runtime override)"
+    ],
+    "uiConfirmed": [
+      "Red/S x1 in USD: Sub-Total $200.00, Shipping 0, Tax 0, Total $200.00, no discount row",
+      "PW-CART-10PCT: Discount -$20.00, Total $180.00",
+      "PW-NOT-EXIST: 'The coupon code cannot be found', no discount, Total unchanged",
+      "Update Red/S 1 -> 6: line warning 'maximum quantity that can be added is 5', quantity stays 1, Total unchanged",
+      "Add Red/S 4 then 2: second add rejected with maximum 5, one line x4, $800.00"
+    ],
+    "evidence": "docs/evidence/S2-ADV-CART-AUTO/screenshots/usd-4-*.png, step4-results-usd.json"
+  },
+  "products": {
+    "simple": {
+      "sku": "PW-SIMPLE-001",
+      "name": "PW-Simple-Stock",
+      "price": 100,
+      "stock": 10
+    },
+    "variant": {
+      "sku": "PW-SHIRT",
+      "name": "PW-Shirt-Variants",
+      "price": 200,
+      "stock": {
+        "RedS": 5,
+        "RedM": 4,
+        "BlueS": 6,
+        "BlueM": 3
+      }
+    },
+    "outOfStock": {
+      "sku": "PW-OOS-001",
+      "stock": 0
+    }
+  },
+  "coupon": {
+    "code": "PW-CART-10PCT",
+    "invalidCode": "PW-NOT-EXIST",
+    "discountTypeId": 20,
+    "percentage": 10,
+    "limitationTypeId": 0,
+    "enumSource": "Nop.Core/Domain/Discounts/DiscountType.cs: AssignedToOrderSubTotal=20"
+  },
+  "cart": {
+    "tax": 0,
+    "shipping": 0,
+    "paymentFee": 0
+  },
+  "checkout": {
+    "groundShipping": 0,
+    "verification": "Zero Ground rate is defined in scripts/seed-n03-pw-shirt.sql; live preflight required"
+  },
+  "selectors": {
+    "subtotal": ".cart-total .order-subtotal .value-summary",
+    "discount": ".cart-total .order-subtotal-discount .value-summary, .cart-total .discount-total .value-summary",
+    "total": ".cart-total .order-total .value-summary"
+  }
+}

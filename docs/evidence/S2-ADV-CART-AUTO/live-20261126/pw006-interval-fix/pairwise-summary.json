@@ -1,0 +1,162 @@
+[
+  {
+    "caseId": "PW-006",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Simple 10; valid coupon; checkout",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 10,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 100,
+      "total": 900,
+      "outcome": "OrderCreated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-14;CART-11;CHK-01;ADDR-01;SHP-01;PAY-LOCAL-01",
+    "expectedPath": "Boundary",
+    "durationMs": 47084,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-006",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Simple 10; valid coupon; checkout",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 10,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 100,
+      "total": 900,
+      "outcome": "OrderCreated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-14;CART-11;CHK-01;ADDR-01;SHP-01;PAY-LOCAL-01",
+    "expectedPath": "Boundary",
+    "durationMs": 67413,
+    "retry": 0,
+    "repeatEachIndex": 1,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-006",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Simple 10; valid coupon; checkout",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 10,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 100,
+      "total": 900,
+      "outcome": "OrderCreated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-14;CART-11;CHK-01;ADDR-01;SHP-01;PAY-LOCAL-01",
+    "expectedPath": "Boundary",
+    "durationMs": 68593,
+    "retry": 0,
+    "repeatEachIndex": 2,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-006",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Simple 10; valid coupon; checkout",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 10,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 100,
+      "total": 900,
+      "outcome": "OrderCreated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-14;CART-11;CHK-01;ADDR-01;SHP-01;PAY-LOCAL-01",
+    "expectedPath": "Boundary",
+    "durationMs": 68792,
+    "retry": 0,
+    "repeatEachIndex": 3,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  }
+]

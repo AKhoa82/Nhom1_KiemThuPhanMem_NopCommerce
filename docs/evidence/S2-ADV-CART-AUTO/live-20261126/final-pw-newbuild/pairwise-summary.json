@@ -1,0 +1,637 @@
+[
+  {
+    "caseId": "PW-001",
+    "group": "PW",
+    "path": "Negative",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Simple 1; update 2; invalid coupon; submit missing billing field",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 2,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 200,
+      "discount": 0,
+      "total": 200,
+      "outcome": "AddressBlocked"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-07"
+    ],
+    "status": "skipped",
+    "classification": "BLOCKED_ENVIRONMENT",
+    "scenario": "CART-05;CART-12;ADDR-02",
+    "expectedPath": "Negative",
+    "durationMs": 95235,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "FIXTURE_BLOCKED: Store did not become ready after fixture reset: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart Call log: - navigating to \"http://localhost/cart\", waiting until \"domcontentloaded\"",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-002",
+    "group": "PW",
+    "path": "Positive",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Red/S 1 + Simple 1; invalid coupon; checkout",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 300,
+      "discount": 0,
+      "total": 300,
+      "outcome": "OrderCreated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-07"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-02;CART-04;CART-12;CHK-02;ADDR-01;SHP-01;PAY-LOCAL-01",
+    "expectedPath": "Positive",
+    "durationMs": 180775,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-003",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Red/S 2; valid coupon; remove last line",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 2,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 400,
+      "discount": 40,
+      "total": 360,
+      "outcome": "CartEmpty"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ],
+    "status": "skipped",
+    "classification": "BLOCKED_ENVIRONMENT",
+    "scenario": "CART-08;CART-11",
+    "expectedPath": "Boundary",
+    "durationMs": 58032,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "FIXTURE_BLOCKED: Store did not become ready after fixture reset: TimeoutError: page.goto: Timeout 5000ms exceeded. Call log: - navigating to \"http://localhost/cart\", waiting until \"domcontentloaded\"",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-004",
+    "group": "PW",
+    "path": "Negative",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Red/S 1 + Simple 1; update Simple 11 (stock 10)",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        }
+      ],
+      "warning": {
+        "product": "PW-Simple-Stock",
+        "pattern": "10"
+      },
+      "subtotal": 300,
+      "discount": 0,
+      "total": 300,
+      "outcome": "StockBlocked"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "skipped",
+    "classification": "BLOCKED_ENVIRONMENT",
+    "scenario": "CART-07",
+    "expectedPath": "Negative",
+    "durationMs": 47996,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "FIXTURE_BLOCKED: Store did not become ready after fixture reset: Error: page.goto: net::ERR_EMPTY_RESPONSE at http://localhost/cart Call log: - navigating to \"http://localhost/cart\", waiting until \"domcontentloaded\"",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-005",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Simple 1; remove last line",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 100,
+      "discount": 0,
+      "total": 100,
+      "outcome": "CartEmpty"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-08",
+    "expectedPath": "Boundary",
+    "durationMs": 91005,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-006",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Simple 10; valid coupon; checkout",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 10,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 100,
+      "total": 900,
+      "outcome": "OrderCreated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-14;CART-11;CHK-01;ADDR-01;SHP-01;PAY-LOCAL-01",
+    "expectedPath": "Boundary",
+    "durationMs": 114121,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-007",
+    "group": "PW",
+    "path": "Positive",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Red/S 2 + Simple 1; checkout",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 2,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 500,
+      "discount": 0,
+      "total": 500,
+      "outcome": "OrderCreated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-02;CART-04;CHK-02;ADDR-01;SHP-01;PAY-LOCAL-01",
+    "expectedPath": "Positive",
+    "durationMs": 108680,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-008",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Blue/M 3; invalid coupon; remove last line",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Blue",
+            "M"
+          ],
+          "quantity": 3,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 600,
+      "discount": 0,
+      "total": 600,
+      "outcome": "CartEmpty"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-07"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-08;CART-12",
+    "expectedPath": "Boundary",
+    "durationMs": 65270,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-009",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Blue/M 1 + Simple 1; update Blue/M 3; checkout",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Blue",
+            "M"
+          ],
+          "quantity": 3,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        }
+      ],
+      "warning": null,
+      "subtotal": 700,
+      "discount": 0,
+      "total": 700,
+      "outcome": "OrderCreated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-14;CHK-02;ADDR-01;SHP-01;PAY-LOCAL-01",
+    "expectedPath": "Boundary",
+    "durationMs": 101749,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-010",
+    "group": "PW",
+    "path": "Negative",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Attempt add out-of-stock product; inspect empty cart",
+    "expected": {
+      "lines": [],
+      "warning": null,
+      "subtotal": 0,
+      "discount": 0,
+      "total": 0,
+      "outcome": "OutOfStock"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-10",
+    "expectedPath": "Negative",
+    "durationMs": 61788,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-011",
+    "group": "PW",
+    "path": "Negative",
+    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Simple 1 + Red/S 1; update Simple 1; valid coupon; submit missing billing",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        },
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 300,
+      "discount": 30,
+      "total": 270,
+      "outcome": "AddressBlocked"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-05;CART-11;ADDR-02",
+    "expectedPath": "Negative",
+    "durationMs": 86839,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-012",
+    "group": "PW",
+    "path": "Boundary",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Blue/M 3; submit missing billing",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Blue",
+            "M"
+          ],
+          "quantity": 3,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 600,
+      "discount": 0,
+      "total": 600,
+      "outcome": "AddressBlocked"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-14;ADDR-02",
+    "expectedPath": "Boundary",
+    "durationMs": 94811,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-013",
+    "group": "PW",
+    "path": "Negative",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Red/S 1; invalid coupon; update 6 (stock 5)",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        }
+      ],
+      "warning": {
+        "product": "PW-Shirt-Variants",
+        "pattern": "5"
+      },
+      "subtotal": 200,
+      "discount": 0,
+      "total": 200,
+      "outcome": "StockBlocked"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-07",
+      "INV-CART-12"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-07;CART-12",
+    "expectedPath": "Negative",
+    "durationMs": 85004,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "PW-014",
+    "group": "PW",
+    "path": "Negative",
+    "precondition": "Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Red/S 1 + Simple 1; valid coupon; update Simple 11 (stock 10)",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        }
+      ],
+      "warning": {
+        "product": "PW-Simple-Stock",
+        "pattern": "10"
+      },
+      "subtotal": 300,
+      "discount": 30,
+      "total": 270,
+      "outcome": "StockBlocked"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "CART-07;CART-11",
+    "expectedPath": "Negative",
+    "durationMs": 80811,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  }
+]

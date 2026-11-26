@@ -5,6 +5,11 @@ const value = (name: string, fallback = '') => process.env[name]?.trim() || fall
 export const runtimeConfig = {
   registeredEmail: value('QA_REGISTERED_EMAIL'),
   registeredPassword: value('QA_REGISTERED_PASSWORD'),
+  // PW cases leave coupons/carts on their account (e.g. PW-014), which the N02
+  // reset deliberately refuses to delete. Keep PW on its own account when both
+  // suites run in one invocation (order-check); falls back to QA_REGISTERED_*.
+  pwRegisteredEmail: value('QA_PW_REGISTERED_EMAIL', value('QA_REGISTERED_EMAIL')),
+  pwRegisteredPassword: value('QA_PW_REGISTERED_PASSWORD', value('QA_REGISTERED_PASSWORD')),
   simpleProductPath: value('QA_SIMPLE_PRODUCT_PATH', '/pw-simple-stock'),
   configurableProductPath: value('QA_CONFIGURABLE_PRODUCT_PATH', '/pw-shirt-variants-2'),
   outOfStockProductPath: value('QA_OUT_OF_STOCK_PRODUCT_PATH', '/pw-out-of-stock'),
@@ -28,8 +33,8 @@ export const runtimeConfig = {
 export function blockedReason(row: PairwiseCase): string | undefined {
   const missing: string[] = [];
   if (!runtimeConfig.sqlPassword) missing.push('QA_SQL_PASSWORD (local fixture reset)');
-  if (row.customerType === 'Registered' && !runtimeConfig.registeredEmail) missing.push('QA_REGISTERED_EMAIL');
-  if (row.customerType === 'Registered' && !runtimeConfig.registeredPassword) missing.push('QA_REGISTERED_PASSWORD');
+  if (row.customerType === 'Registered' && !runtimeConfig.pwRegisteredEmail) missing.push('QA_PW_REGISTERED_EMAIL or QA_REGISTERED_EMAIL');
+  if (row.customerType === 'Registered' && !runtimeConfig.pwRegisteredPassword) missing.push('QA_PW_REGISTERED_PASSWORD or QA_REGISTERED_PASSWORD');
   if (row.address !== 'NA') {
     const requiredBillingValues: Array<[string, string]> = [
       ['QA_BILLING_FIRST_NAME', runtimeConfig.billing.firstName],

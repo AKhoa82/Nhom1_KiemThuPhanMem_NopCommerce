@@ -1,0 +1,19 @@
+{
+  "runId": "S2-ADV-PW-RERUN-202611261207",
+  "startedAt": "2026-11-26T05:37:29.770Z",
+  "finishedAt": "2026-11-26T05:42:41.417Z",
+  "status": "passed",
+  "sourceCommit": "5756d2bac2b77682ad3e86335625446e0d30ac18",
+  "workingTreeDirty": true,
+  "baseUrl": "http://localhost/",
+  "checkoutMode": "multi-step",
+  "fixtureVersion": "S2-ADV-CART-AUTO-v1",
+  "n02FixtureVersion": "SCRUM-87-N02-v1",
+  "fixtureVerification": "VERIFIED_LOCAL_UI_AND_SQL",
+  "databaseContainer": "nopcommerce_mssql_server",
+  "databaseName": "nopcommerce",
+  "storeContainer": "nopcommerce",
+  "hasSqlPassword": true,
+  "hasRegisteredCredential": true,
+  "hasBillingFixture": true
+}

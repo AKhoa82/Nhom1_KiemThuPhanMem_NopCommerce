@@ -129,7 +129,7 @@ SELECT CONCAT('N02_RESET|store=', @StoreId, '|guest=', @GuestId,
 $previousErrorActionPreference = $ErrorActionPreference
 $ErrorActionPreference = 'Continue'
 try {
-    $output = $sql | & docker.exe exec -i $Container /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P $env:QA_SQL_PASSWORD -d $Database -b -h -1 -W -v "GuestGuid=$GuestGuid" "AccountEmail=$accountEmailValue" "StoreId=$StoreId" "ValidateOnly=$validateValue" 2>&1 | Out-String
+    $output = $sql | & docker.exe exec -i $Container sh -c 'S=/opt/mssql-tools18/bin/sqlcmd; [ -x "$S" ] || S=/opt/mssql-tools/bin/sqlcmd; exec "$S" "$@"' sh -C -S localhost -U sa -P $env:QA_SQL_PASSWORD -d $Database -b -h -1 -W -v "GuestGuid=$GuestGuid" "AccountEmail=$accountEmailValue" "StoreId=$StoreId" "ValidateOnly=$validateValue" 2>&1 | Out-String
 } catch {
     $output = $_ | Out-String
 } finally {

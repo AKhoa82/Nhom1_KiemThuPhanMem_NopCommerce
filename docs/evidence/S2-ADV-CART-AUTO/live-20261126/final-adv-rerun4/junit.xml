@@ -1,0 +1,82 @@
+<testsuites id="" name="" tests="4" failures="0" skipped="0" errors="0" time="430.85020299999996">
+<testsuite name="n02-cart.spec.ts" timestamp="2026-11-26T06:18:59.645Z" hostname="" tests="4" failures="0" skipped="0" time="422.892" errors="0">
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-OVER: guest items are not silently lost above stock" classname="n02-cart.spec.ts" time="140.495">
+<properties>
+<property name="caseId" value="MERGE-OVER">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account 4 + guest 2; login rejected; retain guest2/account4; reduce guest1; retry login">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:0,&quot;total&quot;:1000,&quot;outcome&quot;:&quot;CartUpdated&quot;,&quot;feedback&quot;:{&quot;pattern&quot;:&quot;5&quot;,&quot;meaning&quot;:&quot;Stock limit 5 must be stated before notification disappears&quot;,&quot;location&quot;:&quot;login/activation warning&quot;},&quot;rejectedMerge&quot;:{&quot;guestRedS&quot;:2,&quot;accountRedS&quot;:4,&quot;guestSubtotal&quot;:400,&quot;accountSubtotal&quot;:800,&quot;discount&quot;:0,&quot;loginCompleted&quot;:false,&quot;blueM&quot;:&quot;NA&quot;}}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-VARIANT: different variants remain separate" classname="n02-cart.spec.ts" time="93.933">
+<properties>
+<property name="caseId" value="MERGE-VARIANT">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account Red/S 1 + guest Blue/M 1; login">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200},{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Blue&quot;,&quot;M&quot;],&quot;quantity&quot;:1,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:400,&quot;discount&quot;:0,&quot;total&quot;:400,&quot;outcome&quot;:&quot;CartUpdated&quot;}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Positive">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-MULTISTORE: each store retains its own cart state across retry" classname="n02-cart.spec.ts" time="120.346">
+<properties>
+<property name="caseId" value="MERGE-MULTISTORE">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0; store2 fixture required">
+</property>
+<property name="input" value="Store1 account4 guest2; store2 guest Blue/M1; login rejected; recover store1; reduce1; retry">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:5,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:0,&quot;total&quot;:1000,&quot;outcome&quot;:&quot;CartUpdated&quot;,&quot;feedback&quot;:{&quot;pattern&quot;:&quot;5&quot;,&quot;meaning&quot;:&quot;Stock limit 5 must be stated before notification disappears&quot;,&quot;location&quot;:&quot;login/activation warning&quot;},&quot;rejectedMerge&quot;:{&quot;guestRedS&quot;:2,&quot;accountRedS&quot;:4,&quot;guestSubtotal&quot;:400,&quot;accountSubtotal&quot;:800,&quot;discount&quot;:0,&quot;loginCompleted&quot;:false,&quot;blueM&quot;:&quot;moves to account&quot;}}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+</testcase>
+<testcase name="SCRUM-86 N02 Cart UI and automation › CART-MERGE-01 MERGE-ACTIVATION: activation preserves rejected guest cart and returns to recovery" classname="n02-cart.spec.ts" time="68.118">
+<properties>
+<property name="caseId" value="MERGE-ACTIVATION">
+</property>
+<property name="precondition" value="SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0">
+</property>
+<property name="input" value="Account4 guest2; activate account; reject merge and retain guest2">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Shirt-Variants&quot;,&quot;attributes&quot;:[&quot;Red&quot;,&quot;S&quot;],&quot;quantity&quot;:2,&quot;unitPrice&quot;:200}],&quot;warning&quot;:null,&quot;subtotal&quot;:400,&quot;discount&quot;:0,&quot;total&quot;:400,&quot;outcome&quot;:&quot;RejectedMerge&quot;,&quot;feedback&quot;:{&quot;pattern&quot;:&quot;5&quot;,&quot;meaning&quot;:&quot;Stock limit 5 must be stated before notification disappears&quot;,&quot;location&quot;:&quot;login/activation warning&quot;},&quot;rejectedMerge&quot;:{&quot;guestRedS&quot;:2,&quot;accountRedS&quot;:4,&quot;guestSubtotal&quot;:400,&quot;accountSubtotal&quot;:800,&quot;discount&quot;:0,&quot;loginCompleted&quot;:false,&quot;blueM&quot;:&quot;NA&quot;}}">
+</property>
+<property name="invariant" value="[&quot;INV-CART-01&quot;,&quot;INV-CART-02&quot;,&quot;INV-CART-03&quot;,&quot;INV-CART-04&quot;,&quot;INV-CART-05&quot;,&quot;INV-CART-06&quot;,&quot;INV-CART-08&quot;,&quot;INV-CART-12&quot;]">
+</property>
+<property name="expected-path" value="Negative">
+</property>
+<property name="jira" value="SCRUM-86">
+</property>
+<property name="defect" value="SCRUM-96">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>

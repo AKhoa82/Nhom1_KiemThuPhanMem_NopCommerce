@@ -1,79 +1,55 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { relative, resolve } from 'node:path';
 import type { FullResult, Reporter, TestCase, TestResult } from '@playwright/test/reporter';
+import { cartCatalog, type CartCase } from '../tests/helpers/cart-catalog';
 
-type Classification = 'PASSED' | 'BLOCKED_ENVIRONMENT' | 'FAILED_ENVIRONMENT' | 'FAILED_PRODUCT' | 'FAILED_AUTOMATION' | 'SKIPPED';
-
-interface CaseSummary {
-  caseId: string;
-  status: TestResult['status'];
-  classification: Classification;
-  scenario: string;
-  expectedPath: string;
-  durationMs: number;
-  evidence: string;
-  artifacts: string[];
-}
-
-const environmentPattern = /FIXTURE_BLOCKED|ECONNREFUSED|ERR_EMPTY_RESPONSE|net::ERR|Docker container|SQLCMD|Store did not become ready|fixture reset failed/i;
-const automationPattern = /No implementation exists|strict mode violation|TypeScript|Cannot find module|locator\.(check|click|fill)|page\.(goto|waitForURL)|browserContext/i;
-
-function firstError(result: TestResult): string {
-  return result.errors.map(error => error.message ?? error.stack ?? '').find(Boolean)?.replace(/\s+/g, ' ').trim() ?? '';
-}
-
-function classify(result: TestResult, evidence: string): Classification {
-  if (result.status === 'passed') return 'PASSED';
-  if (result.status === 'skipped') return /Blocked:|FIXTURE_BLOCKED/i.test(evidence) ? 'BLOCKED_ENVIRONMENT' : 'SKIPPED';
-  if (environmentPattern.test(evidence)) return 'FAILED_ENVIRONMENT';
-  if (automationPattern.test(evidence)) return 'FAILED_AUTOMATION';
+export function classify(status: string, evidence: string): string {
+  if (status === 'passed') return 'PASSED';
+  // Skipped = never reached business assertions; failed + environment signal = the run broke mid-test.
+  if (status === 'skipped') return 'BLOCKED_ENVIRONMENT';
+  if (/FIXTURE_BLOCKED|Blocked:|ECONNREFUSED|ERR_EMPTY_RESPONSE|net::ERR|Docker container|SQLCMD|Store did not become ready|fixture reset failed/i.test(evidence)) return 'FAILED_ENVIRONMENT';
+  if (/FAILED_AUTOMATION|No implementation|strict mode violation|TypeScript|Cannot find module|locator\.(check|click|fill)|page\.(goto|waitForURL)|browserContext/i.test(evidence)) return 'FAILED_AUTOMATION';
   return 'FAILED_PRODUCT';
 }
 
 export default class PairwiseSummaryReporter implements Reporter {
-  private readonly summaries: CaseSummary[] = [];
+  protected group: CartCase['group'] = 'PW';
+  protected stem = 'pairwise-summary';
+  private summaries: Record<string, any>[] = [];
 
   onTestEnd(test: TestCase, result: TestResult): void {
-    const caseId = test.title.match(/\bPW-\d{3}\b/)?.[0];
-    if (!caseId) return;
-
+    const caseId = this.group === 'PW' ? test.title.match(/^PW-\d{3}\b/)?.[0]
+      : test.title.match(/^CART-(?:MERGE|REPEAT)-01 ((?:MERGE|REPEAT)-[A-Z]+)\b/)?.[1];
+    const spec = cartCatalog.find(item => item.group === this.group && item.caseId === caseId);
+    if (!spec) return;
     const annotation = (type: string) => test.annotations.find(item => item.type === type)?.description ?? '';
-    const evidence = firstError(result) || annotation('skip');
-    this.summaries.push({
-      caseId,
-      status: result.status,
-      classification: classify(result, evidence),
-      scenario: annotation('scenario'),
-      expectedPath: annotation('expected-path'),
-      durationMs: result.duration,
-      evidence,
-      artifacts: result.attachments.map(attachment => attachment.path).filter((path): path is string => Boolean(path)),
-    });
+    const evidence = (result.errors.map(error => error.message ?? error.stack ?? '').find(Boolean) || annotation('skip'))
+      .replace(/\u001b\[[0-9;]*m/g, '').replace(/\s+/g, ' ').trim();
+    if (result.status === 'skipped' && evidence) console.log(`[${caseId}] ${evidence.replace(/\s+/g, ' ').slice(0, 1200)}`);
+    this.summaries.push({ ...spec, status: result.status, classification: classify(result.status, evidence),
+      scenario: annotation('scenario'), expectedPath: spec.path, durationMs: result.duration,
+      retry: result.retry, repeatEachIndex: test.repeatEachIndex, evidence,
+      failureLog: result.attachments.find(a => a.name === 'failure-log.json')?.path ?? '',
+      artifacts: result.attachments.map(a => a.path).filter(Boolean) });
   }
 
   onEnd(_result: FullResult): void {
-    const outputDirectory = resolve(process.cwd(), 'reports');
-    mkdirSync(outputDirectory, { recursive: true });
-    const summaries = this.summaries.sort((left, right) => left.caseId.localeCompare(right.caseId));
-    writeFileSync(resolve(outputDirectory, 'pairwise-summary.json'), `${JSON.stringify(summaries, null, 2)}\n`, 'utf8');
-
-    const rows = summaries.map(item => [
-      item.caseId,
-      item.classification,
-      item.status,
-      item.expectedPath || '-',
-      item.scenario || '-',
-      item.evidence.replaceAll('|', '\\|') || '-',
-    ]);
-    const markdown = [
-      '# Kết quả Pairwise',
-      '',
-      '| Case | Phân loại | Playwright | Expected path | Scenario | Bằng chứng |',
-      '| --- | --- | --- | --- | --- | --- |',
-      ...rows.map(row => `| ${row.join(' | ')} |`),
-      '',
-      'Phân loại: `BLOCKED_ENVIRONMENT`/`FAILED_ENVIRONMENT` là lỗi fixture, Docker, DB hoặc store; `FAILED_PRODUCT` là assertion nghiệp vụ không đạt; `FAILED_AUTOMATION` là lỗi harness/selector.',
-    ];
-    writeFileSync(resolve(outputDirectory, 'pairwise-summary.md'), `${markdown.join('\n')}\n`, 'utf8');
+    if (!this.summaries.length) return;
+    const directory = resolve(process.env.QA_REPORT_DIR ?? 'reports');
+    mkdirSync(directory, { recursive: true });
+    const summaries = this.summaries.sort((a, b) => a.caseId.localeCompare(b.caseId));
+    writeFileSync(resolve(directory, `${this.stem}.json`), JSON.stringify(summaries, null, 2) + '\n');
+    const escape = (value: unknown) => (typeof value === 'string' ? value : JSON.stringify(value)).replaceAll('|', '\\|').replace(/\r?\n/g, '<br>');
+    const rows = summaries.map(item => [item.caseId, item.path, item.precondition, item.input, item.expected, item.invariants.join(', '), item.status, item.classification,
+      item.failureLog ? `[failure-log.json](${relative(directory, item.failureLog).replaceAll('\\', '/')})` : '-', item.evidence || '-'].map(escape));
+    writeFileSync(resolve(directory, `${this.stem}.md`), [
+      this.group === 'PW' ? '# Pairwise Shopping Cart' : '# Advanced Shopping Cart', '',
+      this.group === 'PW' ? 'Original model: 14 PW cases, 253/253 generated pairs. Runtime results below are separate from pair coverage.'
+        : 'ADV lies outside the original 14 PW cases and 253 pairs until the official model/mapping changes.', '',
+      '| Case ID | Path | Precondition | Input | Expected | Invariant | Result | Classification | Failure log | Evidence |',
+      '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+      ...rows.map(row => `| ${row.join(' | ')} |`), '',
+      'FAILED_PRODUCT indicates a business assertion; FAILED_AUTOMATION indicates harness/selector failure; FAILED_ENVIRONMENT means the store/DB/Docker broke during the run; BLOCKED_ENVIRONMENT (skipped) is not a pass.', '',
+    ].join('\n'));
   }
 }

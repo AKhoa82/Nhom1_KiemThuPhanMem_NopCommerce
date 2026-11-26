@@ -1,0 +1,1090 @@
+﻿{
+    "runGroup":  "RUN-20261126140015607",
+    "seed":  10387,
+    "sourceCommit":  "5756d2bac2b77682ad3e86335625446e0d30ac18",
+    "workingTree":  "uncommitted changes recorded in this commit, before the order-placement-interval fix",
+    "status":  "STOPPED_AFTER_ORDER_DEPENDENCE_FOUND",
+    "note":  "Stopped manually at 22:39 during the seeded phase (32/50) after PW-006 failed twice on the second back-to-back repeat; no order-check.json was produced by the runner. Results aggregated from per-invocation summaries.",
+    "totals":  {
+                   "results":  132,
+                   "passed":  130,
+                   "notPassed":  2
+               },
+    "failures":  [
+                     {
+                         "fix":  "tests/helpers/sql-fixture.ts queryOrderPlacementWait + tests/pairwise.spec.ts waits until interval+5s since the account\u0027s last order; store setting unchanged",
+                         "runs":  [
+                                      "reverse-PW-006 repeat 2",
+                                      "seeded-PW-006 repeat 2"
+                                  ],
+                         "reportedClassification":  "FAILED_PRODUCT",
+                         "verification":  "live-20261126/pw006-interval-fix: PW-006 --repeat-each=4, 4/4 PASSED (2nd repeat waited 23 s)",
+                         "actualCause":  "Store anti-duplicate rule OrderSettings.MinimumOrderPlacementInterval=1 minute: \"Please wait several seconds before placing a new order (already placed another order several seconds ago).\" The second repeat placed an order for the same registered account within 1 minute of the first. Test timing dependency, not a cart defect.",
+                         "caseId":  "PW-006"
+                     }
+                 ],
+    "runs":  [
+                 {
+                     "label":  "default",
+                     "startedLocal":  "2026-11-26 21:18:46",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-001",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-002",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-003",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-004",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-005",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-006",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-007",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-008",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-009",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-010",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-011",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-012",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-013",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-014",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-ACTIVATION",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-EXACT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-MIXED",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-MULTISTORE",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-OVER",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-VALID",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-VARIANT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "REPEAT-BELOW",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "REPEAT-DIFFERENT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "REPEAT-OVER",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "REPEAT-SAME",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-001",
+                     "startedLocal":  "2026-11-26 21:19:26",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-001",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-002",
+                     "startedLocal":  "2026-11-26 21:20:12",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-002",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-003",
+                     "startedLocal":  "2026-11-26 21:20:43",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-003",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-004",
+                     "startedLocal":  "2026-11-26 21:21:22",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-004",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-005",
+                     "startedLocal":  "2026-11-26 21:21:56",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-005",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-006",
+                     "startedLocal":  "2026-11-26 21:22:41",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-006",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-007",
+                     "startedLocal":  "2026-11-26 21:23:23",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-007",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-008",
+                     "startedLocal":  "2026-11-26 21:23:55",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-008",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-009",
+                     "startedLocal":  "2026-11-26 21:24:39",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-009",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-010",
+                     "startedLocal":  "2026-11-26 21:25:08",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-010",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-011",
+                     "startedLocal":  "2026-11-26 21:25:47",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-011",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-012",
+                     "startedLocal":  "2026-11-26 21:26:27",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-012",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-013",
+                     "startedLocal":  "2026-11-26 21:27:13",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-013",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-PW-014",
+                     "startedLocal":  "2026-11-26 21:28:01",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-014",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-MERGE-VALID",
+                     "startedLocal":  "2026-11-26 21:28:56",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-VALID",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-MERGE-EXACT",
+                     "startedLocal":  "2026-11-26 21:29:51",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-EXACT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-MERGE-OVER",
+                     "startedLocal":  "2026-11-26 21:31:08",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-OVER",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-MERGE-VARIANT",
+                     "startedLocal":  "2026-11-26 21:32:01",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-VARIANT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-REPEAT-SAME",
+                     "startedLocal":  "2026-11-26 21:32:47",
+                     "results":  [
+                                     {
+                                         "caseId":  "REPEAT-SAME",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-REPEAT-DIFFERENT",
+                     "startedLocal":  "2026-11-26 21:33:37",
+                     "results":  [
+                                     {
+                                         "caseId":  "REPEAT-DIFFERENT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-REPEAT-BELOW",
+                     "startedLocal":  "2026-11-26 21:34:21",
+                     "results":  [
+                                     {
+                                         "caseId":  "REPEAT-BELOW",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-REPEAT-OVER",
+                     "startedLocal":  "2026-11-26 21:35:06",
+                     "results":  [
+                                     {
+                                         "caseId":  "REPEAT-OVER",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-MERGE-MIXED",
+                     "startedLocal":  "2026-11-26 21:36:11",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-MIXED",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-MERGE-MULTISTORE",
+                     "startedLocal":  "2026-11-26 21:38:05",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-MULTISTORE",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "isolated-MERGE-ACTIVATION",
+                     "startedLocal":  "2026-11-26 21:38:53",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-ACTIVATION",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-MERGE-ACTIVATION",
+                     "startedLocal":  "2026-11-26 21:40:28",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-ACTIVATION",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-ACTIVATION",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-MERGE-MULTISTORE",
+                     "startedLocal":  "2026-11-26 21:44:20",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-MULTISTORE",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-MULTISTORE",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-MERGE-MIXED",
+                     "startedLocal":  "2026-11-26 21:46:11",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-MIXED",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-MIXED",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-REPEAT-OVER",
+                     "startedLocal":  "2026-11-26 21:47:29",
+                     "results":  [
+                                     {
+                                         "caseId":  "REPEAT-OVER",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "REPEAT-OVER",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-REPEAT-BELOW",
+                     "startedLocal":  "2026-11-26 21:48:41",
+                     "results":  [
+                                     {
+                                         "caseId":  "REPEAT-BELOW",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "REPEAT-BELOW",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-REPEAT-DIFFERENT",
+                     "startedLocal":  "2026-11-26 21:50:07",
+                     "results":  [
+                                     {
+                                         "caseId":  "REPEAT-DIFFERENT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "REPEAT-DIFFERENT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-REPEAT-SAME",
+                     "startedLocal":  "2026-11-26 21:51:25",
+                     "results":  [
+                                     {
+                                         "caseId":  "REPEAT-SAME",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "REPEAT-SAME",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-MERGE-VARIANT",
+                     "startedLocal":  "2026-11-26 21:52:55",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-VARIANT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-VARIANT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-MERGE-OVER",
+                     "startedLocal":  "2026-11-26 21:54:55",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-OVER",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-OVER",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-MERGE-EXACT",
+                     "startedLocal":  "2026-11-26 21:56:21",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-EXACT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-EXACT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-MERGE-VALID",
+                     "startedLocal":  "2026-11-26 21:57:50",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-VALID",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-VALID",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-014",
+                     "startedLocal":  "2026-11-26 21:59:07",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-014",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-014",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-013",
+                     "startedLocal":  "2026-11-26 22:00:18",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-013",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-013",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-012",
+                     "startedLocal":  "2026-11-26 22:01:31",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-012",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-012",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-011",
+                     "startedLocal":  "2026-11-26 22:02:46",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-011",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-011",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-010",
+                     "startedLocal":  "2026-11-26 22:03:42",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-010",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-010",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-009",
+                     "startedLocal":  "2026-11-26 22:05:10",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-009",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-009",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-008",
+                     "startedLocal":  "2026-11-26 22:06:14",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-008",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-008",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-007",
+                     "startedLocal":  "2026-11-26 22:07:44",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-007",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-007",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-006",
+                     "startedLocal":  "2026-11-26 22:09:46",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-006",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-006",
+                                         "status":  "failed",
+                                         "classification":  "FAILED_PRODUCT"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-005",
+                     "startedLocal":  "2026-11-26 22:10:55",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-005",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-005",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-004",
+                     "startedLocal":  "2026-11-26 22:12:12",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-004",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-004",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-003",
+                     "startedLocal":  "2026-11-26 22:13:16",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-003",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-003",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-002",
+                     "startedLocal":  "2026-11-26 22:14:46",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-002",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-002",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "reverse-PW-001",
+                     "startedLocal":  "2026-11-26 22:16:01",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-001",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-001",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-MERGE-MIXED",
+                     "startedLocal":  "2026-11-26 22:17:52",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-MIXED",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-MIXED",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-REPEAT-OVER",
+                     "startedLocal":  "2026-11-26 22:19:02",
+                     "results":  [
+                                     {
+                                         "caseId":  "REPEAT-OVER",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "REPEAT-OVER",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-PW-006",
+                     "startedLocal":  "2026-11-26 22:21:03",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-006",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-006",
+                                         "status":  "failed",
+                                         "classification":  "FAILED_PRODUCT"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-REPEAT-SAME",
+                     "startedLocal":  "2026-11-26 22:22:17",
+                     "results":  [
+                                     {
+                                         "caseId":  "REPEAT-SAME",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "REPEAT-SAME",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-PW-012",
+                     "startedLocal":  "2026-11-26 22:23:28",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-012",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-012",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-PW-009",
+                     "startedLocal":  "2026-11-26 22:24:55",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-009",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-009",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-MERGE-MULTISTORE",
+                     "startedLocal":  "2026-11-26 22:28:09",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-MULTISTORE",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-MULTISTORE",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-MERGE-EXACT",
+                     "startedLocal":  "2026-11-26 22:29:37",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-EXACT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-EXACT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-PW-002",
+                     "startedLocal":  "2026-11-26 22:31:05",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-002",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-002",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-PW-010",
+                     "startedLocal":  "2026-11-26 22:32:09",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-010",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-010",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-PW-007",
+                     "startedLocal":  "2026-11-26 22:33:32",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-007",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-007",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-PW-005",
+                     "startedLocal":  "2026-11-26 22:34:41",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-005",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-005",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-PW-003",
+                     "startedLocal":  "2026-11-26 22:35:45",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-003",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-003",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-REPEAT-DIFFERENT",
+                     "startedLocal":  "2026-11-26 22:37:06",
+                     "results":  [
+                                     {
+                                         "caseId":  "REPEAT-DIFFERENT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "REPEAT-DIFFERENT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-PW-011",
+                     "startedLocal":  "2026-11-26 22:38:21",
+                     "results":  [
+                                     {
+                                         "caseId":  "PW-011",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "PW-011",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 },
+                 {
+                     "label":  "seeded-MERGE-VARIANT",
+                     "startedLocal":  "2026-11-26 22:40:14",
+                     "results":  [
+                                     {
+                                         "caseId":  "MERGE-VARIANT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     },
+                                     {
+                                         "caseId":  "MERGE-VARIANT",
+                                         "status":  "passed",
+                                         "classification":  "PASSED"
+                                     }
+                                 ]
+                 }
+             ]
+}

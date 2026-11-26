@@ -1,0 +1,95 @@
+{
+  "checkedAt": "2026-11-26T03:12:18.650Z",
+  "results": [
+    {
+      "id": "4.2 Red/S x1 => 200/none/200",
+      "ok": false,
+      "detail": {
+        "subtotal": "200 ₫",
+        "discount": null,
+        "orderTotalDiscount": null,
+        "total": "200 ₫"
+      }
+    },
+    {
+      "id": "4.3 PW-CART-10PCT => 200/-20/180",
+      "ok": false,
+      "detail": {
+        "subtotal": "200 ₫",
+        "discount": "-20 ₫",
+        "orderTotalDiscount": null,
+        "total": "180 ₫",
+        "applied": "Entered coupon code - PW-CART-10PCT"
+      }
+    },
+    {
+      "id": "4.4 PW-NOT-EXIST => error, no discount, 200",
+      "ok": false,
+      "detail": {
+        "subtotal": "200 ₫",
+        "discount": null,
+        "orderTotalDiscount": null,
+        "total": "200 ₫",
+        "couponMsg": ""
+      }
+    },
+    {
+      "id": "4.5 update 6 => line warning, qty stays 1, total 200",
+      "ok": false,
+      "detail": {
+        "lines": [
+          {
+            "qty": "1",
+            "attrs": "PW-Color: Red PW-Size: S",
+            "warn": "Your quantity exceeds stock on hand. The maximum quantity that can be added is 5."
+          }
+        ],
+        "subtotal": "200 ₫",
+        "discount": null,
+        "orderTotalDiscount": null,
+        "total": "200 ₫"
+      }
+    },
+    {
+      "id": "4.6 add 4 then 2 => rejected (max 5), 1 line x4, 800",
+      "ok": false,
+      "detail": {
+        "first": {
+          "cls": "bar-notification success",
+          "text": "The product has been added to your shopping cart"
+        },
+        "second": {
+          "cls": "bar-notification error",
+          "text": "Your quantity exceeds stock on hand. The maximum quantity that can be added is 5."
+        },
+        "lines": [
+          {
+            "qty": "4",
+            "attrs": "PW-Color: Red PW-Size: S",
+            "warn": ""
+          }
+        ],
+        "subtotal": "800 ₫",
+        "discount": null,
+        "orderTotalDiscount": null,
+        "total": "800 ₫"
+      }
+    },
+    {
+      "id": "4.7 selectors unique (subtotal=1, subtotal-discount=1, total=1)",
+      "ok": true,
+      "detail": {
+        "counts": {
+          "subtotal": 1,
+          "subtotalDiscount": 1,
+          "orderTotalDiscount": 0,
+          "total": 1
+        },
+        "subtotal": "800 ₫",
+        "discount": "-80 ₫",
+        "orderTotalDiscount": null,
+        "total": "720 ₫"
+      }
+    }
+  ]
+}

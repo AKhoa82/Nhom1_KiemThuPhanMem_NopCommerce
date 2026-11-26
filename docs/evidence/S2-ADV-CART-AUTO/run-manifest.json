@@ -1,0 +1,19 @@
+{
+  "runId": "AUTO-20261125171700184",
+  "startedAt": "2026-11-25T17:17:00.184Z",
+  "finishedAt": "2026-11-25T17:19:36.315Z",
+  "status": "passed",
+  "sourceCommit": "e21ff4471fbe5a612e8dcda91868ec88cf08457e",
+  "workingTreeDirty": true,
+  "baseUrl": "http://localhost/",
+  "checkoutMode": "LOCAL",
+  "fixtureVersion": "S2-ADV-CART-AUTO-v1",
+  "n02FixtureVersion": "SCRUM-87-N02-v1",
+  "fixtureVerification": "PENDING_LOCAL_STORE",
+  "databaseContainer": "nopcommerce_mssql_server",
+  "databaseName": "nopcommerce",
+  "storeContainer": "nopcommerce",
+  "hasSqlPassword": true,
+  "hasRegisteredCredential": true,
+  "hasBillingFixture": true
+}

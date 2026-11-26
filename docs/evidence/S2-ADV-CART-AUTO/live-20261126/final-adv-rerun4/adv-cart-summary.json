@@ -1,0 +1,233 @@
+[
+  {
+    "caseId": "MERGE-ACTIVATION",
+    "group": "ADV",
+    "path": "Negative",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account4 guest2; activate account; reject merge and retain guest2",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 2,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 400,
+      "discount": 0,
+      "total": 400,
+      "outcome": "RejectedMerge",
+      "feedback": {
+        "pattern": "5",
+        "meaning": "Stock limit 5 must be stated before notification disappears",
+        "location": "login/activation warning"
+      },
+      "rejectedMerge": {
+        "guestRedS": 2,
+        "accountRedS": 4,
+        "guestSubtotal": 400,
+        "accountSubtotal": 800,
+        "discount": 0,
+        "loginCompleted": false,
+        "blueM": "NA"
+      }
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "",
+    "expectedPath": "Negative",
+    "durationMs": 68118,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "MERGE-MULTISTORE",
+    "group": "ADV",
+    "path": "Negative",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0; store2 fixture required",
+    "input": "Store1 account4 guest2; store2 guest Blue/M1; login rejected; recover store1; reduce1; retry",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 0,
+      "total": 1000,
+      "outcome": "CartUpdated",
+      "feedback": {
+        "pattern": "5",
+        "meaning": "Stock limit 5 must be stated before notification disappears",
+        "location": "login/activation warning"
+      },
+      "rejectedMerge": {
+        "guestRedS": 2,
+        "accountRedS": 4,
+        "guestSubtotal": 400,
+        "accountSubtotal": 800,
+        "discount": 0,
+        "loginCompleted": false,
+        "blueM": "moves to account"
+      }
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "",
+    "expectedPath": "Negative",
+    "durationMs": 120346,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "MERGE-OVER",
+    "group": "ADV",
+    "path": "Negative",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account 4 + guest 2; login rejected; retain guest2/account4; reduce guest1; retry login",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 5,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 1000,
+      "discount": 0,
+      "total": 1000,
+      "outcome": "CartUpdated",
+      "feedback": {
+        "pattern": "5",
+        "meaning": "Stock limit 5 must be stated before notification disappears",
+        "location": "login/activation warning"
+      },
+      "rejectedMerge": {
+        "guestRedS": 2,
+        "accountRedS": 4,
+        "guestSubtotal": 400,
+        "accountSubtotal": 800,
+        "discount": 0,
+        "loginCompleted": false,
+        "blueM": "NA"
+      }
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "",
+    "expectedPath": "Negative",
+    "durationMs": 140495,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  },
+  {
+    "caseId": "MERGE-VARIANT",
+    "group": "ADV",
+    "path": "Positive",
+    "precondition": "SCRUM-87-N02-v1; guest/account cart reset; Shirt price200; Red/S stock5; Blue/M stock3; discount/tax/fees0",
+    "input": "Account Red/S 1 + guest Blue/M 1; login",
+    "expected": {
+      "lines": [
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Red",
+            "S"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        },
+        {
+          "product": "PW-Shirt-Variants",
+          "attributes": [
+            "Blue",
+            "M"
+          ],
+          "quantity": 1,
+          "unitPrice": 200
+        }
+      ],
+      "warning": null,
+      "subtotal": 400,
+      "discount": 0,
+      "total": 400,
+      "outcome": "CartUpdated"
+    },
+    "invariants": [
+      "INV-CART-01",
+      "INV-CART-02",
+      "INV-CART-03",
+      "INV-CART-04",
+      "INV-CART-05",
+      "INV-CART-06",
+      "INV-CART-08",
+      "INV-CART-12"
+    ],
+    "status": "passed",
+    "classification": "PASSED",
+    "scenario": "",
+    "expectedPath": "Positive",
+    "durationMs": 93933,
+    "retry": 0,
+    "repeatEachIndex": 0,
+    "evidence": "",
+    "failureLog": "",
+    "artifacts": []
+  }
+]

@@ -1,0 +1,90 @@
+<testsuites id="" name="" tests="4" failures="0" skipped="0" errors="0" time="266.150506">
+<testsuite name="pairwise.spec.ts" timestamp="2026-11-26T15:42:25.189Z" hostname="" tests="1" failures="0" skipped="0" time="47.084" errors="0">
+<testcase name="PW-006 Boundary: Registered customer adds a simple product at the exact stock limit, applies a valid coupon, and completes the local checkout path." classname="pairwise.spec.ts" time="47.084">
+<properties>
+<property name="caseId" value="PW-006">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Simple 10; valid coupon; checkout">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:10,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:100,&quot;total&quot;:900,&quot;outcome&quot;:&quot;OrderCreated&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="scenario" value="CART-14;CART-11;CHK-01;ADDR-01;SHP-01;PAY-LOCAL-01">
+</property>
+<property name="order-interval" value="{&quot;intervalMinutes&quot;:1,&quot;secondsSinceLastOrder&quot;:1406,&quot;waitMs&quot;:0}">
+</property>
+</properties>
+</testcase>
+</testsuite>
+<testsuite name="pairwise.spec.ts" timestamp="2026-11-26T15:42:25.189Z" hostname="" tests="1" failures="0" skipped="0" time="67.413" errors="0">
+<testcase name="PW-006 Boundary: Registered customer adds a simple product at the exact stock limit, applies a valid coupon, and completes the local checkout path." classname="pairwise.spec.ts" time="67.413">
+<properties>
+<property name="caseId" value="PW-006">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Simple 10; valid coupon; checkout">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:10,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:100,&quot;total&quot;:900,&quot;outcome&quot;:&quot;OrderCreated&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="scenario" value="CART-14;CART-11;CHK-01;ADDR-01;SHP-01;PAY-LOCAL-01">
+</property>
+<property name="order-interval" value="{&quot;intervalMinutes&quot;:1,&quot;secondsSinceLastOrder&quot;:42,&quot;waitMs&quot;:23000}">
+</property>
+</properties>
+</testcase>
+</testsuite>
+<testsuite name="pairwise.spec.ts" timestamp="2026-11-26T15:42:25.189Z" hostname="" tests="1" failures="0" skipped="0" time="68.593" errors="0">
+<testcase name="PW-006 Boundary: Registered customer adds a simple product at the exact stock limit, applies a valid coupon, and completes the local checkout path." classname="pairwise.spec.ts" time="68.593">
+<properties>
+<property name="caseId" value="PW-006">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Simple 10; valid coupon; checkout">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:10,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:100,&quot;total&quot;:900,&quot;outcome&quot;:&quot;OrderCreated&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="scenario" value="CART-14;CART-11;CHK-01;ADDR-01;SHP-01;PAY-LOCAL-01">
+</property>
+<property name="order-interval" value="{&quot;intervalMinutes&quot;:1,&quot;secondsSinceLastOrder&quot;:39,&quot;waitMs&quot;:26000}">
+</property>
+</properties>
+</testcase>
+</testsuite>
+<testsuite name="pairwise.spec.ts" timestamp="2026-11-26T15:42:25.189Z" hostname="" tests="1" failures="0" skipped="0" time="68.792" errors="0">
+<testcase name="PW-006 Boundary: Registered customer adds a simple product at the exact stock limit, applies a valid coupon, and completes the local checkout path." classname="pairwise.spec.ts" time="68.792">
+<properties>
+<property name="caseId" value="PW-006">
+</property>
+<property name="precondition" value="Registered; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0">
+</property>
+<property name="input" value="Add Simple 10; valid coupon; checkout">
+</property>
+<property name="expected" value="{&quot;lines&quot;:[{&quot;product&quot;:&quot;PW-Simple-Stock&quot;,&quot;attributes&quot;:[],&quot;quantity&quot;:10,&quot;unitPrice&quot;:100}],&quot;warning&quot;:null,&quot;subtotal&quot;:1000,&quot;discount&quot;:100,&quot;total&quot;:900,&quot;outcome&quot;:&quot;OrderCreated&quot;}">
+</property>
+<property name="invariant" value="INV-CART-01, INV-CART-03, INV-CART-04, INV-CART-05, INV-CART-06, INV-CART-08">
+</property>
+<property name="expected-path" value="Boundary">
+</property>
+<property name="scenario" value="CART-14;CART-11;CHK-01;ADDR-01;SHP-01;PAY-LOCAL-01">
+</property>
+<property name="order-interval" value="{&quot;intervalMinutes&quot;:1,&quot;secondsSinceLastOrder&quot;:43,&quot;waitMs&quot;:22000}">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>

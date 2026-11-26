@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { validateCatalogIds } from './cart-catalog';
 
 export const expectedCaseIds = Array.from({ length: 14 }, (_, index) =>
   `PW-${String(index + 1).padStart(3, '0')}`,
@@ -47,7 +48,7 @@ export interface PairwiseCase extends GeneratedCase {
 
 type CsvRecord = Record<string, string>;
 
-function parseCsv(text: string, source: string): CsvRecord[] {
+export function parseCsv(text: string, source: string): CsvRecord[] {
   const rows: string[][] = [];
   let row: string[] = [];
   let value = '';
@@ -148,6 +149,7 @@ export function loadPairwiseCases(repositoryRoot = resolve(__dirname, '../../../
 
   const cases = generated.map(toGeneratedCase);
   validateExpectedIds(cases.map((item) => item.caseId), generatedPath);
+  validateCatalogIds('PW', cases.map(item => item.caseId));
   validateExpectedIds(mappings.map((item) => item.CaseId), mappingPath);
 
   const mappingsById = new Map(mappings.map((mapping) => [mapping.CaseId, mapping]));
