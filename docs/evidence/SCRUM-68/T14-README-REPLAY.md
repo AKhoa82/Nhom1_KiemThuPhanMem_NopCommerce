@@ -22,7 +22,7 @@ File `.env` local và cấu hình môi trường container có cùng chuỗi m�
 
 ## Đối chứng môi trường sạch
 
-Lượt CI của [PR #28](https://github.com/AKhoa82/Nhom1_KiemThuPhanMem_NopCommerce/pull/28) trên cùng baseline ứng dụng đã hoàn thành [workflow 46051688896](https://github.com/AKhoa82/Nhom1_KiemThuPhanMem_NopCommerce/actions/runs/46051688896) với các job build, pairwise-model và e2e Pass. Workflow dựng store/SQL/fixture và tài khoản QA **mới**, chạy 14/14 PW cùng 11/11 ADV Cart, kiểm tra không có ca thiếu/Skip/Fail, rồi dọn container. Bản PR T14 sẽ chạy lại workflow này trên commit tài liệu mới; cần ghi link/kết quả của lượt đó trước khi đóng issue.
+Lượt CI của [PR #28](https://github.com/AKhoa82/Nhom1_KiemThuPhanMem_NopCommerce/pull/28) trên baseline ứng dụng đã hoàn thành [workflow 46051688896](https://github.com/AKhoa82/Nhom1_KiemThuPhanMem_NopCommerce/actions/runs/46051688896) với các job build, pairwise-model và e2e Pass. Đối chứng trực tiếp cho T14 là [PR #29](https://github.com/AKhoa82/Nhom1_KiemThuPhanMem_NopCommerce/pull/29), commit `f18e5e371d9c10a5883fa126171892494569426d`, [workflow 46054553897](https://github.com/AKhoa82/Nhom1_KiemThuPhanMem_NopCommerce/actions/runs/46054553897): **build, pairwise-model và e2e đều Pass**. Bước bootstrap tạo store/SQL/fixture và tài khoản QA mới Pass; 14/14 PW, 11/11 ADV Cart cùng hai bước từ chối ca thiếu/Skip/Fail đều Pass. Runner dọn container dùng một lần sau lượt chạy. Đây là bằng chứng thực thi từ đầu trên SHA T14, khác với ca local bị Blocked bởi mật khẩu database cũ.
 
 Lượt CI là máy runner độc lập, không phải laptop cá nhân của Trang hay Linh. Theo yêu cầu mới của nhóm, Khoa tự làm cả ba subtask T14 và dùng lượt CI trên môi trường sạch làm đối chứng tái lập. CI chỉ bao phủ gate PW/ADV Cart; Checkout risk, payment decline và N03 race có precondition/report riêng trong [T12](../SCRUM-60/T12-RESULTS.md).
 
@@ -34,4 +34,4 @@ Lượt CI là máy runner độc lập, không phải laptop cá nhân của Tr
 - `setup.md` được gắn nhãn tài liệu seed thủ công của mốc đầu kỳ; README automation bỏ trạng thái “chưa kiểm chứng live” đã lỗi thời và trỏ về T12.
 - Tệp do PICT sinh được kiểm tra rồi khôi phục về nội dung commit vì T14 không đổi model hoặc ca kiểm thử.
 
-Giới hạn: ca local PW-001 hiện Blocked do mật khẩu SQL của database cũ; không dùng nó làm bằng chứng Pass. Workflow PR T14 phải Pass trên môi trường sạch trước khi coi README đã được nghiệm thu từ đầu.
+Giới hạn: ca local PW-001 hiện Blocked do mật khẩu SQL của database cũ; không dùng nó làm bằng chứng Pass. CI PR T14 đã Pass trên môi trường sạch, nhưng CI chỉ chạy PW/ADV Cart và không thay thế report riêng cho Checkout risk, payment decline hoặc N03 race.
