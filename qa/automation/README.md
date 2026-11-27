@@ -1,5 +1,7 @@
 # Pairwise automation
 
+Hướng dẫn theo thứ tự cho báo cáo cuối kỳ, gồm commit, máy mới và link bằng chứng, nằm trong [README chính](../../README.md). Tài liệu này giữ chi tiết các script và fixture. Xem [T12](../../docs/evidence/SCRUM-60/T12-RESULTS.md) để biết kết quả chạy mới nhất cùng điều kiện của lượt đó.
+
 ## SCRUM-92: N04 CI gate
 
 `.github/workflows/dotnet.yml` now has separate .NET, Pairwise-model and real
@@ -219,13 +221,13 @@ npm run test:order-check  # default, each isolated, reverse x2, seeded shuffle x
 subtotal coupon (`DiscountTypeId=20`, 10%, unlimited), tax/fees and Ground rate.
 SQL preflight runs after reset and rejects mismatches with `FIXTURE_BLOCKED`.
 It never changes the expected values to match the storefront. The selectors
-are verified against the checked-in Razor views; live verification remains
-pending until the local nopCommerce/SQL fixture is available. A missing Total
+were verified against the checked-in Razor views and live T12 PW/N02 runs.
+A missing Total
 or an unparseable amount is an explicit automation failure, never an inferred
 subtotal-minus-discount amount. The zero Ground rate is also defined by the
 existing `seed-n03-pw-shirt.sql` fixture.
 
-`cart-case-catalog.json` supplies Case ID, path, precondition, input, expected
+`test-data/cart-case-catalog.json` supplies Case ID, path, precondition, input, expected
 checkpoint state and invariants. PW discovery validates the exact 14 IDs against
 CSV. ADV validates all eight N02 generated mappings plus the three existing
 regressions (mixed, multi-store, activation). PW-004/PW-014 now add Red/S 1 and
@@ -255,8 +257,9 @@ latest ADV summary and run `node ../pairwise/n02-cart/generate.mjs`. Install
 PICT first with `../pairwise/install-pict.ps1` if needed. Do not edit generated
 CSV by hand. Keep historical evidence in its existing directory.
 
-Committed evidence goes in `docs/evidence/S2-ADV-CART-AUTO/`. Export only
-sanitized summaries, JUnit, order-check receipt and run metadata; cookies,
-passwords and traces with sessions must stay out of Git. The current local
-run is blocked; restoring reliable `/cart` responses and supplying QA credentials is required before
-marking live oracle verification or order independence complete.
+Committed evidence goes in `docs/evidence/S2-ADV-CART-AUTO/` and the T12 report
+in `docs/evidence/SCRUM-60/`. Export only sanitized summaries, JUnit,
+order-check receipt and run metadata; cookies, passwords and traces with
+sessions must stay out of Git. The T12 local rerun passed 14/14 PW and 11/11
+ADV cases; see its commit, fixture and run IDs in the linked report. Each new
+run still needs its own fixture preflight and result before it can be marked Pass.
