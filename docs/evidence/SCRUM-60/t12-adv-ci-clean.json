@@ -1,0 +1,98 @@
+{
+  "runId": "AUTO-20261127175344192",
+  "sourceCommit": "c83c128e92b48e7274a546401ad7b04ab8dbebdf",
+  "checkoutMode": "UNSPECIFIED",
+  "fixtureVersion": "S2-ADV-CART-AUTO-v1",
+  "n02FixtureVersion": "SCRUM-87-N02-v1",
+  "startedAt": "2026-11-27T17:53:44.192Z",
+  "finishedAt": "2026-11-27T17:59:11.755Z",
+  "wallDurationSeconds": 328,
+  "total": 11,
+  "counts": {
+    "pass": 11,
+    "fail": 0,
+    "skipped": 0,
+    "notRun": 0
+  },
+  "passRateOfAll": 100,
+  "failRateOfAll": 0,
+  "tests": [
+    {
+      "title": "CART-MERGE-01 MERGE-OVER: guest items are not silently lost above stock",
+      "status": "passed",
+      "durationMs": 34896,
+      "scenarios": [],
+      "skipReason": null
+    },
+    {
+      "title": "CART-MERGE-01 MERGE-MIXED: accepted line moves while rejected line remains usable",
+      "status": "passed",
+      "durationMs": 34934,
+      "scenarios": [],
+      "skipReason": null
+    },
+    {
+      "title": "CART-MERGE-01 MERGE-VALID: same variant merges within stock",
+      "status": "passed",
+      "durationMs": 27248,
+      "scenarios": [],
+      "skipReason": null
+    },
+    {
+      "title": "CART-MERGE-01 MERGE-EXACT: same variant merges within stock",
+      "status": "passed",
+      "durationMs": 27706,
+      "scenarios": [],
+      "skipReason": null
+    },
+    {
+      "title": "CART-MERGE-01 MERGE-VARIANT: different variants remain separate",
+      "status": "passed",
+      "durationMs": 28761,
+      "scenarios": [],
+      "skipReason": null
+    },
+    {
+      "title": "CART-MERGE-01 MERGE-MULTISTORE: each store retains its own cart state across retry",
+      "status": "passed",
+      "durationMs": 53397,
+      "scenarios": [],
+      "skipReason": null
+    },
+    {
+      "title": "CART-MERGE-01 MERGE-ACTIVATION: activation preserves rejected guest cart and returns to recovery",
+      "status": "passed",
+      "durationMs": 28735,
+      "scenarios": [],
+      "skipReason": null
+    },
+    {
+      "title": "CART-REPEAT-01 REPEAT-SAME: adding 2 then 3 makes one line with correct total",
+      "status": "passed",
+      "durationMs": 23089,
+      "scenarios": [],
+      "skipReason": null
+    },
+    {
+      "title": "CART-REPEAT-01 REPEAT-DIFFERENT: another variant remains a separate line",
+      "status": "passed",
+      "durationMs": 24941,
+      "scenarios": [],
+      "skipReason": null
+    },
+    {
+      "title": "CART-REPEAT-01 REPEAT-BELOW: repeat add respects variant stock",
+      "status": "passed",
+      "durationMs": 21410,
+      "scenarios": [],
+      "skipReason": null
+    },
+    {
+      "title": "CART-REPEAT-01 REPEAT-OVER: repeat add respects variant stock",
+      "status": "passed",
+      "durationMs": 21150,
+      "scenarios": [],
+      "skipReason": null
+    }
+  ]
+}

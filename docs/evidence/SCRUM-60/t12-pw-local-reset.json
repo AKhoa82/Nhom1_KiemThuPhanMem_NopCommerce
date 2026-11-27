@@ -1,0 +1,147 @@
+{
+  "runId": "AUTO-20261127175133654",
+  "sourceCommit": "450d486bd19049f406290138e905644fe782bebc",
+  "checkoutMode": "MultiStep",
+  "fixtureVersion": "S2-ADV-CART-AUTO-v1",
+  "n02FixtureVersion": "SCRUM-87-N02-v1",
+  "startedAt": "2026-11-27T17:51:33.654Z",
+  "finishedAt": "2026-11-27T17:59:32.940Z",
+  "wallDurationSeconds": 479,
+  "total": 14,
+  "counts": {
+    "pass": 14,
+    "fail": 0,
+    "skipped": 0,
+    "notRun": 0
+  },
+  "passRateOfAll": 100,
+  "failRateOfAll": 0,
+  "tests": [
+    {
+      "title": "PW-001 Negative: Update quantity; invalid coupon remains independent; missing required address blocks checkout.",
+      "status": "passed",
+      "durationMs": 40193,
+      "scenarios": [
+        "CART-05;CART-12;ADDR-02"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PW-002 Positive: Guest adds a configurable product to a multi-line cart, rejects an invalid coupon, then follows the verified local checkout path.",
+      "status": "passed",
+      "durationMs": 42651,
+      "scenarios": [
+        "CART-02;CART-04;CART-12;CHK-02;ADDR-01;SHP-01;PAY-LOCAL-01"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PW-003 Boundary: A guest removes the final configurable-product line from a one-line cart after the valid-coupon state has been exercised.",
+      "status": "passed",
+      "durationMs": 26056,
+      "scenarios": [
+        "CART-08;CART-11"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PW-004 Negative: Registered customer updates quantity beyond available stock; checkout stops before address, shipping, and payment.",
+      "status": "passed",
+      "durationMs": 29237,
+      "scenarios": [
+        "CART-07"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PW-005 Boundary: Registered customer removes the final simple-product line and leaves an empty cart.",
+      "status": "passed",
+      "durationMs": 26687,
+      "scenarios": [
+        "CART-08"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PW-006 Boundary: Registered customer adds a simple product at the exact stock limit, applies a valid coupon, and completes the local checkout path.",
+      "status": "passed",
+      "durationMs": 39975,
+      "scenarios": [
+        "CART-14;CART-11;CHK-01;ADDR-01;SHP-01;PAY-LOCAL-01"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PW-007 Positive: Guest adds a configurable product within stock to a multi-line cart and completes checkout locally.",
+      "status": "passed",
+      "durationMs": 43395,
+      "scenarios": [
+        "CART-02;CART-04;CHK-02;ADDR-01;SHP-01;PAY-LOCAL-01"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PW-008 Boundary: Guest removes the final configurable-product line from a one-line cart; the invalid-coupon state is independently checked.",
+      "status": "passed",
+      "durationMs": 29874,
+      "scenarios": [
+        "CART-08;CART-12"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PW-009 Boundary: Guest updates a configurable product to the exact available-stock limit and continues through local checkout.",
+      "status": "passed",
+      "durationMs": 35044,
+      "scenarios": [
+        "CART-14;CHK-02;ADDR-01;SHP-01;PAY-LOCAL-01"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PW-010 Negative: Guest attempts to add an out-of-stock configurable product and checkout does not start.",
+      "status": "passed",
+      "durationMs": 30293,
+      "scenarios": [
+        "CART-10"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PW-011 Negative: Guest updates a simple product in a multi-line cart, exercises a valid coupon, then submits an address missing a required field.",
+      "status": "passed",
+      "durationMs": 33366,
+      "scenarios": [
+        "CART-05;CART-11;ADDR-02"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PW-012 Boundary: Registered customer adds a configurable product at the exact stock limit, then submits an address missing a required field.",
+      "status": "passed",
+      "durationMs": 31622,
+      "scenarios": [
+        "CART-14;ADDR-02"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PW-013 Negative: Registered customer updates a configurable product beyond stock; invalid coupon remains an independent operation.",
+      "status": "passed",
+      "durationMs": 34046,
+      "scenarios": [
+        "CART-07;CART-12"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PW-014 Negative: Registered customer updates a simple product beyond available stock while the product is otherwise in stock.",
+      "status": "passed",
+      "durationMs": 34636,
+      "scenarios": [
+        "CART-07;CART-11"
+      ],
+      "skipReason": null
+    }
+  ]
+}
