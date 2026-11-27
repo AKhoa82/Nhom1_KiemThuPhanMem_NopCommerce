@@ -285,7 +285,9 @@ export async function completeLocalCheckout(page: Page): Promise<void> {
     await expect(page).toHaveURL(/checkout\/(paymentmethod|paymentinfo|confirm|completed)/i);
   }
   if (await page.locator('input[name="paymentmethod"]').count()) {
-    await page.locator('input[name="paymentmethod"]').first().check();
+    const localPayment = page.locator('input[name="paymentmethod"][value="Payments.CheckMoneyOrder"]');
+    await expect(localPayment, 'Checkout fixture requires active Check / Money Order.').toHaveCount(1);
+    await localPayment.check();
     await page.locator('.payment-method-next-step-button').click();
     await expect(page).toHaveURL(/checkout\/(paymentinfo|confirm|completed)/i);
   }

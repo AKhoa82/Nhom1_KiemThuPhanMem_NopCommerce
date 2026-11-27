@@ -173,7 +173,10 @@ function markerCount(snapshot: string, marker: string): number {
  * snapshot is intentionally passed in by the test so the before/after pair
  * is attached to the Playwright report.
  */
-export async function assertCheckoutOrderEvidence(before: string, after: string, expectedTotal?: number): Promise<void> {
+export async function assertCheckoutOrderEvidence(
+  before: string, after: string, expectedTotal?: number,
+  expectedItems?: { sku: string; quantity: number }[],
+): Promise<void> {
   const beforeOrderCount = markerCount(before, 'ORDER_COUNT');
   const afterOrderCount = markerCount(after, 'ORDER_COUNT');
   expect(afterOrderCount - beforeOrderCount, 'Successful checkout must create exactly one order.').toBe(1);
@@ -185,6 +188,30 @@ export async function assertCheckoutOrderEvidence(before: string, after: string,
   expect(latestOrder[3], 'PaymentStatus must be Pending for Check/Money Order.').toBe('10');
   expect(latestOrder[4], 'Payment method must be Payments.CheckMoneyOrder.').toBe('Payments.CheckMoneyOrder');
   if (expectedTotal !== undefined) expect(Number(latestOrder[5]), 'Order total equals cart total plus fixture Ground shipping.').toBe(expectedTotal);
+  if (expectedItems) {
+    const actualItems = markerLines(after, 'ORDER_ITEM').map(line => {
+      const [_, orderId, sku, quantity] = line.split('|');
+      expect(orderId, 'Order item must belong to the newly created order.').toBe(latestOrder[1]);
+      return { sku, quantity: Number(quantity) };
+    });
+    expect(actualItems.sort((a, b) => a.sku.localeCompare(b.sku)), 'Order items must match the pre-confirm cart.')
+      .toEqual([...expectedItems].sort((a, b) => a.sku.localeCompare(b.sku)));
+
+    const itemQuantity = (sku: string) => expectedItems
+      .filter(item => item.sku === sku).reduce((sum, item) => sum + item.quantity, 0);
+    const simpleStock = (snapshot: string) => {
+      const line = markerLines(snapshot, 'PRODUCT').find(value => value.startsWith('PRODUCT|PW-SIMPLE-001|'));
+      if (!line) throw new Error('Checkout SQL evidence is missing simple-product stock.');
+      return Number(line.split('|')[2]);
+    };
+    const variantStock = (snapshot: string) => markerLines(snapshot, 'VARIANT')
+      .filter(value => value.startsWith('VARIANT|PW-SHIRT|'))
+      .reduce((sum, value) => sum + Number(value.split('|')[2]), 0);
+    expect(simpleStock(before) - simpleStock(after), 'Simple stock must decrease by ordered quantity.')
+      .toBe(itemQuantity('PW-SIMPLE-001'));
+    expect(variantStock(before) - variantStock(after), 'Variant stock must decrease by ordered quantity.')
+      .toBe(itemQuantity('PW-SHIRT'));
+  }
 
   const cartCount = markerCount(after, 'CART_COUNT');
   expect(cartCount, 'Successful checkout must clear the customer cart.').toBe(0);
