@@ -1,0 +1,156 @@
+{
+  "runId": "AUTO-20261127180850890",
+  "sourceCommit": "450d486bd19049f406290138e905644fe782bebc",
+  "checkoutMode": "MultiStep",
+  "fixtureVersion": "S2-ADV-CART-AUTO-v1",
+  "n02FixtureVersion": "SCRUM-87-N02-v1",
+  "startedAt": "2026-11-27T18:08:50.890Z",
+  "finishedAt": "2026-11-27T18:15:57.488Z",
+  "wallDurationSeconds": 427,
+  "total": 15,
+  "counts": {
+    "pass": 15,
+    "fail": 0,
+    "skipped": 0,
+    "notRun": 0
+  },
+  "passRateOfAll": 100,
+  "failRateOfAll": 0,
+  "tests": [
+    {
+      "title": "CART-01: thêm sản phẩm hợp lệ",
+      "status": "passed",
+      "durationMs": 29529,
+      "scenarios": [
+        "CART-01"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-02: thêm sản phẩm có biến thể",
+      "status": "passed",
+      "durationMs": 31362,
+      "scenarios": [
+        "CART-02"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-03: thêm sản phẩm với quantity bằng 1",
+      "status": "passed",
+      "durationMs": 27998,
+      "scenarios": [
+        "CART-03"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-04: thêm nhiều sản phẩm khác nhau",
+      "status": "passed",
+      "durationMs": 31433,
+      "scenarios": [
+        "CART-04"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-05: cập nhật quantity trong tồn kho",
+      "status": "passed",
+      "durationMs": 28656,
+      "scenarios": [
+        "CART-05"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-06: xóa một item và giữ lại item còn lại",
+      "status": "passed",
+      "durationMs": 29298,
+      "scenarios": [
+        "CART-06"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-07: từ chối quantity vượt tồn kho",
+      "status": "passed",
+      "durationMs": 26566,
+      "scenarios": [
+        "CART-07"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-08: xóa item cuối cùng làm cart rỗng",
+      "status": "passed",
+      "durationMs": 27974,
+      "scenarios": [
+        "CART-08"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-09: mở cart khi chưa có sản phẩm",
+      "status": "passed",
+      "durationMs": 22376,
+      "scenarios": [
+        "CART-09"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-10: chặn thêm sản phẩm hết hàng",
+      "status": "passed",
+      "durationMs": 25983,
+      "scenarios": [
+        "CART-10"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-11: áp dụng coupon hợp lệ",
+      "status": "passed",
+      "durationMs": 27787,
+      "scenarios": [
+        "CART-11"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-12: từ chối coupon không hợp lệ",
+      "status": "passed",
+      "durationMs": 27632,
+      "scenarios": [
+        "CART-12"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-13: đối chiếu subtotal, discount và total",
+      "status": "passed",
+      "durationMs": 31877,
+      "scenarios": [
+        "CART-13"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-14: thêm sản phẩm đúng bằng tồn kho",
+      "status": "passed",
+      "durationMs": 26052,
+      "scenarios": [
+        "CART-14"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-REPEAT-01: gộp cùng variant và tách khác variant",
+      "status": "passed",
+      "durationMs": 30401,
+      "scenarios": [
+        "CART-REPEAT-01"
+      ],
+      "skipReason": null
+    }
+  ]
+}

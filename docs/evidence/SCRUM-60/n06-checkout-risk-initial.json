@@ -1,0 +1,102 @@
+{
+  "runId": "AUTO-20261127170930288",
+  "sourceCommit": "6f702568b0885528e81ecced13422f4cf831d398",
+  "checkoutMode": "MultiStep",
+  "fixtureVersion": "S2-ADV-CART-AUTO-v1",
+  "n02FixtureVersion": "SCRUM-87-N02-v1",
+  "startedAt": "2026-11-27T17:09:30.288Z",
+  "finishedAt": "2026-11-27T17:15:36.939Z",
+  "wallDurationSeconds": 367,
+  "total": 9,
+  "counts": {
+    "pass": 7,
+    "fail": 1,
+    "skipped": 1,
+    "notRun": 0
+  },
+  "passRateOfAll": 77.78,
+  "failRateOfAll": 11.11,
+  "tests": [
+    {
+      "title": "SHP-01: selected local shipping option survives returning to the step",
+      "status": "passed",
+      "durationMs": 33469,
+      "scenarios": [
+        "SHP-01"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "SHP-02-DS01: invalid shipping option is not accepted",
+      "status": "passed",
+      "durationMs": 32137,
+      "scenarios": [
+        "SHP-02"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "SHP-02-DS02: invalid shipping option is not accepted",
+      "status": "passed",
+      "durationMs": 30162,
+      "scenarios": [
+        "SHP-02"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "SHP-02-DS03: invalid shipping option is not accepted",
+      "status": "passed",
+      "durationMs": 30519,
+      "scenarios": [
+        "SHP-02"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "PAY-FAIL-01: local decline keeps cart and does not create an order",
+      "status": "skipped",
+      "durationMs": 31203,
+      "scenarios": [
+        "PAY-FAIL-01"
+      ],
+      "skipReason": "FIXTURE_BLOCKED: Payments.QaDecline is inactive; checkout skipped Payment Method."
+    },
+    {
+      "title": "INV-01: stock reduction before confirm blocks checkout",
+      "status": "passed",
+      "durationMs": 53436,
+      "scenarios": [
+        "INV-01"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-MERGE-01: guest cart merges correctly with registered user cart",
+      "status": "passed",
+      "durationMs": 36328,
+      "scenarios": [
+        "CART-MERGE-01"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CART-MERGE-01-OVERSTOCK: rejected merge must not silently lose guest items",
+      "status": "failed",
+      "durationMs": 81170,
+      "scenarios": [
+        "CART-MERGE-01"
+      ],
+      "skipReason": null
+    },
+    {
+      "title": "CHK-RACE-01: concurrent confirm order requests prevent double order creation",
+      "status": "passed",
+      "durationMs": 35225,
+      "scenarios": [
+        "CHK-RACE-01"
+      ],
+      "skipReason": null
+    }
+  ]
+}

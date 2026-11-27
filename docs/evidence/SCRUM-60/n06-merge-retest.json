@@ -1,0 +1,29 @@
+{
+  "runId": "AUTO-20261127171622526",
+  "sourceCommit": "6f702568b0885528e81ecced13422f4cf831d398",
+  "checkoutMode": "MultiStep",
+  "fixtureVersion": "S2-ADV-CART-AUTO-v1",
+  "n02FixtureVersion": "SCRUM-87-N02-v1",
+  "startedAt": "2026-11-27T17:16:22.526Z",
+  "finishedAt": "2026-11-27T17:17:14.779Z",
+  "wallDurationSeconds": 52,
+  "total": 1,
+  "counts": {
+    "pass": 1,
+    "fail": 0,
+    "skipped": 0,
+    "notRun": 0
+  },
+  "passRateOfAll": 100,
+  "failRateOfAll": 0,
+  "tests": [
+    {
+      "title": "CART-MERGE-01-OVERSTOCK: rejected merge must not silently lose guest items",
+      "status": "passed",
+      "durationMs": 51202,
+      "scenarios": [
+        "CART-MERGE-01"
+      ]
+    }
+  ]
+}
