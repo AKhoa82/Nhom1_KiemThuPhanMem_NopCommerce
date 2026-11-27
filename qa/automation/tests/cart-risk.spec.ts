@@ -1,6 +1,7 @@
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import {
   assertCartEmpty,
+  assertCartAmount,
   assertCartLine,
   assertCartLineCount,
   assertCouponResult,
@@ -46,19 +47,6 @@ const priorityByCase: Record<string, string> = {
   'CART-REPEAT-01': 'P1',
 };
 
-function amountText(page: Page, rowClass: string): ReturnType<Page['locator']> {
-  return page.locator(`.cart-total .${rowClass} .value-summary`);
-}
-
-async function expectAmount(page: Page, rowClass: string, expected: number): Promise<void> {
-  const variants = [
-    String(expected),
-    expected.toLocaleString('en-US'),
-    expected.toLocaleString('de-DE'),
-  ].map((value) => value.replace(/[.,]/g, '[.,]?'));
-  await expect(amountText(page, rowClass)).toContainText(new RegExp(`(?:${variants.join('|')})(?:\\.00)?`));
-}
-
 async function assertFixtureContains(testInfo: TestInfo, pattern: RegExp): Promise<void> {
   const state = await queryCartFixtureState();
   await testInfo.attach('cart-fixture-sql.txt', { body: state, contentType: 'text/plain' });
@@ -91,8 +79,8 @@ test.describe('SCRUM-82 Cart risk acceptance', () => {
   test('CART-01: thêm sản phẩm hợp lệ', async ({ page }, testInfo) => {
     await addSimpleProduct(page, 2);
     await assertCartLine(page, simple, 2);
-    await expectAmount(page, 'order-subtotal', 200);
-    await expectAmount(page, 'order-total', 200);
+    await assertCartAmount(page, 'order-subtotal', 200);
+    await assertCartAmount(page, 'order-total', 200);
     await assertFixtureContains(testInfo, /PRODUCT\|PW-SIMPLE-001\|10/);
     await assertFixtureContains(testInfo, /CART\|PW-SIMPLE-001\|2\|/);
   });
@@ -100,7 +88,7 @@ test.describe('SCRUM-82 Cart risk acceptance', () => {
   test('CART-02: thêm sản phẩm có biến thể', async ({ page }, testInfo) => {
     await addVariantProduct(page, 2, 'RedS');
     await assertCartLine(page, variant, 2, ['Red', 'S']);
-    await expectAmount(page, 'order-subtotal', 400);
+    await assertCartAmount(page, 'order-subtotal', 400);
     await assertFixtureContains(testInfo, /VARIANT\|PW-SHIRT\|5\|/);
     await assertFixtureContains(testInfo, /CART\|PW-SHIRT\|2\|/);
   });
@@ -108,7 +96,7 @@ test.describe('SCRUM-82 Cart risk acceptance', () => {
   test('CART-03: thêm sản phẩm với quantity bằng 1', async ({ page }, testInfo) => {
     await addSimpleProduct(page, 1);
     await assertCartLine(page, simple, 1);
-    await expectAmount(page, 'order-subtotal', 100);
+    await assertCartAmount(page, 'order-subtotal', 100);
     await assertFixtureContains(testInfo, /CART\|PW-SIMPLE-001\|1\|/);
   });
 
@@ -118,7 +106,7 @@ test.describe('SCRUM-82 Cart risk acceptance', () => {
     await assertCartLineCount(page, 2);
     await assertCartLine(page, simple, 1);
     await assertCartLine(page, variant, 1, ['Blue', 'M']);
-    await expectAmount(page, 'order-subtotal', 300);
+    await assertCartAmount(page, 'order-subtotal', 300);
     await assertFixtureContains(testInfo, /CART\|PW-SIMPLE-001\|1\|/);
     await assertFixtureContains(testInfo, /CART\|PW-SHIRT\|1\|/);
   });
@@ -127,7 +115,7 @@ test.describe('SCRUM-82 Cart risk acceptance', () => {
     await addSimpleProduct(page, 2);
     await updateCartLine(page, simple, 4);
     await assertCartLine(page, simple, 4);
-    await expectAmount(page, 'order-subtotal', 400);
+    await assertCartAmount(page, 'order-subtotal', 400);
     await assertFixtureContains(testInfo, /CART\|PW-SIMPLE-001\|4\|/);
   });
 
@@ -137,7 +125,7 @@ test.describe('SCRUM-82 Cart risk acceptance', () => {
     await removeCartLine(page, simple);
     await assertCartLineCount(page, 1);
     await assertCartLine(page, variant, 1, ['Blue', 'M']);
-    await expectAmount(page, 'order-subtotal', 200);
+    await assertCartAmount(page, 'order-subtotal', 200);
     await assertFixtureContains(testInfo, /CART\|PW-SHIRT\|1\|/);
     await assertFixtureContains(testInfo, /PRODUCT\|PW-SIMPLE-001\|10/);
   });
@@ -179,8 +167,8 @@ test.describe('SCRUM-82 Cart risk acceptance', () => {
     await addSimpleProduct(page, 2);
     await applyCouponCode(page, validCoupon);
     await assertCouponResult(page, 'Valid');
-    await expectAmount(page, 'order-subtotal', 200);
-    await expectAmount(page, 'order-total', 180);
+    await assertCartAmount(page, 'order-subtotal', 200);
+    await assertCartAmount(page, 'order-total', 180);
     await assertFixtureContains(testInfo, /DISCOUNT\|PW-CART-10PCT\|10(?:\.0+)?\|1/);
     await assertFixtureContains(testInfo, /COUPON\|.*PW-CART-10PCT/i);
   });
@@ -188,12 +176,12 @@ test.describe('SCRUM-82 Cart risk acceptance', () => {
   test('CART-12: từ chối coupon không hợp lệ', async ({ page }, testInfo) => {
     await addSimpleProduct(page, 2);
     await page.goto('/cart');
-    await expectAmount(page, 'order-subtotal', 200);
-    await expectAmount(page, 'order-total', 200);
+    await assertCartAmount(page, 'order-subtotal', 200);
+    await assertCartAmount(page, 'order-total', 200);
     await applyCouponCode(page, invalidCoupon);
     await assertCouponResult(page, 'Invalid');
-    await expectAmount(page, 'order-subtotal', 200);
-    await expectAmount(page, 'order-total', 200);
+    await assertCartAmount(page, 'order-subtotal', 200);
+    await assertCartAmount(page, 'order-total', 200);
     await assertFixtureContains(testInfo, /DISCOUNT\|PW-CART-10PCT\|10(?:\.0+)?\|1/);
   });
 
@@ -201,14 +189,14 @@ test.describe('SCRUM-82 Cart risk acceptance', () => {
     await addSimpleProduct(page, 1);
     await addVariantProduct(page, 2, 'RedS');
     await page.goto('/cart');
-    await expectAmount(page, 'order-subtotal', 500);
+    await assertCartAmount(page, 'order-subtotal', 500);
     await applyCouponCode(page, validCoupon);
     await assertCouponResult(page, 'Valid');
-    await expectAmount(page, 'order-subtotal', 500);
-    await expectAmount(page, 'order-subtotal-discount', 50);
-    await expectAmount(page, 'order-total', 450);
+    await assertCartAmount(page, 'order-subtotal', 500);
+    await assertCartAmount(page, 'order-subtotal-discount', 50);
+    await assertCartAmount(page, 'order-total', 450);
     await page.reload({ waitUntil: 'domcontentloaded' });
-    await expectAmount(page, 'order-total', 450);
+    await assertCartAmount(page, 'order-total', 450);
     await assertFixtureContains(testInfo, /CART\|PW-SIMPLE-001\|1\|/);
     await assertFixtureContains(testInfo, /CART\|PW-SHIRT\|2\|/);
     await assertFixtureContains(testInfo, /COUPON\|.*PW-CART-10PCT/i);
@@ -217,7 +205,7 @@ test.describe('SCRUM-82 Cart risk acceptance', () => {
   test('CART-14: thêm sản phẩm đúng bằng tồn kho', async ({ page }, testInfo) => {
     await addSimpleProduct(page, 10);
     await assertCartLine(page, simple, 10);
-    await expectAmount(page, 'order-subtotal', 1000);
+    await assertCartAmount(page, 'order-subtotal', 1000);
     await assertFixtureContains(testInfo, /PRODUCT\|PW-SIMPLE-001\|10/);
     await assertFixtureContains(testInfo, /CART\|PW-SIMPLE-001\|10\|/);
   });

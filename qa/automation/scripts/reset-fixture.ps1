@@ -48,9 +48,6 @@ IF @SimpleProductId IS NULL OR @VariantProductId IS NULL
 IF EXISTS (SELECT 1 FROM Product WHERE Id IN (@SimpleProductId, @VariantProductId) AND Published = 0)
     THROW 51000, 'FIXTURE_BLOCKED: Required fixture product is unpublished.', 1;
 
-IF '$(CaseId)' = 'PW-010' AND @OutOfStockProductId IS NULL
-    THROW 51000, 'FIXTURE_BLOCKED: PW-010 requires the missing PW-OOS-001 fixture.', 1;
-
 IF (SELECT COUNT(*) FROM ProductAttributeCombination WHERE ProductId = @VariantProductId) <> 4
     THROW 51000, 'FIXTURE_BLOCKED: PW-SHIRT must have exactly four attribute combinations.', 1;
 

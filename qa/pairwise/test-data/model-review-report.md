@@ -22,9 +22,15 @@ Ngày review: 2026-10-08
 Bảng factor trước đó chưa nêu rõ thời điểm quan sát `CartComposition`, cũng chưa
 xác định `ProductType` mô tả toàn bộ giỏ hàng hay line đang được thao tác. Điều này
 có thể dẫn đến cách chuẩn bị fixture không nhất quán, nhất là với `Add` và `Remove`.
-Tài liệu model hiện xác định `CartComposition` là trạng thái giỏ hàng ngay trước
-`CartAction`, còn `ProductType` là loại fixture/line đang được thao tác. Đây chỉ là
-làm rõ tài liệu, không thay đổi model hoặc output đã sinh.
+Tại thời điểm T07, tài liệu mô tả `CartComposition` là trạng thái giỏ hàng ngay
+trước `CartAction`, còn `ProductType` là loại fixture/line đang được thao tác.
+
+**Đính chính trong T11 (2026-11-27):** định nghĩa thời điểm trên không khớp các
+case `Add`: PW-002/PW-007 có hai line *sau* khi thêm, PW-006/PW-012 có một line
+sau khi thêm. Định nghĩa đã được sửa trong `docs/pict-pairwise.md`: đo sau
+`Add` (hoặc sau lần thêm bị từ chối), trước `Remove`, và
+số line không đổi qua `Update`. `ProductType` vẫn là line đang được thao tác.
+Không thay factor, constraint hoặc các row PICT đã sinh.
 
 ## Xác thực thực tế
 

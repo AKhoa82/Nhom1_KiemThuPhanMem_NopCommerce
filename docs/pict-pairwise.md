@@ -39,7 +39,9 @@ Các quyết định môi trường:
 model bắt buộc `CartComposition=OneLine`. Trường hợp xóa một line khỏi cart nhiều line
 là một hành vi khác và không được dùng chung với nhánh dừng checkout này.
 
-`CartComposition` mô tả số line trong cart ngay trước thao tác `CartAction`;
+`CartComposition` mô tả số line ở checkpoint dùng để đánh giá thao tác:
+với `Add` là sau khi thêm (nếu bị từ chối thì là cart không đổi), với `Update`
+là số line trước/sau cập nhật, còn với `Remove` là ngay trước khi xóa line cuối.
 `ProductType` mô tả loại fixture/line đang được thao tác, không khẳng định mọi line
 trong cart đều cùng loại.
 

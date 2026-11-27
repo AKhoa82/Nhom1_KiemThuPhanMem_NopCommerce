@@ -127,7 +127,9 @@ must name the current test store.
 N02 uses `scripts/reset-n02-fixture.ps1`, scoped to the current guest customer
 cookie and the synthetic registered account. It clears only their `PW-SHIRT`
 Cart rows in the selected store. Existing coupon or gift-card codes block the
-run without being deleted. It restores Red/S stock 5 and Blue/M stock 3, then
+run without being deleted. Cart or wishlist rows for other products in that
+store also block the run, because they would invalidate N02's expected cart
+lines. It restores Red/S stock 5 and Blue/M stock 3, then
 restarts the local store to clear cached inventory. The ordinary
 `PW-*` reset script is not used by N02. The N02 test attaches SQL snapshots
 with `CustomerId`, `StoreId`, variant and quantity for both carts; the UI
@@ -150,8 +152,9 @@ node ../pairwise/n02-cart/generate.mjs
 ```
 
 Read `../pairwise/n02-cart/coverage-report.md` for generated pair coverage.
-The CSV records UI results from `execution.json`; two additional rows remain
-`NotCoded/NotRun` and generated coverage is separate from UI pass rate.
+The CSV records UI results from `execution.json`; all eight generated N02 rows
+currently map to implemented UI cases. Generated coverage remains separate
+from UI pass rate.
 
 Without required local values, every `PW-xxx` test is deliberately skipped as
 `Blocked: environment/fixture` rather than reported as a product failure.
