@@ -1,5 +1,6 @@
 import { spawn } from 'node:child_process';
 import { runtimeConfig } from './runtime-config';
+import { dockerCommand } from './host-tools';
 
 /** N02 evidence is scoped to the two customers and one store in the current run. */
 export async function queryN02CartState(guestGuid: string, accountEmail: string, storeId: number): Promise<string> {
@@ -220,7 +221,7 @@ FROM [Order] o WHERE @CustomerId IS NOT NULL AND o.CustomerId = @CustomerId;
 
 export function executeReadonlySql(sql: string, wide = false): Promise<string> {
   return new Promise((resolve, reject) => {
-    const child = spawn('docker.exe', [
+    const child = spawn(dockerCommand, [
       'exec', '-i', runtimeConfig.databaseContainer,
       // mssql-tools18 on newer images, mssql-tools on older ones (e.g. 2019-CU18).
       'sh', '-c', 'S=/opt/mssql-tools18/bin/sqlcmd; [ -x "$S" ] || S=/opt/mssql-tools/bin/sqlcmd; exec "$S" "$@"', 'sh',

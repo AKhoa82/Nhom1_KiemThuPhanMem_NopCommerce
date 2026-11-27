@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import type { Page } from '@playwright/test';
 import { FixtureBlockedError, waitForStoreReady } from './fixtures';
 import { runtimeConfig } from './runtime-config';
+import { powershellCommand } from './host-tools';
 
 const execFile = promisify(execFileCallback);
 const resetScript = resolve(__dirname, '../../scripts/reset-n02-fixture.ps1');
@@ -32,7 +33,7 @@ export async function resetN02Fixture(page: Page, guestGuid: string, withAccount
 
   let output: string;
   try {
-    ({ stdout: output } = await execFile('powershell.exe', [
+    ({ stdout: output } = await execFile(powershellCommand, [
       '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', resetScript,
       '-GuestGuid', guestGuid,
       '-AccountEmail', withAccount ? runtimeConfig.registeredEmail : '',

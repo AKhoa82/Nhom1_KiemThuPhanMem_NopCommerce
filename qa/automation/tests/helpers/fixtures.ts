@@ -6,6 +6,7 @@ import type { Page } from '@playwright/test';
 import type { PairwiseCase } from './pairwise-data';
 import { runtimeConfig } from './runtime-config';
 import { queryCheckoutEvidence } from './sql-fixture';
+import { powershellCommand } from './host-tools';
 
 const execFile = promisify(execFileCallback);
 const resetScript = resolve(__dirname, '../../scripts/reset-fixture.ps1');
@@ -19,7 +20,7 @@ export class FixtureBlockedError extends Error {}
 
 export async function resetFixture(page: Page, row: PairwiseCase): Promise<FixtureBaseline> {
   try {
-    await execFile('powershell.exe', [
+    await execFile(powershellCommand, [
       '-NoProfile',
       '-ExecutionPolicy', 'Bypass',
       '-File', resetScript,

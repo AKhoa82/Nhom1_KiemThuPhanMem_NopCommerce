@@ -9,7 +9,7 @@ SELECT CONCAT('PRODUCT|', Id, '|limited=', LimitedToStores)
 FROM Product WHERE Sku = 'PW-SHIRT' AND Deleted = 0;`;
 
 if (!process.env.QA_SQL_PASSWORD) throw new Error('QA_SQL_PASSWORD is required');
-const result = spawnSync('docker.exe', [
+const result = spawnSync(process.platform === 'win32' ? 'docker.exe' : 'docker', [
   'exec', '-i', 'nopcommerce_mssql_server', '/opt/mssql-tools18/bin/sqlcmd',
   '-C', '-S', 'localhost', '-U', 'sa', '-P', process.env.QA_SQL_PASSWORD,
   '-d', 'nopcommerce', '-b', '-h', '-1', '-W',

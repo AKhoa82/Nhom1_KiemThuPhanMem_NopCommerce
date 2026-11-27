@@ -1,7 +1,4 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: .NET
+name: .NET and N04 QA
 
 on:
   push:
@@ -11,9 +8,7 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -26,3 +21,141 @@ jobs:
       run: dotnet build --no-restore --configuration Release src
     - name: Test
       run: dotnet test --no-build --configuration Release --verbosity normal src
+
+  pairwise-model:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: npm
+        cache-dependency-path: qa/automation/package-lock.json
+    - name: Install pinned PICT
+      shell: pwsh
+      run: ./qa/pairwise/install-pict.ps1
+    - name: Verify model against checked-in PICT rows
+      shell: pwsh
+      run: ./qa/ci/verify-model.ps1
+    - name: Check CI gate rejection rules
+      run: node qa/ci/test-gates.cjs
+    - name: Validate rows, constraints and feasible pair coverage
+      shell: pwsh
+      run: |
+        ./qa/pairwise/validate.ps1
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        ./qa/pairwise/validate-invalid-combinations.ps1
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    - name: Validate independent N02 Cart model
+      shell: pwsh
+      run: |
+        node qa/pairwise/n02-cart/generate.mjs
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        git diff --exit-code -- qa/pairwise/n02-cart/generated-cases.csv qa/pairwise/n02-cart/coverage-report.md
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    - name: Upload model report even on failure
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: n04-model-${{ github.run_id }}-${{ github.sha }}
+        path: |
+          qa/ci/reports/model-gate.json
+          qa/pairwise/test-data/summary.md
+          qa/pairwise/test-data/coverage-report.csv
+          qa/pairwise/n02-cart/coverage-report.md
+        if-no-files-found: warn
+        retention-days: 7
+
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      QA_BILLING_EMAIL: qa.guest.n04@example.test
+      NOP_BASE_URL: http://localhost/
+      QA_CONFIGURABLE_PRODUCT_PATH: /pw-shirt-variants
+      QA_FIXTURE_VERSION: S2-ADV-CART-AUTO-v1
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: npm
+        cache-dependency-path: qa/automation/package-lock.json
+    - name: Prepare disposable run credentials and manifest
+      shell: bash
+      run: |
+        mkdir -p qa/ci/reports
+        printf '{"sha":"%s","runId":"%s","fixture":"S2-ADV-CART-AUTO-v1"}\n' "$GITHUB_SHA" "$GITHUB_RUN_ID" > qa/ci/reports/run-manifest.json
+        # Generate credentials for this disposable run instead of requiring
+        # long-lived repository secrets or reusing passwords.
+        printf 'QA_ADMIN_EMAIL=admin.n04.%s.%s@example.test\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
+        printf 'QA_PW_REGISTERED_EMAIL=qa.pairwise.%s.%s@example.test\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
+        printf 'QA_REGISTERED_EMAIL=qa.n02.%s.%s@example.test\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
+        for name in QA_SQL_PASSWORD QA_ADMIN_PASSWORD QA_PW_REGISTERED_PASSWORD QA_REGISTERED_PASSWORD; do
+          value="N04a$(openssl rand -hex 24)!"
+          echo "::add-mask::$value"
+          printf '%s=%s\n' "$name" "$value" >> "$GITHUB_ENV"
+        done
+        pwsh --version
+    - name: Install Chromium and test dependencies
+      working-directory: qa/automation
+      run: |
+        npm ci
+        npx playwright install --with-deps chromium
+        node -e "const fs=require('fs');const p=require('./node_modules/@playwright/test/package.json');fs.writeFileSync('../ci/reports/tool-versions.json',JSON.stringify({node:process.version,playwright:p.version,fixture:process.env.QA_FIXTURE_VERSION},null,2)+'\n')"
+    - name: Build and start disposable store and SQL Server
+      shell: bash
+      run: |
+        set -o pipefail
+        docker compose -f qa/ci/compose.yml up -d --build 2>&1 | tee qa/ci/reports/compose.log
+    - name: Bootstrap installation and fixture
+      id: bootstrap
+      working-directory: qa/automation
+      shell: bash
+      run: |
+        set -o pipefail
+        node scripts/ci-bootstrap.cjs 2>&1 | tee ../ci/reports/bootstrap.log
+    - name: Smoke test real storefront
+      id: smoke
+      if: ${{ !cancelled() && steps.bootstrap.outcome == 'success' }}
+      working-directory: qa/automation
+      run: npx playwright test tests/smoke.spec.ts
+    - name: Run 14 original Pairwise cases on Chromium
+      if: ${{ !cancelled() && steps.smoke.outcome == 'success' }}
+      working-directory: qa/automation
+      env:
+        QA_REPORT_DIR: reports/n04-pw
+        QA_ARTIFACT_DIR: artifacts/n04-pw
+      run: npm run test:pw
+    - name: Reject missing, failed or skipped Pairwise cases
+      if: ${{ always() && steps.smoke.outcome == 'success' }}
+      working-directory: qa/automation
+      run: node ../ci/verify-results.cjs PW reports/n04-pw
+    - name: Run 11 ADV Cart cases on Chromium
+      if: ${{ always() && steps.smoke.outcome == 'success' }}
+      working-directory: qa/automation
+      env:
+        QA_REPORT_DIR: reports/n04-adv
+        QA_ARTIFACT_DIR: artifacts/n04-adv
+      run: npm run test:adv-cart
+    - name: Reject missing, failed or skipped ADV cases
+      if: ${{ always() && steps.smoke.outcome == 'success' }}
+      working-directory: qa/automation
+      run: node ../ci/verify-results.cjs ADV reports/n04-adv
+    - name: Upload reports and failure evidence
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: n04-e2e-${{ github.run_id }}-${{ github.sha }}
+        path: |
+          qa/ci/reports/
+          qa/automation/reports/n04-pw/
+          qa/automation/reports/n04-adv/
+          qa/automation/artifacts/n04-pw/
+          qa/automation/artifacts/n04-adv/
+        if-no-files-found: warn
+        retention-days: 7
+    - name: Remove disposable containers
+      if: always()
+      continue-on-error: true
+      run: docker compose -f qa/ci/compose.yml down --volumes --remove-orphans
