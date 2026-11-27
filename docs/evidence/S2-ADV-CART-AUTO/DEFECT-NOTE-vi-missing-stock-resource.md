@@ -2,6 +2,8 @@
 
 Ngày phát hiện: 26/11/2026. Liên quan: SCRUM-96 (B01, gộp giỏ vượt tồn kho). Mức độ đề xuất: Minor (hiển thị/UX).
 
+> Defect này được đưa vào danh sách chính với mã **DEF-04**. Phân tích đầy đủ (pairwise case, tần suất, module, root cause, cách xác minh) nằm ở [DEFECT-ANALYSIS-PAIRWISE.md](../SCRUM-64/DEFECT-ANALYSIS-PAIRWISE.md#def-04--cảnh-báo-gộp-giỏ-hiện-khóa-tài-nguyên-thô-khi-gói-vi-vn-thiếu-shoppingcartquantityexceedsstock).
+
 ## Hiện tượng
 
 Với khách dùng ngôn ngữ **Tiếng Việt**, khi đăng nhập bị từ chối vì gộp giỏ vượt tồn kho, thông báo hiển thị:

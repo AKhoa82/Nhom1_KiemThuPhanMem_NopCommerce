@@ -1,0 +1,14 @@
+-- DEF-04: trang thai resource trong luot tai hien, sau buoc xoa va TRUOC khi khoi phuc (27/11/2026)
+-- Truy van: SET NOCOUNT ON; SELECT CONVERT(varchar(19), SYSUTCDATETIME(), 126) AS utc_time; SELECT l.LanguageCulture, COUNT(r.Id) AS so_dong FROM Language l LEFT JOIN LocaleStringResource r ON r.LanguageId = l.Id AND r.ResourceName = 'shoppingcart.quantityexceedsstock' GROUP BY l.LanguageCulture ORDER BY l.LanguageCulture; SELECT l.LanguageCulture, COUNT(r.Id) AS tong_so_chuoi FROM Language l LEFT JOIN LocaleStringResource r ON r.LanguageId = l.Id GROUP BY l.LanguageCulture ORDER BY l.LanguageCulture;
+
+utc_time
+--------
+2026-11-27T07:31:12
+LanguageCulture so_dong
+--------------- -------
+en-US 1
+vi-VN 0
+LanguageCulture tong_so_chuoi
+--------------- -------------
+en-US 8266
+vi-VN 1297
