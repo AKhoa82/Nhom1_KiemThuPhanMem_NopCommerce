@@ -139,6 +139,19 @@ WHERE o.Deleted = 0
        OR ba.Email = @Email)
 ORDER BY o.Id;
 
+DECLARE @LatestOrderId int = (
+  SELECT TOP 1 o.Id FROM [Order] o
+  LEFT JOIN Address ba ON ba.Id = o.BillingAddressId
+  WHERE o.Deleted = 0
+    AND ((@CustomerId IS NOT NULL AND o.CustomerId = @CustomerId) OR ba.Email = @Email)
+  ORDER BY o.Id DESC
+);
+SELECT CONCAT('ORDER_ITEM|', oi.OrderId, '|', p.Sku, '|', oi.Quantity)
+FROM OrderItem oi
+INNER JOIN Product p ON p.Id = oi.ProductId
+WHERE oi.OrderId = @LatestOrderId
+ORDER BY p.Sku, oi.Id;
+
 SELECT CONCAT('CART_COUNT|', COUNT_BIG(1))
 FROM ShoppingCartItem sci
 WHERE sci.ShoppingCartTypeId = 1

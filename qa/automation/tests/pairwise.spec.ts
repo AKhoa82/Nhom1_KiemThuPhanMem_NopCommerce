@@ -213,7 +213,15 @@ for (const row of pairwiseCases) {
           const after = await queryCheckoutEvidence(customerEmail);
           await testInfo.attach('checkout-after.sql.txt', { body: after, contentType: 'text/plain' });
           if (row.address === 'Complete') {
-            await assertCheckoutOrderEvidence(baseline.checkoutEvidenceBefore, after, cartCase(row.caseId).expected.total + cartManifest.checkout.groundShipping);
+            const expectedItems = cartCase(row.caseId).expected.lines.map(line => ({
+              sku: line.product === simple ? 'PW-SIMPLE-001' : 'PW-SHIRT',
+              quantity: line.quantity,
+            }));
+            await assertCheckoutOrderEvidence(
+              baseline.checkoutEvidenceBefore, after,
+              cartCase(row.caseId).expected.total + cartManifest.checkout.groundShipping,
+              expectedItems,
+            );
           } else {
             assertCheckoutOrderCountUnchanged(baseline.checkoutEvidenceBefore, after);
           }
