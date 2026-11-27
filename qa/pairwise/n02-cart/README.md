@@ -19,8 +19,8 @@ PICT 3.7.4 cannot read this repository's non-ASCII Windows path, so the
 generator copies the model to an ASCII temp path while running it and removes
 the temp file afterward.
 
-Each CSV row maps to a concrete fixture. `ExistingUiTest` links the six
-already coded business cases. `NotCoded` marks two additional RepeatAdd
-combinations from the model. `ConfirmedFixtureRun` uses the pinned run in
-`execution.json` for the six coded cases; the other two remain `NotRun`.
-Pair coverage alone does not imply a UI Pass.
+Each CSV row maps to a concrete fixture. `ExistingUiTest` links all eight
+implemented cases: four merge and four repeat cases. `ConfirmedFixtureRun`
+uses the pinned run in `execution.json`; the latest recorded attempt has
+8 passed, 0 failed and 0 skipped/blocked. Pair coverage alone does not imply
+a UI Pass; read the execution record separately.

@@ -87,6 +87,11 @@ IF EXISTS (SELECT 1 FROM GenericAttribute
       AND (EntityId = @GuestId OR EntityId = @AccountId)
       AND NULLIF(LTRIM(RTRIM([Value])), N'') IS NOT NULL)
     THROW 51000, 'FIXTURE_BLOCKED: N02 customers have an active coupon or gift card; use clean QA customers.', 1;
+IF EXISTS (SELECT 1 FROM ShoppingCartItem
+    WHERE (CustomerId = @GuestId OR CustomerId = @AccountId)
+      AND StoreId = @StoreId
+      AND NOT (ShoppingCartTypeId = 1 AND ProductId = @ProductId))
+    THROW 51000, 'FIXTURE_BLOCKED: N02 customers have a cart or wishlist row outside the N02 fixture; use clean QA customers.', 1;
 
 IF '$(ValidateOnly)' = '1'
 BEGIN

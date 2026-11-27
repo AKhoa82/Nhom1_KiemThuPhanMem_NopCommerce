@@ -322,15 +322,22 @@
     "caseId": "PW-010",
     "group": "PW",
     "path": "Negative",
-    "precondition": "Guest; empty isolated cart; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
-    "input": "Attempt add out-of-stock product; inspect empty cart",
+    "precondition": "Guest; isolated cart with Simple 1 and valid coupon; fixture S2-ADV-CART-AUTO-v1; Simple 100/stock10, Shirt 200/RedS5/BlueM3; coupon 10% subtotal; tax/fees 0",
+    "input": "Add Simple 1; apply valid coupon; attempt to add configurable Red/S 6 while stock is 5; verify existing line and coupon remain",
     "expected": {
-      "lines": [],
+      "lines": [
+        {
+          "product": "PW-Simple-Stock",
+          "attributes": [],
+          "quantity": 1,
+          "unitPrice": 100
+        }
+      ],
       "warning": null,
-      "subtotal": 0,
-      "discount": 0.0,
-      "total": 0.0,
-      "outcome": "OutOfStock"
+      "subtotal": 100,
+      "discount": 10.0,
+      "total": 90.0,
+      "outcome": "StockBlocked"
     },
     "invariants": [
       "INV-CART-01",
