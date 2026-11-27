@@ -146,7 +146,7 @@ export async function submitMissingRequiredBillingAddress(page: Page): Promise<v
   await page.locator('#billingaddress-next-button').click();
 }
 
-async function addConfiguredProduct(page: Page, path: string, quantity: number, color: 'Red' | 'Blue', size: 'S' | 'M'): Promise<void> {
+async function submitConfiguredProduct(page: Page, path: string, quantity: number, color: 'Red' | 'Blue', size: 'S' | 'M'): Promise<void> {
   await page.goto(path);
   await expect(page.locator('.product-details-page')).toBeVisible();
   await ensureUsdCurrency(page);
@@ -159,6 +159,10 @@ async function addConfiguredProduct(page: Page, path: string, quantity: number, 
   await attributes.nth(1).selectOption({ label: size });
   await page.locator('input.qty-input').fill(String(quantity));
   await page.locator('button[id^="add-to-cart-button-"]').click();
+}
+
+async function addConfiguredProduct(page: Page, path: string, quantity: number, color: 'Red' | 'Blue', size: 'S' | 'M'): Promise<void> {
+  await submitConfiguredProduct(page, path, quantity, color, size);
   await expect(page.locator('.bar-notification.success')).toBeVisible();
 }
 
@@ -168,6 +172,16 @@ export async function addSimpleProduct(page: Page, quantity: number): Promise<vo
 
 export async function addVariantProduct(page: Page, quantity: number, variant: 'RedS' | 'BlueM'): Promise<void> {
   await addConfiguredProduct(
+    page,
+    runtimeConfig.configurableProductPath,
+    quantity,
+    variant === 'RedS' ? 'Red' : 'Blue',
+    variant === 'RedS' ? 'S' : 'M',
+  );
+}
+
+export async function attemptVariantProduct(page: Page, quantity: number, variant: 'RedS' | 'BlueM'): Promise<void> {
+  await submitConfiguredProduct(
     page,
     runtimeConfig.configurableProductPath,
     quantity,

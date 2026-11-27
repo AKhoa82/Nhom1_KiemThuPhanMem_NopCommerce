@@ -85,9 +85,7 @@ export async function waitForStoreReady(page: Page, blockedMessage: string, budg
 }
 
 async function verifyRuntimeFixture(page: Page, row: PairwiseCase): Promise<void> {
-  const productPath = row.inventoryState === 'OutOfStock'
-    ? runtimeConfig.outOfStockProductPath
-    : row.productType === 'ConfigurablePhysical'
+  const productPath = row.productType === 'ConfigurablePhysical'
       ? runtimeConfig.configurableProductPath
       : runtimeConfig.simpleProductPath;
   const response = await page.goto(productPath, { waitUntil: 'domcontentloaded' });
@@ -95,7 +93,7 @@ async function verifyRuntimeFixture(page: Page, row: PairwiseCase): Promise<void
     throw new FixtureBlockedError(`FIXTURE_BLOCKED: Product slug '${productPath}' is unavailable for ${row.caseId}.`);
   }
 
-  if (row.productType !== 'ConfigurablePhysical' || row.inventoryState === 'OutOfStock') return;
+  if (row.productType !== 'ConfigurablePhysical') return;
 
   const attributes = page.locator('select[name^="product_attribute_"]');
   if (await attributes.count() !== 2) {

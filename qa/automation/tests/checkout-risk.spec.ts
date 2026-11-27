@@ -24,19 +24,22 @@ const execFile = promisify(execFileCallback);
 const missingEnvironment = (): string | undefined => {
   const missing: string[] = [];
   if (!runtimeConfig.sqlPassword) missing.push('QA_SQL_PASSWORD');
-  if (!runtimeConfig.registeredEmail) missing.push('QA_REGISTERED_EMAIL');
-  if (!runtimeConfig.registeredPassword) missing.push('QA_REGISTERED_PASSWORD');
+  if (!runtimeConfig.pwRegisteredEmail) missing.push('QA_PW_REGISTERED_EMAIL');
+  if (!runtimeConfig.pwRegisteredPassword) missing.push('QA_PW_REGISTERED_PASSWORD');
   if (!runtimeConfig.billing.email) missing.push('QA_BILLING_EMAIL');
   return missing.length ? `Blocked: environment/fixture is not configured: ${missing.join(', ')}.` : undefined;
 };
 
 async function prepareShipping(page: Page): Promise<FixtureBaseline> {
   const baseline = await resetFixture(page, resetRow!);
-  await loginRegisteredCustomer(page);
+  await loginRegisteredCustomer(page, { email: runtimeConfig.pwRegisteredEmail, password: runtimeConfig.pwRegisteredPassword });
   await addSimpleProduct(page, 1);
   await beginCheckout(page);
   await reachShippingMethod(page);
-  return baseline;
+  return {
+    ...baseline,
+    checkoutEvidenceBefore: await queryCheckoutEvidence(runtimeConfig.pwRegisteredEmail),
+  };
 }
 
 async function submitShippingValue(page: Page, value: string): Promise<void> {
@@ -102,7 +105,7 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
     await expect(selectedGround).toBeChecked();
     await expect(selectedGround).toHaveValue(selectedValue);
 
-    const after = await queryCheckoutEvidence(runtimeConfig.registeredEmail);
+    const after = await queryCheckoutEvidence(runtimeConfig.pwRegisteredEmail);
     await attachEvidence(testInfo, 'shp-01-after.sql.txt', after);
     assertCheckoutOrderCountUnchanged(before, after);
     assertCheckoutCartCount(after, 1);
@@ -134,7 +137,7 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
       await expect(page).toHaveURL(/checkout\/shippingmethod/i);
       await expect(page).not.toHaveURL(/checkout\/(paymentmethod|paymentinfo|confirm|completed)/i);
 
-      const after = await queryCheckoutEvidence(runtimeConfig.registeredEmail);
+      const after = await queryCheckoutEvidence(runtimeConfig.pwRegisteredEmail);
       await attachEvidence(testInfo, `${caseId}-after.sql.txt`, after);
       assertCheckoutOrderCountUnchanged(before, after);
       assertCheckoutCartCount(after, 1);
@@ -190,7 +193,7 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
       ]);
       await expect(page).toHaveURL(/checkout\/confirm/i);
       await expect(page.locator('.message-error')).toContainText('QA decline');
-      const snapshot = await queryCheckoutEvidence(runtimeConfig.registeredEmail);
+      const snapshot = await queryCheckoutEvidence(runtimeConfig.pwRegisteredEmail);
       await attachEvidence(testInfo, name, snapshot);
       assertCheckoutOrderCountUnchanged(before, snapshot);
       assertCheckoutCartCount(snapshot, 1);
@@ -214,7 +217,7 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
       throw error;
     }
 
-    await loginRegisteredCustomer(page);
+    await loginRegisteredCustomer(page, { email: runtimeConfig.pwRegisteredEmail, password: runtimeConfig.pwRegisteredPassword });
     await addSimpleProduct(page, 5);
     await beginCheckout(page);
     await reachShippingMethod(page);
@@ -233,7 +236,7 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
     }
     await expect(page).toHaveURL(/checkout\/confirm/i);
 
-    const before = await queryCheckoutEvidence(runtimeConfig.registeredEmail);
+    const before = await queryCheckoutEvidence(runtimeConfig.pwRegisteredEmail);
     await attachEvidence(testInfo, 'inv-01-before.sql.txt', before);
 
     // Direct SQL changes bypass nopCommerce's inventory cache. Restart the local
@@ -252,7 +255,7 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
       }
       await page.waitForTimeout(1_000);
     }
-    const reducedStock = await queryCheckoutEvidence(runtimeConfig.registeredEmail);
+    const reducedStock = await queryCheckoutEvidence(runtimeConfig.pwRegisteredEmail);
     await attachEvidence(testInfo, 'inv-01-stock-reduced.sql.txt', reducedStock);
     expect(reducedStock).toContain('PRODUCT|PW-SIMPLE-001|4');
 
@@ -268,7 +271,7 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
         .first()
     ).toBeVisible();
 
-    const after = await queryCheckoutEvidence(runtimeConfig.registeredEmail);
+    const after = await queryCheckoutEvidence(runtimeConfig.pwRegisteredEmail);
     await attachEvidence(testInfo, 'inv-01-after.sql.txt', after);
     assertCheckoutOrderCountUnchanged(before, after);
     assertCheckoutCartCount(after, 1);
@@ -289,7 +292,7 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
     }
 
     // 1. Prepare registered customer cart with 1 simple product and 1 variant (Blue M)
-    await loginRegisteredCustomer(page);
+    await loginRegisteredCustomer(page, { email: runtimeConfig.pwRegisteredEmail, password: runtimeConfig.pwRegisteredPassword });
     await addSimpleProduct(page, 1);
     await addVariantProduct(page, 1, 'BlueM');
     // Log out to return to anonymous guest session
@@ -302,8 +305,8 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
 
     // 3. Log in as registered customer from guest session
     await page.goto('/login');
-    await page.locator('#Email').fill(runtimeConfig.registeredEmail);
-    await page.locator('#Password').fill(runtimeConfig.registeredPassword);
+    await page.locator('#Email').fill(runtimeConfig.pwRegisteredEmail);
+    await page.locator('#Password').fill(runtimeConfig.pwRegisteredPassword);
     await page.locator('button.login-button').click();
     await expect(page.locator('a.ico-account')).toBeVisible();
 
@@ -324,7 +327,7 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
     await expect(blueLine.locator('input.qty-input')).toHaveValue('1');
 
     // Snapshot evidence
-    const snapshot = await queryCheckoutEvidence(runtimeConfig.registeredEmail);
+    const snapshot = await queryCheckoutEvidence(runtimeConfig.pwRegisteredEmail);
     await attachEvidence(testInfo, 'cart-merge-01-after.sql.txt', snapshot);
     assertCheckoutCartCount(snapshot, 3);
   });
@@ -352,7 +355,7 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
       catch { return 0; }
     }).toBe(200);
 
-    await loginRegisteredCustomer(page);
+    await loginRegisteredCustomer(page, { email: runtimeConfig.pwRegisteredEmail, password: runtimeConfig.pwRegisteredPassword });
     await addSimpleProduct(page, 4);
     await page.locator('a.ico-logout').click();
     await page.waitForLoadState('domcontentloaded');
@@ -372,16 +375,18 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
     await attachEvidence(testInfo, 'cart-merge-overstock-before.txt', `total simple quantity: ${before}`);
 
     await page.goto('/login');
-    await page.locator('#Email').fill(runtimeConfig.registeredEmail);
-    await page.locator('#Password').fill(runtimeConfig.registeredPassword);
+    await page.locator('#Email').fill(runtimeConfig.pwRegisteredEmail);
+    await page.locator('#Password').fill(runtimeConfig.pwRegisteredPassword);
     await page.locator('button.login-button').click();
     // A rejected merge now leaves the customer signed out, with the guest cart intact.
     // Requiring a signed-in state here was a stale oracle from before SCRUM-96.
     await expect(page).toHaveURL(/\/cart/i);
+    await expect(page.getByText('Sign-in is incomplete', { exact: false })).toBeVisible();
+    await expect(page.locator('a.ico-account')).toHaveCount(0);
     await expect(page.locator('a.ico-logout')).toHaveCount(0);
     await expect(page.locator('.bar-notification.warning')).toContainText(/\b5\b/);
-    await expect(page.locator('table.cart tbody tr')).toHaveCount(1);
-    await expect(page.locator('table.cart tbody tr input.qty-input')).toHaveValue('2');
+    await expect(page.locator('table.cart tbody tr').filter({ hasText: 'PW-Simple-Stock' })).toHaveCount(1);
+    await expect(page.locator('table.cart tbody tr').filter({ hasText: 'PW-Simple-Stock' }).locator('input.qty-input')).toHaveValue('2');
     await testInfo.attach('cart-merge-overstock-guest-after.png', {
       body: await page.screenshot({ fullPage: true }),
       contentType: 'image/png',
@@ -405,7 +410,7 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
       throw error;
     }
 
-    await loginRegisteredCustomer(page);
+    await loginRegisteredCustomer(page, { email: runtimeConfig.pwRegisteredEmail, password: runtimeConfig.pwRegisteredPassword });
     await addSimpleProduct(page, 1);
     await beginCheckout(page);
     await reachShippingMethod(page);
@@ -425,7 +430,7 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
     }
     await expect(page).toHaveURL(/checkout\/confirm/i);
 
-    const before = await queryCheckoutEvidence(runtimeConfig.registeredEmail);
+    const before = await queryCheckoutEvidence(runtimeConfig.pwRegisteredEmail);
     await attachEvidence(testInfo, 'chk-race-01-before.sql.txt', before);
 
     // Extract cookies and form parameters for concurrent POST requests
@@ -461,7 +466,7 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
     ].join('\n');
     await attachEvidence(testInfo, 'chk-race-01-responses.txt', responseLog);
 
-    const after = await queryCheckoutEvidence(runtimeConfig.registeredEmail);
+    const after = await queryCheckoutEvidence(runtimeConfig.pwRegisteredEmail);
     await attachEvidence(testInfo, 'chk-race-01-after.sql.txt', after);
 
     // Database check: At most 1 order must be created

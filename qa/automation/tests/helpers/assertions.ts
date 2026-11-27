@@ -32,6 +32,16 @@ export async function readCartTotals(page: Page): Promise<{ subtotal: number; di
   return { subtotal: await amount(cartManifest.selectors.subtotal), discount, total: await amount(cartManifest.selectors.total) };
 }
 
+export async function assertCartAmount(page: Page, rowClass: string, expected: number): Promise<void> {
+  const field = rowClass === 'order-subtotal' ? 'subtotal'
+    : rowClass === 'order-subtotal-discount' ? 'discount'
+      : rowClass === 'order-total' ? 'total'
+        : undefined;
+  if (!field) throw new Error(`FAILED_AUTOMATION: unsupported cart total row '${rowClass}'`);
+  const totals = await readCartTotals(page);
+  expect(totals[field], `${rowClass}: expected exact amount ${expected}`).toBe(expected);
+}
+
 /** Read the current page without navigation, preserving transient warnings and checkout errors. */
 interface CartSnapshot {
   lines: { product: string; attributes: string[]; quantity: number; unitPrice: number; lineTotal: number }[];

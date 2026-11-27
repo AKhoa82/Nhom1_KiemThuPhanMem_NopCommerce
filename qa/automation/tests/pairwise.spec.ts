@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { assertCartState, assertCheckoutOrderCountUnchanged, assertAddressValidationBlocked, assertCartEmpty, assertCartLine, assertCartLineCount, assertCheckoutCompleted, assertCheckoutOrderEvidence, assertCouponResult, assertStockBlocked } from './helpers/assertions';
-import { addOutOfStockProduct, addSimpleProduct, addVariantProduct, applyCouponCode, beginCheckout, completeLocalCheckout as completeCheckoutSteps, invalidCoupon, loginRegisteredCustomer, removeCartLine, submitMissingRequiredBillingAddress, updateCartLine, validCoupon } from './helpers/cart-checkout';
+import { addSimpleProduct, addVariantProduct, applyCouponCode, attemptVariantProduct, beginCheckout, completeLocalCheckout as completeCheckoutSteps, invalidCoupon, loginRegisteredCustomer, removeCartLine, submitMissingRequiredBillingAddress, updateCartLine, validCoupon } from './helpers/cart-checkout';
 import { FixtureBlockedError, resetFixture } from './helpers/fixtures';
 import { loadPairwiseCases, type PairwiseCase } from './helpers/pairwise-data';
 import { blockedReason, runtimeConfig } from './helpers/runtime-config';
@@ -143,10 +143,16 @@ async function runCase(page: Page, row: PairwiseCase): Promise<void> {
       await assertCheckoutCompleted(page);
       return;
     case 'PW-010':
-      await addOutOfStockProduct(page);
+      await addSimpleProduct(page, 1);
+      await applyCouponCode(page, validCoupon);
+      await assertCouponResult(page, 'Valid');
+      await checkpoint();
+      const beforeOutOfStockAdd = await queryCartFixtureState();
+      await attemptVariantProduct(page, 6, 'RedS');
       await assertStockBlocked(page);
       await page.goto('/cart');
-      await checkpoint();
+      await assertCartState(page, expected, row.caseId);
+      expect(await queryCartFixtureState(), `[${row.caseId}] rejected configurable add leaves SQL cart/stock unchanged`).toBe(beforeOutOfStockAdd);
       return;
     case 'PW-011':
       await addSimpleProduct(page, 1);
