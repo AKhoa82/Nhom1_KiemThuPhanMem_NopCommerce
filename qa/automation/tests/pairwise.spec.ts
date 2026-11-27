@@ -63,7 +63,7 @@ async function runCase(page: Page, row: PairwiseCase): Promise<void> {
     case 'PW-001':
       await addSimpleProduct(page, 1);
       await updateCartLine(page, simple, 2);
-      await assertCartLine(page, simple, 2);
+      await assertCartLine(page, simple, 999); // Intentional CI gate probe; never merge.
       await applyCouponCode(page, invalidCoupon);
       await assertCouponResult(page, 'Invalid');
       await checkpoint();
