@@ -18,11 +18,14 @@ inside the stable gate. Reports and failure screenshots/traces are uploaded with
 `always()` to the Actions run as `n04-model-*` and `n04-e2e-*` artifacts for seven
 days. The runner's store/database are destroyed after the run.
 
-The job generates fresh SQL/admin/customer credentials for each run and uses
-synthetic `qa.pairwise.*@example.test` and `qa.n02.*@example.test` customer
-emails. Credentials are masked in logs and live only in the disposable runner
-store, so the E2E job also works for fork pull requests without repository
-secrets.
+The job reads credentials from GitHub Actions secrets when configured:
+`N04_QA_SQL_PASSWORD`, `N04_QA_ADMIN_EMAIL`, `N04_QA_ADMIN_PASSWORD`,
+`N04_QA_PW_REGISTERED_EMAIL`, `N04_QA_PW_REGISTERED_PASSWORD`,
+`N04_QA_REGISTERED_EMAIL`, and `N04_QA_REGISTERED_PASSWORD`. Customer emails
+must use the `qa.pairwise.*@example.test` and `qa.n02.*@example.test` patterns.
+Missing secrets (including on fork pull requests) are replaced with fresh,
+masked per-run credentials because the workflow creates a disposable store and
+database for each run. No production account is used.
 
 For a disposable **fresh** local environment only, set `QA_SQL_PASSWORD`,
 `QA_ADMIN_EMAIL`, `QA_ADMIN_PASSWORD`, `QA_PW_REGISTERED_EMAIL`,

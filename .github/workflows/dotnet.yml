@@ -74,6 +74,13 @@ jobs:
       NOP_BASE_URL: http://localhost/
       QA_CONFIGURABLE_PRODUCT_PATH: /pw-shirt-variants
       QA_FIXTURE_VERSION: S2-ADV-CART-AUTO-v1
+      N04_QA_SQL_PASSWORD: ${{ secrets.N04_QA_SQL_PASSWORD }}
+      N04_QA_ADMIN_EMAIL: ${{ secrets.N04_QA_ADMIN_EMAIL }}
+      N04_QA_ADMIN_PASSWORD: ${{ secrets.N04_QA_ADMIN_PASSWORD }}
+      N04_QA_PW_REGISTERED_EMAIL: ${{ secrets.N04_QA_PW_REGISTERED_EMAIL }}
+      N04_QA_PW_REGISTERED_PASSWORD: ${{ secrets.N04_QA_PW_REGISTERED_PASSWORD }}
+      N04_QA_REGISTERED_EMAIL: ${{ secrets.N04_QA_REGISTERED_EMAIL }}
+      N04_QA_REGISTERED_PASSWORD: ${{ secrets.N04_QA_REGISTERED_PASSWORD }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -86,16 +93,21 @@ jobs:
       run: |
         mkdir -p qa/ci/reports
         printf '{"sha":"%s","runId":"%s","fixture":"S2-ADV-CART-AUTO-v1"}\n' "$GITHUB_SHA" "$GITHUB_RUN_ID" > qa/ci/reports/run-manifest.json
-        # Generate credentials for this disposable run instead of requiring
-        # long-lived repository secrets or reusing passwords.
-        printf 'QA_ADMIN_EMAIL=admin.n04.%s.%s@example.test\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
-        printf 'QA_PW_REGISTERED_EMAIL=qa.pairwise.%s.%s@example.test\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
-        printf 'QA_REGISTERED_EMAIL=qa.n02.%s.%s@example.test\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
-        for name in QA_SQL_PASSWORD QA_ADMIN_PASSWORD QA_PW_REGISTERED_PASSWORD QA_REGISTERED_PASSWORD; do
-          value="N04a$(openssl rand -hex 24)!"
+        # Prefer GitHub Secrets when configured. Fork PRs and new repositories
+        # can still run with per-run credentials against the disposable store.
+        set_credential() {
+          local target="$1" secret_value="$2" fallback="$3"
+          if [[ -n "$secret_value" ]]; then value="$secret_value"; else value="$fallback"; fi
           echo "::add-mask::$value"
-          printf '%s=%s\n' "$name" "$value" >> "$GITHUB_ENV"
-        done
+          printf '%s=%s\n' "$target" "$value" >> "$GITHUB_ENV"
+        }
+        set_credential QA_SQL_PASSWORD "$N04_QA_SQL_PASSWORD" "N04a$(openssl rand -hex 24)!"
+        set_credential QA_ADMIN_EMAIL "$N04_QA_ADMIN_EMAIL" "admin.n04.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}@example.test"
+        set_credential QA_ADMIN_PASSWORD "$N04_QA_ADMIN_PASSWORD" "N04a$(openssl rand -hex 24)!"
+        set_credential QA_PW_REGISTERED_EMAIL "$N04_QA_PW_REGISTERED_EMAIL" "qa.pairwise.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}@example.test"
+        set_credential QA_PW_REGISTERED_PASSWORD "$N04_QA_PW_REGISTERED_PASSWORD" "N04a$(openssl rand -hex 24)!"
+        set_credential QA_REGISTERED_EMAIL "$N04_QA_REGISTERED_EMAIL" "qa.n02.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}@example.test"
+        set_credential QA_REGISTERED_PASSWORD "$N04_QA_REGISTERED_PASSWORD" "N04a$(openssl rand -hex 24)!"
         pwsh --version
     - name: Install Chromium and test dependencies
       working-directory: qa/automation
