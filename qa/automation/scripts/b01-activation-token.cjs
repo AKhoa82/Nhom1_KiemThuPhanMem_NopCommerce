@@ -27,7 +27,7 @@ ${mode === 'setup' ? `INSERT INTO GenericAttribute (EntityId, KeyGroup, [Key], V
 VALUES (@customerId, 'Customer', 'AccountActivationToken', @token, 0, GETUTCDATE());` : ''}
 COMMIT TRANSACTION;
 SELECT 'B01_ACTIVATION_TOKEN_${mode.toUpperCase()}';`;
-const result = spawnSync('docker.exe', [
+const result = spawnSync(process.platform === 'win32' ? 'docker.exe' : 'docker', [
   'exec', '-i', 'nopcommerce_mssql_server', 'sh', '-c', 'S=/opt/mssql-tools18/bin/sqlcmd; [ -x "$S" ] || S=/opt/mssql-tools/bin/sqlcmd; exec "$S" "$@"', 'sh',
   '-C', '-S', 'localhost', '-U', 'sa', '-P', process.env.QA_SQL_PASSWORD,
   '-d', 'nopcommerce', '-b', '-h', '-1', '-W',

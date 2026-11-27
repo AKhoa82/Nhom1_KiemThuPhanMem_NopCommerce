@@ -1,5 +1,61 @@
 # Pairwise automation
 
+## SCRUM-92: N04 CI gate
+
+`.github/workflows/dotnet.yml` now has separate .NET, Pairwise-model and real
+Chromium E2E jobs for PRs and pushes to `develop`. The model job installs pinned
+PICT 3.7.4, compares fresh model output with the checked-in rows, validates
+constraints/coverage, and checks the independent N02 model. Model coverage is
+reported separately from UI pass rate.
+
+The E2E job runs on an Ubuntu GitHub runner with Docker. It builds the web image
+from the PR SHA, installs a new nopCommerce database, seeds only synthetic QA
+products/accounts, and runs `smoke.spec.ts`, all 14 `PW-*` cases (including
+Checkout), then all 11 ADV Cart cases. `qa/ci/verify-results.cjs` rejects a
+missing, skipped, blocked or failed case even if Playwright exits successfully.
+The race test and QA-decline payment test remain separate; they are not hidden
+inside the stable gate. Reports and failure screenshots/traces are uploaded with
+`always()` to the Actions run as `n04-model-*` and `n04-e2e-*` artifacts for seven
+days. The runner's store/database are destroyed after the run.
+
+The job reads credentials from GitHub Actions secrets when configured:
+`N04_QA_SQL_PASSWORD`, `N04_QA_ADMIN_EMAIL`, `N04_QA_ADMIN_PASSWORD`,
+`N04_QA_PW_REGISTERED_EMAIL`, `N04_QA_PW_REGISTERED_PASSWORD`,
+`N04_QA_REGISTERED_EMAIL`, and `N04_QA_REGISTERED_PASSWORD`. Customer emails
+must use the `qa.pairwise.*@example.test` and `qa.n02.*@example.test` patterns.
+Missing secrets (including on fork pull requests) are replaced with fresh,
+masked per-run credentials because the workflow creates a disposable store and
+database for each run. No production account is used.
+
+For a disposable **fresh** local environment only, set `QA_SQL_PASSWORD`,
+`QA_ADMIN_EMAIL`, `QA_ADMIN_PASSWORD`, `QA_PW_REGISTERED_EMAIL`,
+`QA_PW_REGISTERED_PASSWORD`, `QA_REGISTERED_EMAIL`, `QA_REGISTERED_PASSWORD`
+and `QA_BILLING_EMAIL`, then run from the repository root:
+
+```powershell
+docker compose -f qa/ci/compose.yml up -d --build
+cd qa/automation
+npm ci
+npx playwright install chromium
+node scripts/ci-bootstrap.cjs
+$env:QA_REPORT_DIR = 'reports/n04-pw'; $env:QA_ARTIFACT_DIR = 'artifacts/n04-pw'
+npm run test:pw
+node ../ci/verify-results.cjs PW reports/n04-pw
+$env:QA_REPORT_DIR = 'reports/n04-adv'; $env:QA_ARTIFACT_DIR = 'artifacts/n04-adv'
+npm run test:adv-cart
+node ../ci/verify-results.cjs ADV reports/n04-adv
+cd ../..
+docker compose -f qa/ci/compose.yml down --volumes --remove-orphans
+```
+
+The bootstrap refuses missing credentials and non-dedicated test emails. It
+expects the named CI containers and a fresh empty nopCommerce database; never
+run it against an existing local store. To read a CI result, open the GitHub
+Actions run and download the artifacts. `pairwise/test-data/summary.md` and the
+N02 coverage report describe model coverage. `reports/n04-pw/` and
+`reports/n04-adv/` each contain JSON, JUnit, HTML and `n04-gate.json` for actual
+UI outcomes. A `BLOCKED_ENVIRONMENT` or skipped case is not a Pass.
+
 This folder runs the generated Pairwise cases without copying their source data.
 `tests/helpers/pairwise-data.ts` reads and validates the two CSV files in
 `../pairwise/test-data/`; a malformed or mismatched source file fails test

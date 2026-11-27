@@ -12,6 +12,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+$dockerCommand = if ($env:OS -eq 'Windows_NT') { 'docker.exe' } else { 'docker' }
 if ($Container -ne 'nopcommerce_mssql_server' -or $Database -ne 'nopcommerce' -or $StoreContainer -ne 'nopcommerce') {
     throw 'FIXTURE_BLOCKED: N02 reset only permits the named local nopcommerce containers and database.'
 }
@@ -22,10 +23,10 @@ if ($AccountEmail -and $AccountEmail -notmatch '^qa\.n02\.[a-zA-Z0-9._%+\-]+@exa
     throw 'FIXTURE_BLOCKED: N02 reset requires a dedicated qa.n02.*@example.test account.'
 }
 
-& docker.exe inspect --type container $Container | Out-Null
+& $dockerCommand inspect --type container $Container | Out-Null
 if ($LASTEXITCODE -ne 0) { throw "FIXTURE_BLOCKED: local database container '$Container' is unavailable." }
 if (-not $ValidateOnly) {
-    & docker.exe inspect --type container $StoreContainer | Out-Null
+    & $dockerCommand inspect --type container $StoreContainer | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "FIXTURE_BLOCKED: local store container '$StoreContainer' is unavailable." }
 }
 
@@ -129,7 +130,7 @@ SELECT CONCAT('N02_RESET|store=', @StoreId, '|guest=', @GuestId,
 $previousErrorActionPreference = $ErrorActionPreference
 $ErrorActionPreference = 'Continue'
 try {
-    $output = $sql | & docker.exe exec -i $Container sh -c 'S=/opt/mssql-tools18/bin/sqlcmd; [ -x "$S" ] || S=/opt/mssql-tools/bin/sqlcmd; exec "$S" "$@"' sh -C -S localhost -U sa -P $env:QA_SQL_PASSWORD -d $Database -b -h -1 -W -v "GuestGuid=$GuestGuid" "AccountEmail=$accountEmailValue" "StoreId=$StoreId" "ValidateOnly=$validateValue" 2>&1 | Out-String
+    $output = $sql | & $dockerCommand exec -i $Container sh -c 'S=/opt/mssql-tools18/bin/sqlcmd; [ -x "$S" ] || S=/opt/mssql-tools/bin/sqlcmd; exec "$S" "$@"' sh -C -S localhost -U sa -P $env:QA_SQL_PASSWORD -d $Database -b -h -1 -W -v "GuestGuid=$GuestGuid" "AccountEmail=$accountEmailValue" "StoreId=$StoreId" "ValidateOnly=$validateValue" 2>&1 | Out-String
 } catch {
     $output = $_ | Out-String
 } finally {
@@ -137,7 +138,7 @@ try {
 }
 if ($LASTEXITCODE -ne 0) { throw "FIXTURE_BLOCKED: N02 SQL reset failed: $($output.Trim())" }
 if (-not $ValidateOnly) {
-    & docker.exe restart $StoreContainer | Out-Null
+    & $dockerCommand restart $StoreContainer | Out-Null
     if ($LASTEXITCODE -ne 0) { throw 'FIXTURE_BLOCKED: store restart failed after N02 reset.' }
 }
 Write-Host $output.Trim()

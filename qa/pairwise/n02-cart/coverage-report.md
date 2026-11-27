@@ -1,6 +1,6 @@
 # SCRUM-87 — N02 Cart PICT coverage
 
-- Model SHA-256: `ab88b481ec4d6e6cf4c206fa633dcae91c6f86c6e22a586f5ac545b87461ff18`
+- Model SHA-256: `9c8330ea736992bb48425c48baa14e5c7c16ca926948f94e94256bc30e770a7c`
 - PICT command: `pict.exe model.pict /o:2 /r:10387`
 - Feasible full assignments: 8
 - Generated rows: 8

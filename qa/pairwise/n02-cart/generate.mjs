@@ -149,7 +149,9 @@ const dataRows = generated.map((row, index) => {
     data.ui ? (execution?.cases[data.ui] ?? 'NotRun') : 'NotRun'].map(csv).join(',');
 });
 writeFileSync(join(directory, 'generated-cases.csv'), [csvHeader.join(','), ...dataRows].join('\n') + '\n');
-const modelHash = createHash('sha256').update(model).digest('hex');
+// Hash the canonical model text so Windows CRLF checkouts and Linux LF checkouts
+// produce the same recorded SHA-256 value.
+const modelHash = createHash('sha256').update(model.toString('utf8').replace(/\r\n/g, '\n')).digest('hex');
 const report = [
   '# SCRUM-87 — N02 Cart PICT coverage',
   '',

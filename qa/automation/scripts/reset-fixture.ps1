@@ -10,6 +10,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+$dockerCommand = if ($env:OS -eq 'Windows_NT') { 'docker.exe' } else { 'docker' }
 
 $localDatabaseNames = @('nopcommerce', (([char]0x200B) + 'nopcommerce'))
 if ($Container -ne 'nopcommerce_mssql_server' -or $Database -notin $localDatabaseNames) {
@@ -20,13 +21,13 @@ if ([string]::IsNullOrWhiteSpace($env:QA_SQL_PASSWORD)) {
     throw 'FIXTURE_BLOCKED: QA_SQL_PASSWORD is required to reset the local test fixture.'
 }
 
-& docker.exe inspect --type container $Container | Out-Null
+& $dockerCommand inspect --type container $Container | Out-Null
 if ($LASTEXITCODE -ne 0) {
     throw "FIXTURE_BLOCKED: Docker container '$Container' was not found. Start the local test environment first."
 }
 
 if (-not $ValidateOnly) {
-    & docker.exe inspect --type container $StoreContainer | Out-Null
+    & $dockerCommand inspect --type container $StoreContainer | Out-Null
     if ($LASTEXITCODE -ne 0) {
         throw "FIXTURE_BLOCKED: Store container '$StoreContainer' was not found; fixture data was not changed."
     }
@@ -138,7 +139,7 @@ SELECT 'Fixture reset completed for $(CaseId).' AS Result;
 $previousErrorActionPreference = $ErrorActionPreference
 $ErrorActionPreference = 'Continue'
 try {
-    $output = $sql | & docker.exe exec -i $Container sh -c 'S=/opt/mssql-tools18/bin/sqlcmd; [ -x $S ] || S=/opt/mssql-tools/bin/sqlcmd; $S $@' sh -C -S localhost -U sa -P $env:QA_SQL_PASSWORD -d $Database -b -v "ValidateOnly=$validateOnlyValue" "CaseId=$CaseId" 2>&1 | Out-String
+    $output = $sql | & $dockerCommand exec -i $Container sh -c 'S=/opt/mssql-tools18/bin/sqlcmd; [ -x $S ] || S=/opt/mssql-tools/bin/sqlcmd; $S $@' sh -C -S localhost -U sa -P $env:QA_SQL_PASSWORD -d $Database -b -v "ValidateOnly=$validateOnlyValue" "CaseId=$CaseId" 2>&1 | Out-String
 } catch {
     $output = $_ | Out-String
 } finally {
@@ -152,7 +153,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 if (-not $ValidateOnly) {
-    & docker.exe restart $StoreContainer | Out-Null
+    & $dockerCommand restart $StoreContainer | Out-Null
     if ($LASTEXITCODE -ne 0) {
         throw "FIXTURE_BLOCKED: Failed to restart '$StoreContainer' after resetting fixture data."
     }

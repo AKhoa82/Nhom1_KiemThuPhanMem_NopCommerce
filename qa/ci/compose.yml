@@ -1,0 +1,25 @@
+services:
+  nopcommerce_database:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: nopcommerce_mssql_server
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Express
+      MSSQL_SA_PASSWORD: ${QA_SQL_PASSWORD:?QA_SQL_PASSWORD is required}
+    healthcheck:
+      test: ["CMD-SHELL", "S=/opt/mssql-tools18/bin/sqlcmd; [ -x \"$$S\" ] || S=/opt/mssql-tools/bin/sqlcmd; \"$$S\" -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q 'SELECT 1' -b >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+  nopcommerce_web:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    container_name: nopcommerce
+    ports:
+      - "127.0.0.1:80:80"
+    depends_on:
+      nopcommerce_database:
+        condition: service_healthy
+    restart: on-failure

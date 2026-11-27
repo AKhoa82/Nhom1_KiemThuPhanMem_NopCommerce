@@ -209,3 +209,4 @@ src/packages/*
 src/Tests/Nop.Tests/Connections.resx
 test-results/
 qa/local-backups/
+qa/ci/reports/
