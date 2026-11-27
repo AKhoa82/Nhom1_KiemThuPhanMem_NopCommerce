@@ -72,7 +72,7 @@ jobs:
     env:
       QA_BILLING_EMAIL: qa.guest.n04@example.test
       NOP_BASE_URL: http://localhost/
-      QA_CONFIGURABLE_PRODUCT_PATH: /pw-shirt-variants
+      QA_CONFIGURABLE_PRODUCT_PATH: /qa-fixture-not-found
       QA_FIXTURE_VERSION: S2-ADV-CART-AUTO-v1
       N04_QA_SQL_PASSWORD: ${{ secrets.N04_QA_SQL_PASSWORD }}
       N04_QA_ADMIN_EMAIL: ${{ secrets.N04_QA_ADMIN_EMAIL }}
