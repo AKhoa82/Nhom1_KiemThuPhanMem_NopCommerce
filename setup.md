@@ -1,5 +1,7 @@
 # Dựng môi trường nopCommerce (R04 + K06)
 
+> Tài liệu này ghi lại cách seed thủ công của mốc đầu kỳ `674d0ce`. Với báo cáo cuối kỳ và bộ test hiện hành, bắt đầu từ [README chính](README.md) để chọn đúng SHA, môi trường dùng một lần hoặc store local đã cài. Các giá trị sản phẩm/tồn kho ở đây chỉ là hướng dẫn tạo fixture thủ công; manifest trong `qa/automation/test-data/` là dữ liệu test cần đối chiếu khi chạy.
+
 ## 1. Trạng thái kiểm chứng
 
 - Source baseline: `674d0ceef6bd8a52fe74d6f4fff326960162cec0` (commit SHA; dùng thay tag vì checkout hiện tại không có tag release gần nhất).
@@ -63,10 +65,10 @@ Tự nhập email quản trị và tạo mật khẩu riêng cho môi trường 
 | Database name                       | `nopcommerce`                         |
 | Authentication                      | SQL Server account                    |
 | Username                            | `sa`                                  |
-| Password                            | `nopCommerce_db_password`             |
+| Password                            | Giá trị `SA_PASSWORD` của môi trường local; không ghi vào báo cáo |
 | Create database if it doesn't exist | Chọn nếu wizard hiển thị lựa chọn này |
 
-Password trên là mật khẩu development được khai báo trong `docker-compose.yml`; tuyệt đối không tái sử dụng cho môi trường thật. Hoàn tất wizard. nopCommerce gọi `/install/restartapplication` khi cài xong và kết thúc process web; Compose hiện không đặt restart policy nên container `nopcommerce` có thể chuyển sang `Exited (0)` và trình duyệt báo `ERR_CONNECTION_REFUSED`. Khi đó khởi động lại **container hiện tại** để giữ cấu hình cài đặt:
+Giá trị đăng nhập SQL local nằm trong cấu hình `docker-compose.yml`; không tái sử dụng cho môi trường thật. Hoàn tất wizard. nopCommerce gọi `/install/restartapplication` khi cài xong và kết thúc process web; Compose hiện không đặt restart policy nên container `nopcommerce` có thể chuyển sang `Exited (0)` và trình duyệt báo `ERR_CONNECTION_REFUSED`. Khi đó khởi động lại **container hiện tại** để giữ cấu hình cài đặt:
 
 ```powershell
 docker start nopcommerce
