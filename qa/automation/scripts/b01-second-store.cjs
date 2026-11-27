@@ -3,12 +3,14 @@ const { spawnSync } = require('node:child_process');
 const mode = process.argv[2];
 if (!['setup', 'cleanup'].includes(mode)) throw new Error('Use setup or cleanup');
 if (!process.env.QA_SQL_PASSWORD) throw new Error('QA_SQL_PASSWORD is required');
+const database = process.env.QA_DB_NAME || 'nopcommerce';
+if (database.replace(/^\u200B/, '') !== 'nopcommerce') throw new Error('Second-store setup only permits the local nopcommerce database.');
 if (mode === 'cleanup' && !/^qa\.n02\.[a-zA-Z0-9._%+\-]+@example\.test$/.test(process.env.QA_REGISTERED_EMAIL ?? ''))
   throw new Error('Cleanup requires the dedicated N02 account');
 
 const common = `SET NOCOUNT ON;
 SET XACT_ABORT ON;
-IF DB_NAME() <> N'nopcommerce' THROW 51000, 'Wrong database', 1;
+IF REPLACE(DB_NAME(), NCHAR(8203), N'') <> N'nopcommerce' THROW 51000, 'Wrong database', 1;
 IF (SELECT COUNT(*) FROM Store WHERE Deleted = 0) NOT IN (1, 2)
   THROW 51000, 'Unexpected store count', 1;
 DECLARE @name nvarchar(400) = N'SCRUM-96 B01 local second store';
@@ -57,7 +59,7 @@ SELECT CONCAT('B01_SECOND_STORE_REMOVED|', @id);`;
 const result = spawnSync(process.platform === 'win32' ? 'docker.exe' : 'docker', [
   'exec', '-i', 'nopcommerce_mssql_server', 'sh', '-c', 'S=/opt/mssql-tools18/bin/sqlcmd; [ -x "$S" ] || S=/opt/mssql-tools/bin/sqlcmd; exec "$S" "$@"', 'sh',
   '-C', '-S', 'localhost', '-U', 'sa', '-P', process.env.QA_SQL_PASSWORD,
-  '-d', 'nopcommerce', '-b', '-h', '-1', '-W',
+  '-d', database, '-b', '-h', '-1', '-W',
 ], { input: mode === 'setup' ? setup : cleanup, encoding: 'utf8', windowsHide: true });
 if (result.error) throw result.error;
 process.stdout.write(result.stdout);

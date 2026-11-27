@@ -8,10 +8,12 @@ if (!/^[0-9a-f-]{36}$/i.test(token ?? '')) throw new Error('A UUID token is requ
 if (!/^qa\.n02\.[a-zA-Z0-9._%+\-]+@example\.test$/.test(email))
   throw new Error('Only the dedicated N02 account is allowed');
 if (!process.env.QA_SQL_PASSWORD) throw new Error('QA_SQL_PASSWORD is required');
+const database = process.env.QA_DB_NAME || 'nopcommerce';
+if (database.replace(/^\u200B/, '') !== 'nopcommerce') throw new Error('Activation setup only permits the local nopcommerce database.');
 
 const sql = `SET NOCOUNT ON;
 SET XACT_ABORT ON;
-IF DB_NAME() <> N'nopcommerce' THROW 51000, 'Wrong database', 1;
+IF REPLACE(DB_NAME(), NCHAR(8203), N'') <> N'nopcommerce' THROW 51000, 'Wrong database', 1;
 DECLARE @customerId int = (SELECT Id FROM Customer WHERE Email = N'${email}' AND Deleted = 0);
 IF @customerId IS NULL THROW 51000, 'N02 account is missing', 1;
 DECLARE @token nvarchar(400) = N'${token}';
@@ -30,7 +32,7 @@ SELECT 'B01_ACTIVATION_TOKEN_${mode.toUpperCase()}';`;
 const result = spawnSync(process.platform === 'win32' ? 'docker.exe' : 'docker', [
   'exec', '-i', 'nopcommerce_mssql_server', 'sh', '-c', 'S=/opt/mssql-tools18/bin/sqlcmd; [ -x "$S" ] || S=/opt/mssql-tools/bin/sqlcmd; exec "$S" "$@"', 'sh',
   '-C', '-S', 'localhost', '-U', 'sa', '-P', process.env.QA_SQL_PASSWORD,
-  '-d', 'nopcommerce', '-b', '-h', '-1', '-W',
+  '-d', database, '-b', '-h', '-1', '-W',
 ], { input: sql, encoding: 'utf8', windowsHide: true });
 if (result.error) throw result.error;
 if (result.status !== 0) throw new Error(result.stderr || result.stdout);

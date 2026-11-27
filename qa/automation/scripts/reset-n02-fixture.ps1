@@ -13,7 +13,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $dockerCommand = if ($env:OS -eq 'Windows_NT') { 'docker.exe' } else { 'docker' }
-if ($Container -ne 'nopcommerce_mssql_server' -or $Database -ne 'nopcommerce' -or $StoreContainer -ne 'nopcommerce') {
+$normalizedDatabase = $Database.TrimStart([char]0x200B)
+if ($Container -ne 'nopcommerce_mssql_server' -or $normalizedDatabase -ne 'nopcommerce' -or $StoreContainer -ne 'nopcommerce') {
     throw 'FIXTURE_BLOCKED: N02 reset only permits the named local nopcommerce containers and database.'
 }
 if ([string]::IsNullOrWhiteSpace($env:QA_SQL_PASSWORD)) {
@@ -35,7 +36,7 @@ $accountEmailValue = if ($AccountEmail) { $AccountEmail } else { 'NONE' }
 $sql = @'
 SET NOCOUNT ON;
 SET XACT_ABORT ON;
-IF DB_NAME() <> N'nopcommerce' THROW 51000, 'FIXTURE_BLOCKED: unexpected database.', 1;
+IF REPLACE(DB_NAME(), NCHAR(8203), N'') <> N'nopcommerce' THROW 51000, 'FIXTURE_BLOCKED: unexpected database.', 1;
 
 DECLARE @GuestGuid uniqueidentifier = CONVERT(uniqueidentifier, '$(GuestGuid)');
 DECLARE @AccountEmail nvarchar(255) = N'$(AccountEmail)';

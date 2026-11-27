@@ -378,9 +378,19 @@ test.describe('SCRUM-112 checkout shipping risks', () => {
     await page.locator('#Email').fill(runtimeConfig.pwRegisteredEmail);
     await page.locator('#Password').fill(runtimeConfig.pwRegisteredPassword);
     await page.locator('button.login-button').click();
+    // A rejected merge now leaves the customer signed out, with the guest cart intact.
+    // Requiring a signed-in state here was a stale oracle from before SCRUM-96.
+    await expect(page).toHaveURL(/\/cart/i);
     await expect(page.getByText('Sign-in is incomplete', { exact: false })).toBeVisible();
     await expect(page.locator('a.ico-account')).toHaveCount(0);
+    await expect(page.locator('a.ico-logout')).toHaveCount(0);
+    await expect(page.locator('.bar-notification.warning')).toContainText(/\b5\b/);
+    await expect(page.locator('table.cart tbody tr').filter({ hasText: 'PW-Simple-Stock' })).toHaveCount(1);
     await expect(page.locator('table.cart tbody tr').filter({ hasText: 'PW-Simple-Stock' }).locator('input.qty-input')).toHaveValue('2');
+    await testInfo.attach('cart-merge-overstock-guest-after.png', {
+      body: await page.screenshot({ fullPage: true }),
+      contentType: 'image/png',
+    });
 
     const after = await totalSimpleQuantity();
     await attachEvidence(testInfo, 'cart-merge-overstock-after.txt', `total simple quantity: ${after}`);

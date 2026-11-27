@@ -9,10 +9,12 @@ SELECT CONCAT('PRODUCT|', Id, '|limited=', LimitedToStores)
 FROM Product WHERE Sku = 'PW-SHIRT' AND Deleted = 0;`;
 
 if (!process.env.QA_SQL_PASSWORD) throw new Error('QA_SQL_PASSWORD is required');
+const database = process.env.QA_DB_NAME || 'nopcommerce';
+if (database.replace(/^\u200B/, '') !== 'nopcommerce') throw new Error('Store preflight only permits the local nopcommerce database.');
 const result = spawnSync(process.platform === 'win32' ? 'docker.exe' : 'docker', [
   'exec', '-i', 'nopcommerce_mssql_server', '/opt/mssql-tools18/bin/sqlcmd',
   '-C', '-S', 'localhost', '-U', 'sa', '-P', process.env.QA_SQL_PASSWORD,
-  '-d', 'nopcommerce', '-b', '-h', '-1', '-W',
+  '-d', database, '-b', '-h', '-1', '-W',
 ], { input: sql, encoding: 'utf8', windowsHide: true });
 if (result.error) throw result.error;
 process.stdout.write(result.stdout);
